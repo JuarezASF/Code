@@ -26,18 +26,23 @@ int main( int argc, char** argv )
 	//------------------------------------------------------------------
 
 	namedWindow( "Original Video", CV_WINDOW_AUTOSIZE );
-
-
-	while(1)//LAÇO PRINCIPAL DO PROGRAMA
+	int delay = 2;
+	for(int i = 0; ; i++)//LAÇO PRINCIPAL DO PROGRAMA
   		{
-			swap(frame, previous);
-  			video >> frame;
+			video >> frame;
+			if(i == 0)
+				frame.copyTo(previous);
+
 			if(frame.empty())
 				{
 				cout << "frame não pôde ser capturado"<<endl;
 				break;
 				}
 			opticFlowCalculate(previous, frame);
+			if(i%delay == 0)
+			{
+				frame.copyTo(previous);
+			}
   			imshow("Original Video", frame);
   //------------------------------------------------------------------
   //--------------------ESPERA OU TERMINA A EXECUÇÃO------------------
