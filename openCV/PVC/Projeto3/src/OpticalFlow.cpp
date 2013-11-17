@@ -1,9 +1,4 @@
-#include "opencv2/video/tracking.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-
-#include <iostream>
-#include <ctype.h>
+#include "../headers/OpticalFlow.h"
 
 using namespace cv;
 using namespace std;
@@ -16,7 +11,7 @@ static Size subPixWinSize(10,10), winSize(31,31);
  * eles não são necessários, isto é, a função tem valores default para eles
  * */
 
-void opticFlowCalculate(Mat &previous, Mat &current)
+int opticFlowCalculate(Mat &previous, Mat &current)
 {
 
     const int MAX_COUNT = 500;
@@ -29,8 +24,10 @@ void opticFlowCalculate(Mat &previous, Mat &current)
     //points[1] ponto na nova imagem
 
 
-     if(current.empty() )
-        cout << "Isso não deveria acontecer!" << endl;
+     if(current.empty() || previous.empty()){
+    	 	return -1;
+     	 }
+
 
      /*Como estamos trabalhando com brilho, passamos para PB*/
      cvtColor(current, gray, CV_BGR2GRAY);
@@ -68,4 +65,5 @@ void opticFlowCalculate(Mat &previous, Mat &current)
      * a fazer:
      * 	- definir os pontos de interesse como todos os pontos de uma malha quadrada
      * 	- visualizar isso*/
+    return 1;
 }

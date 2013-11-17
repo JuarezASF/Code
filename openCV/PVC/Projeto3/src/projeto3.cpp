@@ -6,13 +6,15 @@
 #include <sstream>
 #include <cassert>
 
+#include "../headers/OpticalFlow.h"
+
 using namespace cv;
 using namespace std;
 
 int main( int argc, char** argv )
 {
 	VideoCapture video("/home/juarez408/Copy/UnB/2-2013/PVC/Projeto3/data/video.avi");
-	Mat frame;
+	Mat frame, previous;
 	if(!video.isOpened())
 		{
 			cout << "Video não pode ser aberto!" << endl;
@@ -28,12 +30,14 @@ int main( int argc, char** argv )
 
 	while(1)//LAÇO PRINCIPAL DO PROGRAMA
   		{
+			swap(frame, previous);
   			video >> frame;
 			if(frame.empty())
 				{
 				cout << "frame não pôde ser capturado"<<endl;
 				break;
 				}
+			opticFlowCalculate(previous, frame);
   			imshow("Original Video", frame);
   //------------------------------------------------------------------
   //--------------------ESPERA OU TERMINA A EXECUÇÃO------------------
@@ -50,6 +54,8 @@ int main( int argc, char** argv )
 	cout << "fim" <<endl;
 
 	waitKey(0);
+
+
 
 	return 0;
 }
