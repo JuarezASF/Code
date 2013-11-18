@@ -7,6 +7,7 @@
 #include <cassert>
 
 #include "../headers/OpticalFlow.h"
+#include "../headers/kMeans.h"
 
 using namespace cv;
 using namespace std;
@@ -26,7 +27,7 @@ int main( int argc, char** argv )
 	//------------------------------------------------------------------
 
 	namedWindow( "Original Video", CV_WINDOW_AUTOSIZE );
-	int delay = 2;
+	int delay = 1;
 	for(int i = 0; ; i++)//LAÇO PRINCIPAL DO PROGRAMA
   		{
 			video >> frame;
@@ -47,7 +48,7 @@ int main( int argc, char** argv )
   //------------------------------------------------------------------
   //--------------------ESPERA OU TERMINA A EXECUÇÃO------------------
   //------------------------------------------------------------------
-            int wait_c = cvWaitKey(30);
+            int wait_c = cvWaitKey(0);
   			if((char)wait_c == 27 )
   				{// char == 27 : ESC key
   				cout << "\n\n execução será encerrada!"<<endl;

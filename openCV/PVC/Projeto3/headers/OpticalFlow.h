@@ -14,6 +14,10 @@
 
 #include <iostream>
 #include <ctype.h>
+
+#include "kMeans.h"
+
+
 using namespace cv;
 using namespace std;
 

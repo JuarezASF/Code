@@ -1,5 +1,9 @@
 #include "../headers/OpticalFlow.h"
 
+#define GREEN CV_RGB(0,255,0)
+#define RED CV_RGB(0,0,255)
+#define BLUE CV_RGB(255,0,0)
+
 using namespace cv;
 using namespace std;
 
@@ -12,14 +16,14 @@ static Size  winSize(31,31);
  * */
 
 void drawNormalizedArrows(Mat &img, vector<Point2f> &P,
-		vector<Point2f> &V)
+		vector<Point2f> &P2)
 {
     double l_max = -10;
-    for (size_t i = 0; i < V.size(); i++)
+    for (size_t i = 0; i < P2.size(); i++)
         {
     	//descobre o maior módulo
-        float dx = V[i].x;
-        float dy = V[i].y;
+        float dx = P2[i].x - P[i].x;
+        float dy = P2[i].y- P[i].y;
 
         double l = sqrt(dx*dx + dy*dy);
 
@@ -28,33 +32,32 @@ void drawNormalizedArrows(Mat &img, vector<Point2f> &P,
 
 
 
-    for (size_t i = 0; i < V.size(); i++)
+    for (size_t i = 0; i < P2.size(); i++)
     {
-    	float dx = V[i].x;
-    	float dy = V[i].y;
+        float dx = P2[i].x - P[i].x;
+        float dy = P2[i].y- P[i].y;
         double l = sqrt(dx*dx + dy*dy);
         //'l' é módulo da velocidade
         if (l > 0)
-        {
-            double spinSize = 5.0 * l/l_max;
+        {//dezenha flecha com ângulo de ponta definido
+            double spinSize = l/l_max;
+            double angPonta = 3.1416 / 4;
 
             //dezenha o traço da flecha
-            CvPoint p2 = cvPoint(P[i].x + (int)(dx), P[i].y + (int)(dy));
-            line(img, P[i], p2, CV_RGB(0,255,0), 1, CV_AA);
+            line(img, P[i], P2[i], GREEN, 1, CV_AA);
 
             //dezenha a cabeça da flexa
             double angle;                                                                           // Draws the spin of the arrow
-            angle = atan2( (double) P[i].y - p2.y, (double) P[i].x - p2.x );
+            angle = atan2( (double) P[i].y - P2[i].y, (double) P[i].x - P2[i].x );
 
             CvPoint p;
-            p.x = (int) (p2.x + spinSize * cos(angle + 3.1416 / 4));
-            p.y = (int) (p2.y + spinSize * sin(angle + 3.1416 / 4));
-            line(img, p, p2, CV_RGB(0,255,0), 1, CV_AA, 0 );
+            p.x = (int) (P2[i].x + spinSize * cos(angle + angPonta));
+            p.y = (int) (P2[i].y + spinSize * sin(angle + angPonta));
+            line(img, p,P2[i], CV_RGB(0,255,0), 1, CV_AA, 0 );
 
-            p.x = (int) (p2.x + spinSize * cos(angle - 3.1416 / 4));
-            p.y = (int) (p2.y + spinSize * sin(angle - 3.1416 / 4));
-            line( img, p, p2, CV_RGB(0,255,0), 1, CV_AA, 0 );
-
+            p.x = (int) (P2[i].x + spinSize * cos(angle - angPonta));
+            p.y = (int) (P2[i].y + spinSize * sin(angle - angPonta));
+            line( img, p, P2[i], CV_RGB(0,255,0), 1, CV_AA, 0 );
         }
    }
 
@@ -71,24 +74,21 @@ float maxElement(vector<float> data){
 
 void opticFlowCalculate(Mat &previous, Mat &current)
 {
-    //contagem máxima de pontos a seguir
-
     Mat gray, prevGray;
     vector<Point2f> pointsToTrack, pointsFounded, V;
-
-    //pontos que serão usados para calcular o fluxo ótico
-    //points[0] pontos da imagem anterior
-    //points[1] ponto na nova imagem
+    int filterSize = 7;
 
      if(current.empty() || previous.empty()){
     	 	return;
      	 }
-
-
-     /*Como estamos trabalhando com brilho, passamos para PB*/
+     //conversão para PB e filtragem básica
      cvtColor(current, gray, CV_BGR2GRAY);
      cvtColor(previous, prevGray, CV_BGR2GRAY);
+     medianBlur ( gray, gray, filterSize);
+     medianBlur ( prevGray, prevGray, filterSize);
 
+
+     //criando malha retangular para o algoritmo
      int dy, dx;
      dy = 20;
      dx = 20;
@@ -102,17 +102,17 @@ void opticFlowCalculate(Mat &previous, Mat &current)
           }
 
 	vector<uchar> status;
-	//status guarda para guarda ponto do vetor points[0]
-	//se a operação de detectar foi bem sucedida ou não
     vector<float> err;
-    //estima erro para cada ponto achado?? not sure what it means
+    /*status guarda o sucesso da busca para cada ponto
+     * err guarda o erro da medida para cada ponto*/
 
-    calcOpticalFlowPyrLK(prevGray, gray, pointsToTrack, pointsFounded, status, err, winSize,
+    calcOpticalFlowPyrLK(prevGray, gray, pointsToTrack,
+    					pointsFounded, status, err, winSize,
                                  3, termcrit, 0, 0.001);
 
-    /*acha o vetor velocidade*/
-    size_t i, k;
 
+    //eliminando dados ruins
+    size_t i, k;
     float maxError = maxElement(err);
 
     for( i = k = 0; i < pointsFounded.size(); i++ )
@@ -120,17 +120,20 @@ void opticFlowCalculate(Mat &previous, Mat &current)
        	//se o ponto falhou não será computado!
     	if( !status[i] )
     		continue;
-    	if( err[i] > 1.0*maxError )
+    	if( err[i] > 0.2*maxError )
     	    		continue;
-    	Point2f vel = (pointsFounded[i] - pointsToTrack[i]);
-    	V.push_back(vel);
+
+    	V.push_back(pointsFounded[i] - pointsToTrack[i]);
+
     	pointsFounded[k] = pointsFounded[i];
     	pointsToTrack[k++] = pointsToTrack[i];
     	}
     	pointsToTrack.resize(k);
     	pointsFounded.resize(k);
 
-    	drawNormalizedArrows(current, pointsToTrack, V);
+    	drawNormalizedArrows(current, pointsToTrack, pointsFounded);
+
+    	myK_Means(current, pointsToTrack, V);
 
     return ;
 }
