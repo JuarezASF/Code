@@ -8,6 +8,7 @@
 
 #include "../headers/OpticalFlow.h"
 #include "../headers/kMeans.h"
+#include "../headers/myMath.h"
 
 using namespace cv;
 using namespace std;
@@ -15,7 +16,8 @@ using namespace std;
 int main( int argc, char** argv )
 {
 	VideoCapture video("/home/juarez408/Copy/UnB/2-2013/PVC/Projeto3/data/video.avi");
-	Mat frame, previous;
+	Mat frame, previous, prevPrev, output;
+	Mat process ,processP;
 	if(!video.isOpened())
 		{
 			cout << "Video não pode ser aberto!" << endl;
@@ -27,10 +29,20 @@ int main( int argc, char** argv )
 	//------------------------------------------------------------------
 
 	namedWindow( "Original Video", CV_WINDOW_AUTOSIZE );
-	int delay = 1;
+	namedWindow( "Video Processado", CV_WINDOW_AUTOSIZE );
+	namedWindow( "BackGround Subtract", CV_WINDOW_AUTOSIZE );
+
+
+	cvMoveWindow("Original Video", 0, 0);
+	cvMoveWindow("Video Processado", 300, 0);
+	cvMoveWindow("BackGround Subtract", 600, 0);
+
+
+
 	for(int i = 0; ; i++)//LAÇO PRINCIPAL DO PROGRAMA
   		{
 			video >> frame;
+			frame.copyTo(output);
 			if(i == 0)
 				frame.copyTo(previous);
 
@@ -39,16 +51,26 @@ int main( int argc, char** argv )
 				cout << "frame não pôde ser capturado"<<endl;
 				break;
 				}
-			opticFlowCalculate(previous, frame);
-			if(i%delay == 0)
+			if(i > 4)
 			{
-				frame.copyTo(previous);
+				 process = frame - previous;
+				 processP = previous - prevPrev;
+
+				 opticFlowCalculate(process, processP, output);
+
 			}
+			previous.copyTo(prevPrev);
+			frame.copyTo(previous);
   			imshow("Original Video", frame);
+  			if(i > 4){
+  				imshow("Video Processado", output);
+  				imshow("BackGround Subtract", process);
+  			}
+
   //------------------------------------------------------------------
   //--------------------ESPERA OU TERMINA A EXECUÇÃO------------------
   //------------------------------------------------------------------
-            int wait_c = cvWaitKey(0);
+            int wait_c = cvWaitKey(50);
   			if((char)wait_c == 27 )
   				{// char == 27 : ESC key
   				cout << "\n\n execução será encerrada!"<<endl;

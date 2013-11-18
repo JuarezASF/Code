@@ -1,4 +1,6 @@
 #include "../headers/OpticalFlow.h"
+#include "../headers/myMath.h"
+
 
 #define GREEN CV_RGB(0,255,0)
 #define RED CV_RGB(0,0,255)
@@ -8,7 +10,7 @@ using namespace cv;
 using namespace std;
 
 static TermCriteria termcrit(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 20, 0.03);
-static Size  winSize(31,31);
+static Size  winSize(31,31),  subPixWinSize(10,10);
 /*essas últimas duas linahs definem o tamanho da imagem a ser utilizado
  * esses parametros são passados como argumento da função que calcula
  * o fluxo óptico.
@@ -72,7 +74,7 @@ float maxElement(vector<float> data){
 	return max;
 }
 
-void opticFlowCalculate(Mat &previous, Mat &current)
+void opticFlowCalculate(Mat &previous, Mat &current, Mat &output)
 {
     Mat gray, prevGray;
     vector<Point2f> pointsToTrack, pointsFounded, V;
@@ -84,10 +86,12 @@ void opticFlowCalculate(Mat &previous, Mat &current)
      //conversão para PB e filtragem básica
      cvtColor(current, gray, CV_BGR2GRAY);
      cvtColor(previous, prevGray, CV_BGR2GRAY);
-     medianBlur ( gray, gray, filterSize);
-     medianBlur ( prevGray, prevGray, filterSize);
+    // medianBlur ( gray, gray, filterSize);
+     //medianBlur ( prevGray, prevGray, filterSize);
+     myFilter(gray);
+     myFilter(prevGray);
 
-
+/*
      //criando malha retangular para o algoritmo
      int dy, dx;
      dy = 20;
@@ -100,8 +104,16 @@ void opticFlowCalculate(Mat &previous, Mat &current)
              pointsToTrack.push_back(p);
           	 }
           }
+*/
+     int MAX_COUNT = 500;
+     goodFeaturesToTrack(gray, pointsToTrack,
+    		 MAX_COUNT, 0.01, 10, Mat(),
+    		 3, 0, 0.04);
 
-	vector<uchar> status;
+     cornerSubPix(gray, pointsToTrack,
+    		 subPixWinSize, Size(-1,-1), termcrit);
+
+    vector<uchar> status;
     vector<float> err;
     /*status guarda o sucesso da busca para cada ponto
      * err guarda o erro da medida para cada ponto*/
@@ -131,9 +143,9 @@ void opticFlowCalculate(Mat &previous, Mat &current)
     	pointsToTrack.resize(k);
     	pointsFounded.resize(k);
 
-    	drawNormalizedArrows(current, pointsToTrack, pointsFounded);
+    	drawNormalizedArrows(output, pointsToTrack, pointsFounded);
 
-    	myK_Means(current, pointsToTrack, V);
+    	myK_Means(output, pointsToTrack, V);
 
     return ;
 }

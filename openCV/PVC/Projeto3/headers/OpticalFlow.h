@@ -21,7 +21,7 @@
 using namespace cv;
 using namespace std;
 
-void opticFlowCalculate(Mat &previous, Mat &current);
+void opticFlowCalculate(Mat &previous, Mat &current, Mat &output);
 /**o primeiro elemento são os pontos
  * o segundo são as velcidades respectivas*/
 
