@@ -1,6 +1,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/video/background_segm.hpp>
 
 #include <iostream>
 #include <sstream>
@@ -9,14 +10,16 @@
 #include "../headers/OpticalFlow.h"
 #include "../headers/kMeans.h"
 #include "../headers/myMath.h"
+#include "../headers/DenseFlux.h"
 
 using namespace cv;
 using namespace std;
 
+
 int main( int argc, char** argv )
 {
 	VideoCapture video("/home/juarez408/Copy/UnB/2-2013/PVC/Projeto3/data/video.avi");
-	Mat frame, previous, prevPrev, output;
+	Mat frameCaptured, previous, prevPrev, output;
 	Mat process ,processP;
 	if(!video.isOpened())
 		{
@@ -29,42 +32,74 @@ int main( int argc, char** argv )
 	//------------------------------------------------------------------
 
 	namedWindow( "Original Video", CV_WINDOW_AUTOSIZE );
-	namedWindow( "Video Processado", CV_WINDOW_AUTOSIZE );
-	namedWindow( "BackGround Subtract", CV_WINDOW_AUTOSIZE );
+	namedWindow( "BG", CV_WINDOW_AUTOSIZE );
+	namedWindow( "FG", CV_WINDOW_AUTOSIZE );
+	namedWindow( "fluxoO", CV_WINDOW_AUTOSIZE );
+	namedWindow( "output", CV_WINDOW_AUTOSIZE );
 
 
 	cvMoveWindow("Original Video", 0, 0);
-	cvMoveWindow("Video Processado", 300, 0);
-	cvMoveWindow("BackGround Subtract", 600, 0);
+	cvMoveWindow("BG", 300, 0);
+	cvMoveWindow("FG", 600, 0);
+	cvMoveWindow("fluxoO", 900, 0);
 
+	cvMoveWindow("output", 0, 300);
 
+	DenseFlux flux;
+
+	cv::BackgroundSubtractorMOG2 bg;
+    bg.nmixtures = 20;
+    bg.bShadowDetection = true;
+    bg.nShadowDetection = 127;
+    bg.fTau = 0.4;
+
+    Mat backG, foreG;
+    Mat fluxImg;
 
 	for(int i = 0; ; i++)//LAÇO PRINCIPAL DO PROGRAMA
   		{
-			video >> frame;
-			frame.copyTo(output);
-			if(i == 0)
-				frame.copyTo(previous);
+		//---------------------captura e teste---------------
+			video >> frameCaptured;
+
+			Mat frame;
+
+			frameCaptured.copyTo(frame);
+
+			medianBlur ( frame, frame, 7);
 
 			if(frame.empty())
-				{
-				cout << "frame não pôde ser capturado"<<endl;
-				break;
-				}
+					{
+					cout << "frame não pôde ser capturado"<<endl;
+					break;
+					}
+
+			//---------------------background---------------
+			bg.operator ()(frame,foreG);
+	        bg.getBackgroundImage(backG);
+
+			cv::erode(foreG,foreG,cv::Mat());
+			cv::dilate(foreG,foreG,cv::Mat());
+
+			//--------------------fluxo---------------
+			frame.copyTo(output);
 			if(i > 4)
 			{
 				 process = frame - previous;
 				 processP = previous - prevPrev;
 
-				 opticFlowCalculate(process, processP, output);
+				 frameCaptured.copyTo(fluxImg);
 
+				 flux.fluxCalculate(process, processP);
+				 flux.drawOptFlowMap(fluxImg, 8, 1.5, CV_RGB(0, 255, 0));
 			}
 			previous.copyTo(prevPrev);
 			frame.copyTo(previous);
-  			imshow("Original Video", frame);
+
+  			imshow("Original Video", frameCaptured);
+			imshow("BG", backG);
+			imshow("FG", foreG);
   			if(i > 4){
-  				imshow("Video Processado", output);
-  				imshow("BackGround Subtract", process);
+  				imshow("fluxoO", fluxImg);
   			}
 
   //------------------------------------------------------------------

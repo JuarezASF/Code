@@ -74,11 +74,10 @@ float maxElement(vector<float> data){
 	return max;
 }
 
-void opticFlowCalculate(Mat &previous, Mat &current, Mat &output)
+void sparseOpticFlowCalculate(Mat &previous, Mat &current, Mat &output)
 {
     Mat gray, prevGray;
     vector<Point2f> pointsToTrack, pointsFounded, V;
-    int filterSize = 7;
 
      if(current.empty() || previous.empty()){
     	 	return;
@@ -86,25 +85,9 @@ void opticFlowCalculate(Mat &previous, Mat &current, Mat &output)
      //conversão para PB e filtragem básica
      cvtColor(current, gray, CV_BGR2GRAY);
      cvtColor(previous, prevGray, CV_BGR2GRAY);
-    // medianBlur ( gray, gray, filterSize);
-     //medianBlur ( prevGray, prevGray, filterSize);
      myFilter(gray);
      myFilter(prevGray);
 
-/*
-     //criando malha retangular para o algoritmo
-     int dy, dx;
-     dy = 20;
-     dx = 20;
-     for (int y = 0; y < gray.rows; y+=gray.rows/dy)
-    	 {
-    	 for (int x = 0; x < gray.cols; x+=gray.cols/dx)
-    	 	 {
-             Point2f p(x, y);
-             pointsToTrack.push_back(p);
-          	 }
-          }
-*/
      int MAX_COUNT = 500;
      goodFeaturesToTrack(gray, pointsToTrack,
     		 MAX_COUNT, 0.01, 10, Mat(),
@@ -149,3 +132,4 @@ void opticFlowCalculate(Mat &previous, Mat &current, Mat &output)
 
     return ;
 }
+
