@@ -79,11 +79,16 @@ void DenseFlux::fluxCalculate(Mat &frame, Mat &previous){
 
 
 	this->setFrame(frame);
-	cvtColor(frame, this->gray, CV_BGR2GRAY);
+	if(frame.channels() == 3)
+		cvtColor(frame, this->gray, CV_BGR2GRAY);
+	else
+		setGray(frame);
 
 	this->setPrev(previous);
-	cvtColor(previous, this->prevGray, CV_BGR2GRAY);
-
+	if(previous.channels() == 3)
+		cvtColor(previous, this->prevGray, CV_BGR2GRAY);
+	else
+		setPrevGray(previous);
 
     if( prevGray.data )
 			calcOpticalFlowFarneback(prevGray, gray, flux,
