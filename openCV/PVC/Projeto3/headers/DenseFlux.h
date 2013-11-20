@@ -22,14 +22,25 @@ class DenseFlux {
 private:
 
 	Mat gray, prevGray, prev, frame, flux;
+	double maxFlux;
+	vector<vector<Point2f> > interestData;
+	int nObjects;
 
 public:
 	DenseFlux();
 	virtual ~DenseFlux();
 
 	void fluxCalculate(Mat &frame, Mat &previous);
-	void drawOptFlowMap(Mat& output, int step,
-			double, const Scalar& color);
+
+	void drawOptFlowMap(Mat& output, unsigned int step,
+			float threshold, const Scalar& color);
+
+	void calcInterestPoints(const Mat &data,
+			const int step, float threshold);
+
+	void countObjects(const Mat& data, const int step,
+					const float thresholdFlux);
+
 
 	const Mat& getFlux() const;
 	void setFlux(const Mat& flux);
@@ -41,6 +52,19 @@ public:
 	void setPrev(const Mat& prev);
 	const Mat& getPrevGray() const;
 	void setPrevGray(const Mat& prevGray);
+	double getMaxFlux() const;
+	void setMaxFlux(double maxFlux);
+	const vector<vector<Point2f> >& getInterestData() const;
+	void setInterestData(const vector<vector<Point2f> >& interestData);
+	void eraseInterestData();
+
+	int getObjects() const {
+		return nObjects;
+	}
+
+	void setObjects(int objects) {
+		nObjects = objects;
+	}
 };
 
 

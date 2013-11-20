@@ -34,18 +34,64 @@ using namespace cv;
 using namespace std;
 
 #define BLACK CV_RGB(0,0,0)
+RNG rng(12345);
 
-void myK_Means(Mat &frame, vector<Point2f> &P,vector<Point2f> &V){
+void drawContoursRetang(Mat &frame, vector<vector<Point> > contours){
+		vector<vector<Point> > contours_poly( contours.size() );
+		vector<Rect> boundRect( contours.size() );
 
+		  for( unsigned int i = 0; i < contours.size(); i++ )
+			 {
+			  approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
+			   boundRect[i] = boundingRect( Mat(contours_poly[i]) );
 
+			 }
+		for(unsigned  int i = 0; i< contours.size(); i++ )
+			 {
+			   Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+			   //drawContours( frame, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
+			   rectangle( frame, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
+			 }
+}
+
+void drawContoursCirc(Mat &frame, vector<vector<Point> > contours){
+		 vector<Point2f>center( contours.size() );
+		  vector<float>radius( contours.size() );
+		vector<vector<Point> > contours_poly( contours.size() );
+		vector<Rect> boundRect( contours.size() );
+		  for( unsigned int i = 0; i < contours.size(); i++ )
+			 {
+
+				 approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
+			   boundRect[i] = boundingRect( Mat(contours_poly[i]) );
+			    minEnclosingCircle( (Mat)contours_poly[i], center[i], radius[i] );
+			 }
+		for( unsigned int i = 0; i< contours.size(); i++ )
+			 {
+			   Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+			   circle( frame, center[i], (int)radius[i], color, 2, 8, 0 );
+			 }
+}
+
+void myK_Means(Mat &frame, vector<vector<Point2f> > &dataPoints,
+		int nObjects){
+
+	if(nObjects == 0)
+		return;
+
+	vector<Point2f> P = dataPoints[0];
+	vector<Point2f> V = dataPoints[1];
+
+	vector<Point> *groups = new vector<Point>[nObjects];
+	vector<vector<Point> > sortedData;
 
 	if(P.empty() || V.empty())
 		return;
 
-	Mat data((int)P.size(), 4, CV_32FC1);
-
-	int clusterCount = 10;
-	//numero de carros a procurar. 10 é um bom número?
+//	Mat data((int)P.size(), 4, CV_32FC1);
+	Mat data((int)P.size(), 2, CV_32FC1);
+	int clusterCount = nObjects;
+	//numero de carros a procurar.
 
     int sampleCount = P.size();
     //numero de amostras a utilizar
@@ -56,7 +102,7 @@ void myK_Means(Mat &frame, vector<Point2f> &P,vector<Point2f> &V){
     clusterCount = MIN(clusterCount, sampleCount);
 	//se tivermos menos pontos do que clusters, o n de clusters é reduzido
     Mat centers(clusterCount, 2, CV_32FC2);
-
+/*
     for(int i = 0; i < (int)P.size(); i++)
     {
             data.at<float>(i,0) = P[i].x;
@@ -64,7 +110,13 @@ void myK_Means(Mat &frame, vector<Point2f> &P,vector<Point2f> &V){
             data.at<float>(i,2) = V[i].x;
             data.at<float>(i,3) = V[i].y;
     }
+*/
+    for(int i = 0; i < (int)P.size(); i++)
+      {
+              data.at<float>(i,0) = P[i].x;
+              data.at<float>(i,1) = P[i].y;
 
+      }
 
     kmeans(data, clusterCount, labels,
                    TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 10, 1.0),
@@ -76,6 +128,19 @@ void myK_Means(Mat &frame, vector<Point2f> &P,vector<Point2f> &V){
         Point ipt = centers.at<Point2f>(i);
         circle( frame, ipt, 10, BLACK, 3, 8, 0 );
     }
+
+    for(unsigned int i = 0; i < P.size(); i++ )
+        {
+    		(groups[labels.at<int>(i)]).push_back(Point(P[i].x, P[i].y));
+        }
+
+    for(int i = 0; i < nObjects; i++)
+    	sortedData.push_back(groups[i]);
+
+    drawContoursRetang(frame, sortedData);
+
+    delete[] groups;
+
 
 }
 

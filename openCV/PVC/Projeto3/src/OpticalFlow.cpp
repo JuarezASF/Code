@@ -128,7 +128,7 @@ void sparseOpticFlowCalculate(Mat &previous, Mat &current, Mat &output)
 
     	drawNormalizedArrows(output, pointsToTrack, pointsFounded);
 
-    	myK_Means(output, pointsToTrack, V);
+    	//myK_Means(output, pointsToTrack, V);
 
     return ;
 }

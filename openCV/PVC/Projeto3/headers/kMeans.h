@@ -17,7 +17,8 @@
 using namespace cv;
 using namespace std;
 
-void myK_Means(Mat &frame, vector<Point2f> &P,vector<Point2f> &V);
+void myK_Means(Mat &frame, vector<vector<Point2f> > &dataPoints,
+		int nObjects);
 
 
 
