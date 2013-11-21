@@ -17,7 +17,7 @@ using namespace std;
 
 int iTau = 3;
 const int iTauMax = 100;
-
+//teste de corretor asdf asdf Isto é um teste.
 float fFluxThreshold = 0.08;
 int iFluxTh = 8;
 const int iFluxThMax = 100;
@@ -178,6 +178,19 @@ int main( int argc, char** argv )
   				cout << "\n\n execução será encerrada!"<<endl;
   				break;
   				}
+			if((char)wait_c == 112)//p
+				{
+					char const save_frame[] = "../images/frame.jpg";
+					char const save_flux[] = "../images/flux.jpg";
+					char const save_output[] = "../images/output.jpg";
+
+					imwrite( save_frame, frameCaptured);
+					imwrite( save_flux, fluxImg);
+					imwrite( save_output, output);
+
+					cout << "imagens salvas em ../images/!" << endl;
+				}
+
   		}//FIM DO LAÇO PRINCIPAL
 
 
