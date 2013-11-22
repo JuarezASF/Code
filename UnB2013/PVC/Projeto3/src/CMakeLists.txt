@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+set (ProjectName  "Projeto3")
+project( ${ProjectName} )
+find_package( OpenCV REQUIRED )
+add_executable( ${ProjectName} main.cpp )
+target_link_libraries( ${ProjectName} ${OpenCV_LIBS} )
