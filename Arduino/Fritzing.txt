@@ -1,0 +1,15 @@
+Fritizing é um programa open source usado para criar esquemáticos que
+montagem em protobord. No futuro ele pode ser usado para
+criar o layout que será impresso na placa.
+
+Faça o download em:
+
+http://fritzing.org/
+
+*tenha certeza de baixar a versão adequada para o seu 
+sistema operacional
+
+Para instalar simplesmente descompacte o arquivo e execute
+./frintzing.
+
+Não precisa compilar nem nada! pontos para esse programa.

@@ -1,0 +1,11 @@
+Primeiro de tudo temos de escolher o tipo correto de arduino
+e a porta usb que será usada.
+
+no menu tools->border escolha a opção adequada
+*aqui é bom saber qual arduino vc tem.
+*o que tenho aqui funcionou com Duelmilanova w/ ATM 8
+ou algo assim.
+
+depois selecione a porta usb, ou serial.
+*antes de selecionar a prota usb conecte o arduino. aqui
+funcionou assim.

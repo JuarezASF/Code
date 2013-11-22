@@ -1,0 +1,26 @@
+Apenas mande um:
+
+sudo apt-get install arduino
+
+aqui complete com tab, aparecem três opções:
+-arduino
+-arduino-mk
+-arduino-core
+
+aqui eu instalei os três.
+
+O que você está fazendo é instalar a IDE que interfaceia com
+oarduino.
+Pronto, acho que é isso.
+
+Basta executar: 'arduino' e é isso.
+
+*aqui ele pediu uma senha. não sei ainda se está
+funcionando.
+
+Você deve adicionar permissão para o seu usuário do linux
+(aquele cujo nome aparece no terminal) gravar na porta usb.
+para isso faça:
+sudo usermod -aG dialout <myuser>
+aqui por exemplo usei:
+sudo usermod -aG dialout juarez
