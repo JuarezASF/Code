@@ -1,0 +1,24 @@
+Algumas dúvidas que surgiram durante o trabalho:
+
+-Não estou muito certo sobre as funções atribuídas a classe fachada:
+	ela deve somente repassar os comandos ou faz algum processmento?
+
+-Muitas operações requerem verificações do tipo "o objeto já existe?". Em que
+camada essas verificações devem ser feitas? Múltiplas verificações são recomen
+dadas?
+
+-Em que camada devem ser implementadas regras de negócio? Por exemplo, um usuário
+só pode ser atualizado se ele já existir, essa verificações é trabalho 
+dos repositórios ou dos cadastros?
+
+-quais camadas são permitidas interagir com com mensagens de texto? por exemplo,
+menssagens do tipo 'usuário já existe' devem ser emitidas por que camada?
+
+-será que o modo como construi o menu está bom? ou o modo do professor é 
+mais interessante?
+
+-procurar o curso com menos alunos matriculados é função da interface ou da fachada?
+O repositório deve fornecer uma função com esse objetivo?(retornar o curso
+com menos matriculados)
+
+-como fazer uma variável final apartir de certo ponto sem ser na contrução?

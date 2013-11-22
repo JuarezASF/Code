@@ -1,0 +1,9 @@
+Guardo aqui os backups do desenvolvimento!
+
+a numeração indica o dia e a hora em que o zip foi feito. Exemplo:
+
+Trab1-30D09M18h45m = 
+Dia 30 do Mês 09 às 18h45min
+
+
+*não sei se volto a usar o github ou se fico com esses sistema de cópias no Copy.
