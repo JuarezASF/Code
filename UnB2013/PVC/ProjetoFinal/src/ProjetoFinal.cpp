@@ -15,10 +15,18 @@
 #include <cassert>
 
 using namespace std;
+using namespace cv;
 
 int main(){
 
 	cout << "Este é o main do projeto!" << endl;
+	cout << "aperte para sair!" << endl;
+    int wait_c = cvWaitKey(0);
+		if((char)wait_c == 27 )
+			{// char == 27 : ESC key
+			cout << "\n\n execução será encerrada!"<<endl;
+			}
+
 
 	return 0;
 }
