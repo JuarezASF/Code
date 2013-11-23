@@ -180,15 +180,15 @@ int main( int argc, char** argv )
   				}
 			if((char)wait_c == 112)//p
 				{
-					char const save_frame[] = "../images/frame.jpg";
-					char const save_flux[] = "../images/flux.jpg";
-					char const save_output[] = "../images/output.jpg";
+					char const save_frame[] = "/home/juarez408/github/Programando/UnB2013/PVC/Projeto3/images/frame.jpg";
+					char const save_flux[] = "/home/juarez408/github/Programando/UnB2013/PVC/Projeto3/images/flux.jpg";
+					char const save_output[] = "/home/juarez408/github/Programando/UnB2013/PVC/Projeto3/images/output.jpg";
 
 					imwrite( save_frame, frameCaptured);
 					imwrite( save_flux, fluxImg);
 					imwrite( save_output, output);
 
-					cout << "imagens salvas em ../images/!" << endl;
+					cout << "imagens salvas em ../images/" << endl;
 				}
 
   		}//FIM DO LAÇO PRINCIPAL
