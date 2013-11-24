@@ -1,28 +1,11 @@
-#include <iostream>
-#include <vector>
+/*
+ * MyKalmanFilter.cpp
+ *
+ *  Created on: 24/11/2013
+ *      Author: juarez408
+ */
 
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/video/tracking.hpp>
-
-/*Esse exemplo foi retirado do site :
- * http://www.morethantechnical.com/2011/06/17/simple-kalman-filter-for-tracking-using-opencv-2-2-w-code/
- *
- * e modificado segundo a sugestão do usuário Anant, nos comentários do mesmo link,
- * para incluir no modelo a aceleração.
- *
- *outras modificações no exemplo foram feitas para tornar o código no meu
- *outras estilo de ptrogamação
- *
- * Ao incluir no modelo essa nova variável notou-se que o algoritmo se torna
- * muito mais rápido!
- *
- * autor : Juarez Aires Sampaio Filho
- * data : 23/11/2013 00h04
- *
-*/
-
-using namespace cv;
-using namespace std;
+#include "MyKalmanFilter.h"
 
 
 struct mouse_info_struct { int x,y; };
@@ -30,26 +13,36 @@ struct mouse_info_struct mouse_info = {-1,-1}, last_mouse;
 
 vector<Point> mousev,kalmanv;
 
+
 void on_mouse(int event, int x, int y, int flags, void* param) {
-	//if (event == CV_EVENT_LBUTTONUP) 
+	//if (event == CV_EVENT_LBUTTONUP)
 	{
 		last_mouse = mouse_info;
 		mouse_info.x = x;
 		mouse_info.y = y;
-		
+
 //		cout << "got mouse " << x <<","<< y <<endl;
 	}
 }
 
-void drawCross(Mat &img, Point center, Scalar color, float d){
-	line( img, Point( center.x - d, center.y - d),
-			Point( center.x + d, center.y + d ), color, 2, CV_AA, 0);
-	line( img, Point( center.x + d, center.y - d ),
-			Point( center.x - d, center.y + d ), color, 2, CV_AA, 0);
-}
+void MyKalmanFilter::runDemo(){
+	/*Esse exemplo foi retirado do site :
+	 * http://www.morethantechnical.com/2011/06/17/simple-kalman-filter-for-tracking-using-opencv-2-2-w-code/
+	 *
+	 * e modificado segundo a sugestão do usuário Anant, nos comentários do mesmo link,
+	 * para incluir no modelo a aceleração.
+	 *
+	 *outras modificações no exemplo foram feitas para tornar o código no meu
+	 *outras estilo de ptrogamação
+	 *
+	 * Ao incluir no modelo essa nova variável notou-se que o algoritmo se torna
+	 * muito mais rápido!
+	 *
+	 * autor : Juarez Aires Sampaio Filho
+	 * data : 23/11/2013 00h04
+	 *
+	*/
 
-
-int main (int argc, char * const argv[]) {
     Mat img(500, 500, CV_8UC3);
 
     KalmanFilter KF(6, 2, 0);
@@ -67,10 +60,10 @@ int main (int argc, char * const argv[]) {
 
     char code = (char)-1;
     //sinal de controle de parada
-	
+
 	namedWindow("mouse kalman");
 	setMouseCallback("mouse kalman", on_mouse, 0);
-	
+
 	bool drawPast = false;
 
     for(;;)
@@ -123,13 +116,13 @@ int main (int argc, char * const argv[]) {
 
         //erro a posteriori?
         setIdentity(KF.errorCovPost, Scalar::all(.1));
-		
+
         //limpa a memória de pontos
 		mousev.clear();
 		kalmanv.clear();
 		/*kalmanv e mousev são vector<Point> e guardam a memória
 		 * dos estados anteriores. Usamos ele para plotar a trajetória*/
-		
+
 		/*depois de setadas as condições iniciais e demais parâmetros,
 		 * rodamos o kalman Filter até que o usuário entre 'q' ou 'esc'*/
         for(;;)
@@ -150,21 +143,21 @@ int main (int argc, char * const argv[]) {
 
 			//atualiza o novo estado calculado na memória
 			kalmanv.push_back(statePt);
-			
+
 
             // plot points
 			// cada vez que rodamos limpamos
             img = Scalar::all(0);
-            drawCross(img,  statePt, Scalar(255,255,255), 5 );
-            drawCross(img,  measPt, Scalar(0,0,255), 5 );
-			
+            Draw::drawCross(img,  statePt, Scalar(255,255,255), 5 );
+            Draw::drawCross(img,  measPt, Scalar(0,0,255), 5 );
+
             if(drawPast == true)
             {
             	//dezenha todas as linhas anteriores
-				for (int i = 0; i < mousev.size()-1; i++)
+				for (unsigned int i = 0; i < mousev.size()-1; i++)
 					line(img, mousev[i], mousev[i+1], Scalar(255,255,0), 1);
 
-				for (int i = 0; i < kalmanv.size()-1; i++)
+				for (unsigned int i = 0; i < kalmanv.size()-1; i++)
 					line(img, kalmanv[i], kalmanv[i+1], Scalar(0,255,0), 1);
             }
 
@@ -179,6 +172,10 @@ int main (int argc, char * const argv[]) {
         if( code == 'p' || code == 'P' )
            drawPast = !drawPast;
     }
-	
-    return 0;
+
+    return;
 }
+
+
+
+
