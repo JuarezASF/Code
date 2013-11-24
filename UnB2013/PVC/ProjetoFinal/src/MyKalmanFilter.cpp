@@ -11,7 +11,7 @@
 struct mouse_info_struct { int x,y; };
 struct mouse_info_struct mouse_info = {-1,-1}, last_mouse;
 
-vector<Point> mousev,kalmanv;
+vector<Point> mousev,kalmanv, future;
 
 
 void on_mouse(int event, int x, int y, int flags, void* param) {
@@ -51,8 +51,11 @@ void MyKalmanFilter::runDemo2(){
 	namedWindow("mouse kalman");
 	setMouseCallback("mouse kalman", on_mouse, 0);
 
-	bool drawPast = false;
 
+	bool drawPast = false;
+	bool drawFuture = false;
+
+	int futureSize = 50;
     for(;;)
     {
     	/*seta variaveis do modelo*/
@@ -114,39 +117,58 @@ void MyKalmanFilter::runDemo2(){
 		 * rodamos o kalman Filter até que o usuário entre 'q' ou 'esc'*/
         for(;;)
         {
-            //pega ponto predito
-            Mat prediction = KF.predict();
-            Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
-
             //pega a medida atual e insere no histórico (mousec)
             measurement(0) = mouse_info.x;
 			measurement(1) = mouse_info.y;
 			Point measPt(measurement(0),measurement(1));
 			mousev.push_back(measPt);
 
+			future.clear();
+			KalmanFilter DelfusOracle = myMath::copyKF(KF);
+			for(int j = 0; j < futureSize; j++)
+				/*calcula os pontos no futuro*/
+				{
+				Mat prediction = DelfusOracle.predict();
+				Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
+				future.push_back(predictPt);
+
+			    Mat_<float> predictedMeasurement(2,1);
+				predictedMeasurement(0) = prediction.at<float>(0);
+				predictedMeasurement(1) = prediction.at<float>(1);
+				DelfusOracle.correct(predictedMeasurement);
+
+				}
+			KF.predict();
+
 			//corrige com o novo ponto medido
 			Mat estimated = KF.correct(measurement);
 			Point statePt(estimated.at<float>(0),estimated.at<float>(1));
-
-			//atualiza o novo estado calculado na memória
+			//coloca o novo estado na memória memória
 			kalmanv.push_back(statePt);
 
 
             // plot points
 			// cada vez que rodamos limpamos
             img = Scalar::all(0);
-            Draw::drawCross(img,  statePt, Scalar(255,255,255), 5 );
-            Draw::drawCross(img,  measPt, Scalar(0,0,255), 5 );
+            Draw::Cross(img,  statePt, Scalar(255,255,255), 5 );
+            Draw::Cross(img,  measPt, Scalar(0,0,255), 5 );
 
             if(drawPast == true)
             {
             	//dezenha todas as linhas anteriores
 				for (unsigned int i = 0; i < mousev.size()-1; i++)
-					line(img, mousev[i], mousev[i+1], Scalar(255,255,0), 1);
-
+					Draw::Line(img, mousev[i], mousev[i+1], Scalar(255,255,0));
 				for (unsigned int i = 0; i < kalmanv.size()-1; i++)
-					line(img, kalmanv[i], kalmanv[i+1], Scalar(0,255,0), 1);
+					Draw::dashedLine(img, kalmanv[i], kalmanv[i+1], Scalar(0, 255, 0));
             }
+
+            if(drawFuture == true)
+            {
+            //dezenha todas as linhas do futuro
+            for (unsigned int i = 0; i < future.size()-1; i++)
+            	Draw::dashedLine(img, future[i], future[i+1], Scalar(0, 0, 255));
+            }
+
 
             imshow( "mouse kalman", img );
 
@@ -158,6 +180,9 @@ void MyKalmanFilter::runDemo2(){
             break;
         if( code == 'p' || code == 'P' )
            drawPast = !drawPast;
+        if( code == 'f' || code == 'F' )
+           drawFuture = !drawFuture;
+
     }
 
     return;
@@ -286,8 +311,8 @@ void MyKalmanFilter::runDemo(){
             // plot points
 			// cada vez que rodamos limpamos
             img = Scalar::all(0);
-            Draw::drawCross(img,  statePt, Scalar(255,255,255), 5 );
-            Draw::drawCross(img,  measPt, Scalar(0,0,255), 5 );
+            Draw::Cross(img,  statePt, Scalar(255,255,255), 5 );
+            Draw::Cross(img,  measPt, Scalar(0,0,255), 5 );
 
             if(drawPast == true)
             {

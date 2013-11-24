@@ -21,7 +21,7 @@ using namespace cv;
 
 int main(){
 
-	MyKalmanFilter::runDemo();
+	MyKalmanFilter::runDemo2();
 
 	return 0;
 }

@@ -17,10 +17,16 @@ using namespace cv;
 
 class Draw {
 public:
-	static void drawCross(Mat &img, Point center, Scalar color, float d);
+	static void Cross(Mat &img, const Point center,
+			const Scalar &color, float d);
 
-	static void dashedLine(Mat &img, Point &start,
-			Point & end, Scalar color, int dashSize = 2);
+	static void dashedLine(Mat &img, const Point &start,
+			const Point & end, const Scalar &color, int dashSize = 2);
+
+	static void Line(Mat &img, const Point &start,
+			const Point & end, const Scalar &color);
+
+
 };
 
 #endif /* DRAW_H_ */

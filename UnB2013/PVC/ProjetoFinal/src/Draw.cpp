@@ -8,7 +8,9 @@
 #include "Draw.h"
 
 
-void Draw::drawCross(Mat &img, Point center, Scalar color, float d){
+void Draw::Cross(Mat &img, const Point center,
+					const Scalar &color, float d)
+{
 	line( img, Point( center.x - d, center.y - d),
 				Point( center.x + d, center.y + d ),
 				color, 2, CV_AA, 0);
@@ -18,8 +20,8 @@ void Draw::drawCross(Mat &img, Point center, Scalar color, float d){
 				color, 2, CV_AA, 0);
 }
 
-void Draw::dashedLine(Mat &img, Point &start, Point & end,
-					Scalar color, int dashSize)
+void Draw::dashedLine(Mat &img, const Point &start, const Point &end,
+					const Scalar &color, int dashSize)
 {
 	// grabs pixels along the line (pt1, pt2)
 	// from 8-bit 3-channel image to the buffer
@@ -43,3 +45,8 @@ void Draw::dashedLine(Mat &img, Point &start, Point & end,
 	}
 }
 
+void Draw::Line(Mat &img, const Point &start, const Point & end,
+					const Scalar &color)
+{
+	line(img, start, end, color, 1);
+}
