@@ -136,7 +136,7 @@ void MyKalmanFilter::runDemo2(){
 				predictedMeasurement(0) = prediction.at<float>(0);
 				predictedMeasurement(1) = prediction.at<float>(1);
 				DelfusOracle.correct(predictedMeasurement);
-
+				DelfusOracle.errorCovPre.copyTo(DelfusOracle.errorCovPost);
 				}
 			KF.predict();
 
