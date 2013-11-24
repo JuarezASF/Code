@@ -24,6 +24,8 @@ class MyKalmanFilter {
 
 public:
 	static void runDemo();
+
+	static void runDemo2();
 };
 
 #endif /* MYKALMANFILTER_H_ */
