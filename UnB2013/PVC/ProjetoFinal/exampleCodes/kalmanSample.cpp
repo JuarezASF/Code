@@ -1,10 +1,25 @@
 #include <iostream>
 #include <vector>
 
-//#include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/video/tracking.hpp>
-//#include <opencv2/highgui/highgui_c.h>
+
+/*Esse exemplo foi retirado do site :
+ * http://www.morethantechnical.com/2011/06/17/simple-kalman-filter-for-tracking-using-opencv-2-2-w-code/
+ *
+ * e modificado segundo a sugestão do usuário Anant, nos comentários do mesmo link,
+ * para incluir no modelo a aceleração.
+ *
+ *outras modificações no exemplo foram feitas para tornar o código no meu
+ *outras estilo de ptrogamação
+ *
+ * Ao incluir no modelo essa nova variável notou-se que o algoritmo se torna
+ * muito mais rápido!
+ *
+ * autor : Juarez Aires Sampaio Filho
+ * data : 23/11/2013 00h04
+ *
+*/
 
 using namespace cv;
 using namespace std;
@@ -37,13 +52,13 @@ void drawCross(Mat &img, Point center, Scalar color, float d){
 int main (int argc, char * const argv[]) {
     Mat img(500, 500, CV_8UC3);
 
-    KalmanFilter KF(4, 2, 0);
+    KalmanFilter KF(6, 2, 0);
     //kalman filter com 4 variáveis de estado e 2 de medida
 
-    Mat_<float> state(4, 1); /* (x, y, Vx, Vy) */
+    Mat_<float> state(6, 1); /* (x, y, Vx, Vy, Ax, Ay) */
     //vairável para guardar estado
 
-    Mat processNoise(4, 1, CV_32F);
+    Mat processNoise(6, 1, CV_32F);
     //guarda o ruído
 
     Mat_<float> measurement(2,1);
@@ -60,9 +75,7 @@ int main (int argc, char * const argv[]) {
 
     for(;;)
     {
-    	//seta variávei do modelo
-    	//a princípio poderia variar em cada iteração, aqui tomamos ...
-    	//...como constante
+    	/*seta variaveis do modelo*/
 		if (mouse_info.x < 0 || mouse_info.y < 0) {
 			//captura o novo estado(espera 30 sec para atualização)
 			imshow("mouse kalman", img);
@@ -70,20 +83,37 @@ int main (int argc, char * const argv[]) {
 			continue;
 		}
 
-		//define novo estado de posição
+		//condições iniciais de posição
         KF.statePre.at<float>(0) = mouse_info.x;
 		KF.statePre.at<float>(1) = mouse_info.y;
-
-		//a velocidade é sempre 0?
+		//condições iniciais de velocidade
 		KF.statePre.at<float>(2) = 0;
 		KF.statePre.at<float>(3) = 0;
+		//condições iniciais de aceleração
+		KF.statePre.at<float>(4) = 0;
+		KF.statePre.at<float>(5) = 0;
+
 		//modelo
-		KF.transitionMatrix = *(Mat_<float>(4, 4) << 1,0,0,0,
-													0,1,0,0,
-													0,0,1,0,
-													0,0,0,1);
+		/*A princípio o modelo poderia variar a cada iteração
+		 * nessa versão simplificada setamos o modelo inicialmente
+		 * e mantemos as matrizes constantes ao longo do processamento*/
+		KF.transitionMatrix =
+			*(
+				Mat_<float>(6, 6) <</*		Sx	Sy	Vx	Vy	Ax		Ay	*/
+									/*Sx*/	 1,	0,	1,	0,	0.5,	0,
+									/*Sy*/	 0,	1,	0,	1,	0,		0.5,
+									/*Vx*/	 0,	0,	1,	0,	1,		0,
+									/*Vy*/	 0,	0,	0,	1,	0,		1,
+									/*Ax*/	 0,	0,	0,	0,	1,		0,
+									/*Ay*/	 0,	0,	0,	0,	0,		1
+							);
 		//medidas??
-        setIdentity(KF.measurementMatrix);
+        KF.measurementMatrix =
+        		*(
+        		Mat_<float>(2,6) <<
+        					1, 0, 1, 0, 0.5, 0,
+        					0, 1, 0, 1, 0, 0.5
+        			);
 
         //erro no processo de medida??
         setIdentity(KF.processNoiseCov, Scalar::all(1e-4));
@@ -94,34 +124,36 @@ int main (int argc, char * const argv[]) {
         //erro a posteriori?
         setIdentity(KF.errorCovPost, Scalar::all(.1));
 		
+        //limpa a memória de pontos
 		mousev.clear();
 		kalmanv.clear();
-		//kalmanv é um vetor com a velocidade
+		/*kalmanv e mousev são vector<Point> e guardam a memória
+		 * dos estados anteriores. Usamos ele para plotar a trajetória*/
 		
+		/*depois de setadas as condições iniciais e demais parâmetros,
+		 * rodamos o kalman Filter até que o usuário entre 'q' ou 'esc'*/
         for(;;)
         {
-            Mat prediction = KF.predict();
-
             //pega ponto predito
+            Mat prediction = KF.predict();
             Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
 
-            //pega a medida atual
+            //pega a medida atual e insere no histórico (mousec)
             measurement(0) = mouse_info.x;
 			measurement(1) = mouse_info.y;
-			
 			Point measPt(measurement(0),measurement(1));
 			mousev.push_back(measPt);
-			//mousev pega as medidas
 
-
-			//corrige com os novos pontos
+			//corrige com o novo ponto medido
 			Mat estimated = KF.correct(measurement);
-			//
 			Point statePt(estimated.at<float>(0),estimated.at<float>(1));
+
+			//atualiza o novo estado calculado na memória
 			kalmanv.push_back(statePt);
-			//kalman ve mantes a saída de kalman filter
 			
+
             // plot points
+			// cada vez que rodamos limpamos
             img = Scalar::all(0);
             drawCross(img,  statePt, Scalar(255,255,255), 5 );
             drawCross(img,  measPt, Scalar(0,0,255), 5 );
