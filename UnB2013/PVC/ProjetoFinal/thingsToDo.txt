@@ -1,0 +1,21 @@
+TO DO:
+
+-escrever coisas na tela, como
+	-tempo de simulação
+	-funcionalidades
+	-tempo para colisão....
+	
+-gerar trajetória parabólica acrescentada de um ruído e testar a previsão. 
+para isso:
+	-ler dados de arquivo
+	
+-implementar detecção de objetos. ideias:
+	-começar com objetos de cores diferente
+	-segmentação de cores e kmeans
+	-opcional: usar fluxo óptico?
+
+-juntar os dois algoritmos: kalman e kmeans
+
+-implementar algoritmo de previsão de colisão
+
+-implementar algoritmo para prever resultado de colisão?(opcional)
