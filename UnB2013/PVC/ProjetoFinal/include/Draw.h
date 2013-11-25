@@ -26,7 +26,11 @@ public:
 	static void Line(Mat &img, const Point &start,
 			const Point & end, const Scalar &color);
 
+	static void Text(Mat &img, Point origin, string text,
+			Scalar color, double fontScale);
 
+	static void Text_in_a_Box(Mat &img, Point origin, string text,
+			Scalar color, double fontScale);
 };
 
 #endif /* DRAW_H_ */

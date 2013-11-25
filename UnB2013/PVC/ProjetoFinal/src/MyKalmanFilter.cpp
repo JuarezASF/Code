@@ -30,6 +30,8 @@ void MyKalmanFilter::runDemo2(){
 	 * esse demo tenta mostra o futuro e não o passado!
 	*/
 
+	double initialTime = (double)getTickCount();
+
     Mat img(500, 500, CV_8UC3);
 
     KalmanFilter KF(6, 2, 0);
@@ -168,6 +170,13 @@ void MyKalmanFilter::runDemo2(){
             for (unsigned int i = 0; i < future.size()-1; i++)
             	Draw::dashedLine(img, future[i], future[i+1], Scalar(0, 0, 255));
             }
+
+
+            double currentTime = ((double)getTickCount() - initialTime)/getTickFrequency();
+        	string sTime(ToString(currentTime));
+        	string sPrintTime(string("time: ") + sTime + string("s"));
+        	Draw::Text_in_a_Box(img, Point(0 ,20), sPrintTime,
+        			Scalar(255, 255, 255), 0.5);
 
 
             imshow( "mouse kalman", img );

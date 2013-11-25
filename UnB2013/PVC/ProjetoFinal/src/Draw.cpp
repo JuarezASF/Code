@@ -50,3 +50,45 @@ void Draw::Line(Mat &img, const Point &start, const Point & end,
 {
 	line(img, start, end, color, 1);
 }
+
+void Draw::Text(Mat &img, Point origin, string text,
+		Scalar color, double fontScale){
+
+
+	Scalar boxColor(255, 255, 255);
+	int fontFace = FONT_HERSHEY_SIMPLEX;
+	int thickness = 1;
+	int lineType = 8;
+	bool bottomLeftOrigin = false;
+
+	putText(img, text, origin, fontFace, fontScale,
+			color, thickness,lineType, bottomLeftOrigin);
+
+}
+
+void Draw::Text_in_a_Box(Mat &img, Point origin, string text,
+										Scalar color, double fontScale)
+{
+
+	Scalar boxColor(255, 255, 255);
+	int fontFace = FONT_HERSHEY_SIMPLEX;
+	int thickness = 1;
+	int lineType = 8;
+	bool bottomLeftOrigin = false;
+	int baseline = 0;
+
+	Size textSize = getTextSize(text, fontFace,
+	                            fontScale, thickness, &baseline);
+
+
+	// draw the box
+	rectangle(img, origin + Point(0, baseline),
+	          origin + Point(textSize.width, -textSize.height),
+	          boxColor);
+
+
+	putText(img, text, origin, fontFace, fontScale,
+			color, thickness,lineType, bottomLeftOrigin);
+
+}
+

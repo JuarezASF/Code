@@ -10,12 +10,14 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/video/tracking.hpp>
 
 #include "Draw.h"
 #include "myMath.h"
+#include "myString.h"
 
 using namespace cv;
 using namespace std;
