@@ -7,7 +7,6 @@
 
 #include "Draw.h"
 
-
 void Draw::Cross(Mat &img, const Point center,
 					const Scalar &color, float d)
 {

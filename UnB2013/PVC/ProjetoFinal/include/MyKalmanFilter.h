@@ -19,6 +19,8 @@
 #include "myMath.h"
 #include "myString.h"
 
+#include "projetofinal.h"
+
 using namespace cv;
 using namespace std;
 
@@ -29,6 +31,8 @@ public:
 	static void runDemo();
 
 	static void runDemo2();
+
+    static void runDemo3(ProjetoFinal &mainWindow);
 };
 
 #endif /* MYKALMANFILTER_H_ */

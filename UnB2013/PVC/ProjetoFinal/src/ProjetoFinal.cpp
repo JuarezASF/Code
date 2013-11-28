@@ -10,18 +10,31 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/video/background_segm.hpp>
 
+#include <QApplication>
+
+
 #include <iostream>
 #include <sstream>
 #include <cassert>
 
 #include "MyKalmanFilter.h"
 
+#include "projetofinal.h"
+
 using namespace std;
 using namespace cv;
 
-int main(){
+int main(int argc, char *argv[])
+{
+    QApplication prog(argc, argv);
+    ProjetoFinal mainWindow;
+    mainWindow.show();
 
-	MyKalmanFilter::runDemo2();
 
-	return 0;
+    MyKalmanFilter::runDemo3(mainWindow);
+
+
+
+
+    return prog.exec();
 }
