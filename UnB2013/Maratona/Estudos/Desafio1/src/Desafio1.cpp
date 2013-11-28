@@ -47,10 +47,6 @@ int main() {
 
 		sort(data.begin(), data.end());
 
-		for(unsigned int i = 0; i < data.size(); i++)
-			cout << data[i] << endl;
-
-
 		cout << inf << "\t" << sup << "\t" << data[data.size() - 1] <<endl;
 
 		data.clear();
