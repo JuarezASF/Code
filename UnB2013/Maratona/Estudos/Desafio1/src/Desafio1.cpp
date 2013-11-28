@@ -7,11 +7,13 @@
 //============================================================================
 
 #include <iostream>
+#include <vector>
+#include <algorithm>
+
 using namespace std;
 
 int process(int n)
 {
-	cout << n<<"\t";
 	if(n != 1)
 	{
 		if(n%2 == 0)
@@ -24,6 +26,35 @@ int process(int n)
 }
 
 int main() {
-	cout << process(22) << endl;
+
+	int inf = 1;
+	int sup = 1;
+
+
+	while(1)
+	{
+		cin >> inf;
+		if(inf < 1)
+			break;
+		cin >> sup;
+
+
+
+		vector<int> data;
+
+		for(int i = inf; i <= sup; i++)
+			data.push_back(process(i));
+
+		sort(data.begin(), data.end());
+
+		for(unsigned int i = 0; i < data.size(); i++)
+			cout << data[i] << endl;
+
+
+		cout << inf << "\t" << sup << "\t" << data[data.size() - 1] <<endl;
+
+		data.clear();
+
+	}
 	return 0;
 }
