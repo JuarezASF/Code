@@ -1,9 +1,8 @@
 //============================================================================
 // Name        : Desafio1.cpp
 // Author      : Juarez A.S.F.
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
+// Version     : final
+// Description : Estudando para a maratona de promagação UnB 2°/2013
 //============================================================================
 
 #include <iostream>
