@@ -16,8 +16,9 @@ private:
 	double peso;
 
 public:
-    GrafoAresta(nodeType &from, nodeType &to,
-    		double peso = numeric_limits<double>::max());
+    GrafoAresta(nodeType &newFrom, nodeType &newTo,
+    		double newPeso = numeric_limits<double>::max()) :
+	from(newFrom), to(newTo), peso(newPeso){}
 
 };
 
