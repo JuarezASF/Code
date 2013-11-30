@@ -34,13 +34,15 @@ SOURCES +=\
     ../../src/MyKalmanFilter.cpp \
     ../../src/myMath.cpp \
     ../../src/ProjetoFinal.cpp \
-    cv2qtimage.cpp
+    cv2qtimage.cpp \
+    myTimer.cpp
 
 HEADERS  += projetofinal.h \
     ../../include/myString.h \
     ../../include/myMath.h \
     ../../include/MyKalmanFilter.h \
     ../../include/Draw.h \
-    cv2qtimage.h
+    cv2qtimage.h \
+    myTimer.h
 
 FORMS    += projetofinal.ui

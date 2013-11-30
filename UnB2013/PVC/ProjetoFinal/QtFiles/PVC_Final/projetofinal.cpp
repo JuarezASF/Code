@@ -12,6 +12,13 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
 
     pastMode = false;
     futureMode = false;
+
+    mouseCursor = new QCursor();
+    mouseCursor->setShape(Qt::CrossCursor);
+
+    ui->inputImg->setCursor(*mouseCursor);
+    ui->inputImg->setMouseTracking(true);
+
 }
 
 ProjetoFinal::~ProjetoFinal()
@@ -35,3 +42,27 @@ void ProjetoFinal::on_futureButtom_stateChanged(int arg1)
 {
     futureMode = ui->futureButtom->isChecked();
 }
+
+QPoint ProjetoFinal::getMousePos(){
+    return mouseCursor->pos();
+}
+
+void ProjetoFinal::report(string text)
+{
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::reportGood(string text)
+{
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::reportBad(string text)
+{
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::reportWarning(string text){
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+

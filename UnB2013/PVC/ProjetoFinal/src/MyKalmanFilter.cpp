@@ -7,7 +7,6 @@
 
 #include "MyKalmanFilter.h"
 
-
 struct mouse_info_struct { int x,y; };
 struct mouse_info_struct mouse_info = {-1,-1}, last_mouse;
 
@@ -521,5 +520,22 @@ void MyKalmanFilter::runDemo3(ProjetoFinal &mainWindow){
 
     return;
 }
+
+
+void MyKalmanFilter::runDemo4(ProjetoFinal &mainWindow){
+    /*
+     * esse demo tenta mostra o futuro e não o passado!
+    */
+
+
+    Mat img(500, 500, CV_8UC3);
+
+    mainWindow.setInputImg(img);
+
+
+
+    return;
+}
+
 
 

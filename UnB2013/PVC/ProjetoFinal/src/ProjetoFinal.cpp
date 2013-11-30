@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     mainWindow.show();
 
 
-    MyKalmanFilter::runDemo3(mainWindow);
+    MyKalmanFilter::runDemo4(mainWindow);
 
 
 

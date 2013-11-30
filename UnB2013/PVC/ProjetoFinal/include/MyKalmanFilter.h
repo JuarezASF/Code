@@ -20,6 +20,7 @@
 #include "myString.h"
 
 #include "projetofinal.h"
+#include "myTimer.h"
 
 using namespace cv;
 using namespace std;
@@ -33,6 +34,8 @@ public:
 	static void runDemo2();
 
     static void runDemo3(ProjetoFinal &mainWindow);
+
+    static void runDemo4(ProjetoFinal &mainWindow);
 };
 
 #endif /* MYKALMANFILTER_H_ */
