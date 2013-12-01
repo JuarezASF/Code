@@ -1,0 +1,68 @@
+#include "UserInterface.h"
+#include "ui_UserInterface.h"
+
+ProjetoFinal::ProjetoFinal(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::ProjetoFinal)
+{
+    ui->setupUi(this);
+
+    connect(ui->pastButtom, SIGNAL(stateChanged(int)), this, SLOT(on_pastButtom_stateChanged(int)));
+    connect(ui->futureButtom, SIGNAL(stateChanged(int)), this, SLOT(on_futureButtom_stateChanged(int)));
+
+    pastMode = false;
+    futureMode = false;
+
+    mouseCursor = new QCursor();
+    mouseCursor->setShape(Qt::CrossCursor);
+
+    ui->inputImg->setCursor(*mouseCursor);
+    ui->inputImg->setMouseTracking(true);
+
+}
+
+ProjetoFinal::~ProjetoFinal()
+{
+    delete ui;
+}
+
+void ProjetoFinal::setInputImg(const cv::Mat &img){
+
+    QImage myQImg = Cv2QtImage::Mat2QImage(img);
+    ui->inputImg->setPixmap(QPixmap::fromImage(myQImg));
+}
+
+
+void ProjetoFinal::on_pastButtom_stateChanged(int arg1)
+{
+    pastMode = ui->pastButtom->isChecked();
+}
+
+void ProjetoFinal::on_futureButtom_stateChanged(int arg1)
+{
+    futureMode = ui->futureButtom->isChecked();
+}
+
+QPoint ProjetoFinal::getMousePos(){
+    return mouseCursor->pos();
+}
+
+void ProjetoFinal::report(string text)
+{
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::reportGood(string text)
+{
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::reportBad(string text)
+{
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::reportWarning(string text){
+    ui->logText->appendPlainText(QString(text.c_str()));
+}
+
