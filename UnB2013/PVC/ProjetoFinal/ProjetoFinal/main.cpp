@@ -23,6 +23,8 @@
 using namespace std;
 using namespace cv;
 
+int iTau = 50;
+
 int main(int argc, char *argv[])
 {
     QApplication prog(argc, argv);

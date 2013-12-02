@@ -33,9 +33,9 @@ public:
 
 	static void runDemo2();
 
-    static void runDemo3(ProjetoFinal &mainWindow);
+    //static void runDemo3(ProjetoFinal &mainWindow);
 
-    static void runDemo4(ProjetoFinal &mainWindow);
+    //static void runDemo4(ProjetoFinal &mainWindow);
 };
 
 #endif /* MYKALMANFILTER_H_ */

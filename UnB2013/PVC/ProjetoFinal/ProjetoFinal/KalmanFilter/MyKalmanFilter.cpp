@@ -350,7 +350,7 @@ void MyKalmanFilter::runDemo2(){
 }
 
 
-void MyKalmanFilter::runDemo3(ProjetoFinal &mainWindow){
+void runDemo3(ProjetoFinal &mainWindow){
     /*
      * esse demo tenta mostra o futuro e não o passado!
     */
@@ -525,7 +525,7 @@ void MyKalmanFilter::runDemo3(ProjetoFinal &mainWindow){
 }
 
 
-void MyKalmanFilter::runDemo4(ProjetoFinal &mainWindow){
+void runDemo4(ProjetoFinal &mainWindow){
     /*
      * esse demo tenta mostra o futuro e não o passado!
     */

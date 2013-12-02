@@ -7,6 +7,8 @@
 #include <opencv2/core/core.hpp>
 #include <cv2qtimage.h>
 
+extern int iTau;
+
 namespace Ui {
 class secondWindow;
 }
@@ -26,8 +28,13 @@ public:
 
 
 
+private slots:
+    void on_shadowSlider_valueChanged(int value);
+
 private:
     Ui::secondWindow *ui;
+
+
 };
 
 #endif // SECONDWINDOW_H

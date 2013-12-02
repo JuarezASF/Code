@@ -31,16 +31,17 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     /*======>*/timer->start(20);
     connect(timer, SIGNAL(timeout()), this, SLOT(process()));
 
-    video = NULL;
-
-    nVideos = 2;
+    nVideos = 3;
     fileNames = new string[nVideos];
-    fileNames[0] = "/home/juarez408/Copy/UnB/2-2013/PVC/Projeto3/data/video.avi";
-    fileNames[1] = "/home/juarez408/Copy/UnB/2-2013/PVC/projetoFinal/data/video.avi";
 
-    videoAtual = 0;
+    fileNames[0] = "/home/juarez408/Copy/UnB/2-2013/PVC/projetoFinal/data/video1.avi";
+    fileNames[1] = "/home/juarez408/Copy/UnB/2-2013/PVC/projetoFinal/data/video2.avi";
+    fileNames[2] = "/home/juarez408/Copy/UnB/2-2013/PVC/projetoFinal/data/video3.avi";
 
-    /*init video ===>*/initVideo(fileNames[videoAtual].c_str());
+    videoAtual = 1;
+
+    video = NULL;
+    initVideo(fileNames[videoAtual].c_str());
 
     connect(ui->speedSlider, SIGNAL(sliderMoved(int)), this, SLOT(on_speedSlider_sliderMoved(int)));
 
@@ -48,6 +49,9 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     auxiliarWindow = new secondWindow();
     auxiliarWindow->show();
     initSecondWindow();
+
+    bg = NULL;
+    initBG();
 }
 
 void ProjetoFinal::initSecondWindow(){
@@ -63,12 +67,33 @@ void ProjetoFinal::initSecondWindow(){
 ProjetoFinal::~ProjetoFinal()
 {
     delete ui;
+    delete []fileNames;
 }
 
 void ProjetoFinal::initVideo(const char *fileName){
     if(video != NULL)
         video->release();
     video = new VideoCapture(fileName);
+}
+
+void ProjetoFinal::initBG(){
+
+    if(bg != NULL)
+        delete bg;
+
+    bg = new cv::BackgroundSubtractorMOG2();
+
+    static int iTauMax = 100;
+    bg->nmixtures = 20;
+    bg->bShadowDetection = true;
+    bg->nShadowDetection = 0;
+    bg->fTau = ((float)iTau)/((float)iTauMax);
+}
+
+void ProjetoFinal::uptdateBG(){
+    static int iTauMax = 100;
+    bg->nmixtures = 20;
+    bg->fTau = ((float)iTau)/((float)iTauMax);
 }
 
 //--------------------------------------------------------
@@ -167,6 +192,7 @@ void ProjetoFinal::on_restartButtom_clicked()
     video->set(CV_CAP_PROP_POS_AVI_RATIO, 0);
     runVideo();
     report("Reiniciando o vídeo\n");
+    initBG();
 }
 
 void ProjetoFinal::on_speedSlider_sliderMoved(int position)
@@ -181,6 +207,7 @@ void ProjetoFinal::on_pushButton_clicked()
     report("mudando de vídeo");
     videoAtual = (videoAtual + 1)%nVideos;
     initVideo(fileNames[videoAtual].c_str());
+    initBG();
 }
 
 //--------------------------------------------------------
@@ -189,10 +216,10 @@ void ProjetoFinal::on_pushButton_clicked()
 
 void ProjetoFinal::process()
 {
+
     if(this->run == true)
         {
         *video >> currentFrame;
-        Mat outputFrame(currentFrame.rows, currentFrame.cols, CV_8UC3);
 
         if(currentFrame.empty())
             {
@@ -200,7 +227,28 @@ void ProjetoFinal::process()
             pauseVideo();
             return;
             }
-        outputFrame = Scalar::all(0);
+        Mat frame;
+        Mat backG, foreG;
+
+        Mat outputFrame(currentFrame.rows,
+                        currentFrame.cols,
+                        CV_8UC3);
+
+        currentFrame.copyTo(frame);
+
+        medianBlur ( frame, frame, 9);
+
+        auxiliarWindow->setWindow(frame, 1);
+
+        this->uptdateBG();
+        bg->operator ()(frame,foreG);
+        bg->getBackgroundImage(backG);
+
+        auxiliarWindow->setWindow(backG, 2);
+        auxiliarWindow->setWindow(foreG, 3);
+
+        foreG.copyTo(outputFrame);
+
         //show Qimage using QLabel
         setInputImg(currentFrame);
         setOutputImg(outputFrame);
@@ -208,3 +256,15 @@ void ProjetoFinal::process()
 }
 
 
+
+void ProjetoFinal::on_pushButton_2_clicked()
+{
+    auxiliarWindow->close();
+    exit(0);
+}
+
+void ProjetoFinal::on_runDemoKalman_clicked()
+{
+    pauseVideo();
+    MyKalmanFilter::runDemo2();
+}

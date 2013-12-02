@@ -9,16 +9,22 @@
 #include <QMouseEvent>
 
 #include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/video/background_segm.hpp>
 
 #include "cv2qtimage.h"
 #include "myString.h"
 #include "secondWindow.h"
+#include "MyKalmanFilter.h"
 
 using namespace  cv;
 
 namespace Ui {
 class ProjetoFinal;
 }
+
+extern int iTau;
 
 class ProjetoFinal : public QMainWindow
 {
@@ -34,6 +40,7 @@ private:
     //openCV objects
     VideoCapture *video;
     Mat currentFrame;
+    cv::BackgroundSubtractorMOG2 *bg;
 
     //C++ objects
     string *fileNames;
@@ -69,6 +76,8 @@ public:
 private:
     //inicializa vídeo
     void initVideo(const char *fileName);
+    void initBG();
+    void uptdateBG();
 
     //controle de fluxo
     void pauseVideo();
@@ -91,6 +100,8 @@ private slots:
     void process();
     void on_speedSlider_sliderMoved(int position);
     void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
+    void on_runDemoKalman_clicked();
 };
 
 #endif // PROJETOFINAL_H

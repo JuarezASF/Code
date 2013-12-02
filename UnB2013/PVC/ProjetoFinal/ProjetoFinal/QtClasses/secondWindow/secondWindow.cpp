@@ -53,3 +53,9 @@ void secondWindow::setWindow(const cv::Mat &img, int n)
     }
     target->setPixmap(myQpix);
 }
+
+void secondWindow::on_shadowSlider_valueChanged(int value)
+{
+    iTau = value;
+    ui->shadowValue->setText(QString::number(value));
+}
