@@ -2,7 +2,8 @@
 
 
 
-void myTimer::wait(int  milisecondTime){
+void myTimer::wait(int  milisecondTime)
+{
     QTimer myClock;
 
     myClock.setInterval(milisecondTime);
@@ -10,5 +11,7 @@ void myTimer::wait(int  milisecondTime){
 
     while(myClock.isActive())
         {}
+
+
     return;
 }

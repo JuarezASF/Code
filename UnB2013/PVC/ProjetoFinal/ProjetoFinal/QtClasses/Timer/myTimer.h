@@ -2,6 +2,7 @@
 #define MYTIMER_H
 
 #include<QTimer>
+#include <stdlib.h>
 
 class myTimer
 {

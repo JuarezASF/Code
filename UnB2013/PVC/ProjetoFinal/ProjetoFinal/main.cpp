@@ -18,7 +18,6 @@
 #include <cassert>
 
 #include "MyKalmanFilter.h"
-
 #include "UserInterface.h"
 
 using namespace std;
@@ -31,7 +30,7 @@ int main(int argc, char *argv[])
     mainWindow.show();
 
 
-    MyKalmanFilter::runDemo3(mainWindow);
+//    MyKalmanFilter::runDemo4(mainWindow);
 
 
 

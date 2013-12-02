@@ -11,6 +11,8 @@
 #include <opencv2/core/core.hpp>
 
 #include "cv2qtimage.h"
+#include "myString.h"
+#include "secondWindow.h"
 
 using namespace  cv;
 
@@ -23,31 +25,72 @@ class ProjetoFinal : public QMainWindow
     Q_OBJECT
 
 private:
+    //Qt objects
     Ui::ProjetoFinal *ui;
     QCursor *mouseCursor;
+    QTimer *timer;
+    secondWindow *auxiliarWindow;
+
+    //openCV objects
+    VideoCapture *video;
+    Mat currentFrame;
+
+    //C++ objects
+    string *fileNames;
+
+    //C objects
+    int nVideos;
+    int videoAtual;
+
 public:
+    //controle de funcionalidade
     bool futureMode, pastMode;
 
-public:
+    //controle de execução
+    bool run;
 
+public:
     explicit ProjetoFinal(QWidget *parent = 0);
     ~ProjetoFinal();
 
+    //seta imagem principal
     void setInputImg(const cv::Mat &img);
+    void setOutputImg(const cv::Mat &img);
 
+    //retorna posição do mouse
     QPoint getMousePos();
 
+    //funções para imprimir texto(atualmente são todas iguais)
     void report(string text);
     void reportGood(string text);
     void reportBad(string text);
     void reportWarning(string text);
 
+private:
+    //inicializa vídeo
+    void initVideo(const char *fileName);
+
+    //controle de fluxo
+    void pauseVideo();
+    void runVideo();
+
+    void initSecondWindow();
+
+
 private slots:
 
+    //controle de funcionalidade
     void on_pastButtom_stateChanged(int arg1);
-
     void on_futureButtom_stateChanged(int arg1);
 
+    //controle de fluxo
+    void on_pauseButtom_clicked();
+    void on_restartButtom_clicked();
+
+    //===>FUNÇÃO DE PROCESSAMENTO-----PRINCIPAL----<===
+    void process();
+    void on_speedSlider_sliderMoved(int position);
+    void on_pushButton_clicked();
 };
 
 #endif // PROJETOFINAL_H

@@ -18,6 +18,7 @@ INCLUDEPATH +=  Draw \
                 QtClasses/Cv2QtImg        \
                 QtClasses/UI        \
                 QtClasses/Timer        \
+                QtClasses/secondWindow \
                 /usr/include/opencv2
 
 
@@ -40,7 +41,8 @@ SOURCES += main.cpp\
     KalmanFilter/MyKalmanFilter.cpp \
     Math/myMath.cpp \
     QtClasses/Cv2QtImg/cv2qtimage.cpp \
-    QtClasses/Timer/myTimer.cpp
+    QtClasses/Timer/myTimer.cpp \
+    QtClasses/secondWindow/secondWindow.cpp
 
 
 HEADERS  += QtClasses/UI/UserInterface.h \
@@ -49,6 +51,8 @@ HEADERS  += QtClasses/UI/UserInterface.h \
     KalmanFilter/MyKalmanFilter.h \
     Draw/Draw.h \
     QtClasses/Cv2QtImg/cv2qtimage.h \
-    QtClasses/Timer/myTimer.h
+    QtClasses/Timer/myTimer.h \
+    QtClasses/secondWindow/secondWindow.h
 
-FORMS    += QtClasses/UI/UserInterface.ui
+FORMS    += QtClasses/UI/UserInterface.ui \
+    QtClasses/secondWindow/secondWindow.ui
