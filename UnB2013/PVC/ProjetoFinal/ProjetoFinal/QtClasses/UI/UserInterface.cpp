@@ -265,6 +265,8 @@ void ProjetoFinal::process()
                         currentFrame.cols,
                         CV_8UC3);
 
+        std::vector<std::vector<cv::Point> > contours;
+
         currentFrame.copyTo(frame);
 
         medianBlur ( frame, frame, 9);
@@ -278,7 +280,10 @@ void ProjetoFinal::process()
         auxiliarWindow->setWindow(backG, 2);
         auxiliarWindow->setWindow(foreG, 3);
 
-        foreG.copyTo(outputFrame);
+        cv::findContours(foreG,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
+
+        currentFrame.copyTo(outputFrame);
+        cv::drawContours(outputFrame,contours,-1,cv::Scalar(0,0,255),2);
 
         //show Qimage using QLabel
         setInputImg(currentFrame);
