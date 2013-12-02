@@ -1,0 +1,7 @@
+Esse operador é usado para detectar bordas. Ele pinta de
+claro os lugares onde a derivada é mais intensa.
+
+Basicemente nós calculamos os gradienetes na direção x e y e
+fazemos a soma de seus gradados. O processamento é feito em
+uma imagem PB. Usamos um filtro gaussiano para borrar a
+imagem antes de precessá-la.
