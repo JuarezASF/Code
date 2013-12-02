@@ -75,6 +75,7 @@ public:
 
 private:
     //inicializa vídeo
+    void initVideo();
     void initVideo(const char *fileName);
     void initBG();
     void uptdateBG();
@@ -99,9 +100,14 @@ private slots:
     //===>FUNÇÃO DE PROCESSAMENTO-----PRINCIPAL----<===
     void process();
     void on_speedSlider_sliderMoved(int position);
-    void on_pushButton_clicked();
-    void on_pushButton_2_clicked();
     void on_runDemoKalman_clicked();
+    void on_videoFileOption_currentIndexChanged(int index);
+    void on_closeButtom_clicked();
+    void on_clearButtom_clicked();
 };
 
 #endif // PROJETOFINAL_H
+
+
+
+

@@ -53,56 +53,13 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>60</y>
-      <width>168</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-   </widget>
-   <widget class="QLabel" name="outputImg">
-    <property name="geometry">
-     <rect>
-      <x>360</x>
-      <y>40</y>
-      <width>320</width>
-      <height>240</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLabel" name="inputImg">
-    <property name="geometry">
-     <rect>
-      <x>9</x>
-      <y>39</y>
-      <width>320</width>
-      <height>240</height>
-     </rect>
-    </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
       <x>91</x>
       <y>341</y>
       <width>81</width>
-      <height>50</height>
+      <height>52</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="FuturePastLayout">
      <item>
       <widget class="QCheckBox" name="futureButtom">
        <property name="text">
@@ -131,7 +88,7 @@
       <height>31</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="speedLayout">
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
@@ -154,40 +111,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>0</y>
-      <width>291</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <item>
-      <widget class="QPushButton" name="pauseButtom">
-       <property name="text">
-        <string>Pause</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="restartButtom">
-       <property name="text">
-        <string>Restart</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>ChangeVideo</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="closeButtom">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -213,17 +137,99 @@
      <string>RunDemoKalman</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="videoFileOption">
+    <property name="geometry">
+     <rect>
+      <x>300</x>
+      <y>0</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>0</y>
+      <width>178</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="PauseRestartLayout">
+     <item>
+      <widget class="QPushButton" name="pauseButtom">
+       <property name="text">
+        <string>Pause</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="restartButtom">
+       <property name="text">
+        <string>Restart</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPushButton" name="clearButtom">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>360</y>
+      <width>99</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clear</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>50</y>
+      <width>611</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="inputImg">
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="outputImg">
+       <property name="autoFillBackground">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
    <zorder>outputImg</zorder>
    <zorder>inputImg</zorder>
-   <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>logText</zorder>
    <zorder>label</zorder>
    <zorder>label_2</zorder>
-   <zorder>pushButton_2</zorder>
+   <zorder>closeButtom</zorder>
    <zorder>runDemoKalman</zorder>
+   <zorder>videoFileOption</zorder>
+   <zorder>clearButtom</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -231,7 +237,7 @@
      <x>0</x>
      <y>0</y>
      <width>851</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

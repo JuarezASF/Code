@@ -33,14 +33,22 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
 
     nVideos = 3;
     fileNames = new string[nVideos];
-
-    fileNames[0] = "/home/juarez408/Copy/UnB/2-2013/PVC/projetoFinal/data/video1.avi";
-    fileNames[1] = "/home/juarez408/Copy/UnB/2-2013/PVC/projetoFinal/data/video2.avi";
-    fileNames[2] = "/home/juarez408/Copy/UnB/2-2013/PVC/projetoFinal/data/video3.avi";
-
-    videoAtual = 1;
-
     video = NULL;
+    bg = NULL;
+
+    fileNames[0] = "../data/video1.avi";
+    fileNames[1] = "../data/video2.avi";
+    fileNames[2] = "../data/video3.avi";
+
+    ui->videoFileOption->addItem("[0] : WebCam");
+    ui->videoFileOption->addItem("[1] : video rodovia");
+    ui->videoFileOption->addItem("[2] : video helicoptero");
+    ui->videoFileOption->addItem("[3] : video bolinhas");
+    connect(ui->videoFileOption,SIGNAL(currentIndexChanged(int)),
+            this, SLOT(on_videoFileOption_currentIndexChanged(int)));
+
+    ui->videoFileOption->setCurrentIndex(1);
+    videoAtual = 0;
     initVideo(fileNames[videoAtual].c_str());
 
     connect(ui->speedSlider, SIGNAL(sliderMoved(int)), this, SLOT(on_speedSlider_sliderMoved(int)));
@@ -50,7 +58,6 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     auxiliarWindow->show();
     initSecondWindow();
 
-    bg = NULL;
     initBG();
 }
 
@@ -74,6 +81,23 @@ void ProjetoFinal::initVideo(const char *fileName){
     if(video != NULL)
         video->release();
     video = new VideoCapture(fileName);
+
+    if(!video->isOpened())
+        reportBad("video nao pode ser aberto");
+
+    pauseVideo();
+
+}
+
+void ProjetoFinal::initVideo(){
+    if(video != NULL)
+        video->release();
+    video = new VideoCapture(0);
+
+    if(!video->isOpened())
+        reportBad("webcam 0 nao pode ser aberta");
+
+    pauseVideo();
 }
 
 void ProjetoFinal::initBG(){
@@ -201,13 +225,20 @@ void ProjetoFinal::on_speedSlider_sliderMoved(int position)
     timer->start(position);
 }
 
-
-void ProjetoFinal::on_pushButton_clicked()
+void ProjetoFinal::on_videoFileOption_currentIndexChanged(int index)
 {
     report("mudando de vídeo");
-    videoAtual = (videoAtual + 1)%nVideos;
-    initVideo(fileNames[videoAtual].c_str());
+
+    if(index == 0)
+        initVideo();
+    else
+        {
+        videoAtual = index - 1;
+        //subtraimos 1 pq o 0 e a webcam
+        initVideo(fileNames[videoAtual].c_str());
+        }
     initBG();
+    runVideo();
 }
 
 //--------------------------------------------------------
@@ -223,7 +254,7 @@ void ProjetoFinal::process()
 
         if(currentFrame.empty())
             {
-            report("O video chegou ao fim! \n");
+            report("frame nao pode ser capturado!");
             pauseVideo();
             return;
             }
@@ -255,16 +286,21 @@ void ProjetoFinal::process()
         }
 }
 
-
-
-void ProjetoFinal::on_pushButton_2_clicked()
+void ProjetoFinal::on_closeButtom_clicked()
 {
     auxiliarWindow->close();
     exit(0);
 }
 
+
 void ProjetoFinal::on_runDemoKalman_clicked()
 {
     pauseVideo();
     MyKalmanFilter::runDemo2();
+}
+
+
+void ProjetoFinal::on_clearButtom_clicked()
+{
+    ui->logText->clear();
 }
