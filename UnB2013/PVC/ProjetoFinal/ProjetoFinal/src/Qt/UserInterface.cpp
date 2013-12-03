@@ -50,7 +50,8 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     ui->videoFileOption->setCurrentIndex(1);
     videoAtual = 0;
     initVideo(fileNames[videoAtual].c_str());
-
+    //initVideo();
+    runVideo();
     connect(ui->speedSlider, SIGNAL(sliderMoved(int)), this, SLOT(on_speedSlider_sliderMoved(int)));
 
     //janela auxiliar
@@ -78,25 +79,31 @@ ProjetoFinal::~ProjetoFinal()
 }
 
 void ProjetoFinal::initVideo(const char *fileName){
-    if(video != NULL)
-        video->release();
-    video = new VideoCapture(fileName);
+    if(video == NULL)
+        video = new VideoCapture(fileName);
+    else
+    {
+    video->release();
+    video->open(fileName);
 
     if(!video->isOpened())
         reportBad("video nao pode ser aberto");
-
+    }
     pauseVideo();
 
 }
 
 void ProjetoFinal::initVideo(){
-    if(video != NULL)
+    if(video == NULL)
+        video = new VideoCapture(0);
+    else
+    {
         video->release();
-    video = new VideoCapture(0);
+        video->open(0);
 
     if(!video->isOpened())
         reportBad("webcam 0 nao pode ser aberta");
-
+    }
     pauseVideo();
 }
 
@@ -250,6 +257,12 @@ void ProjetoFinal::process()
 
     if(this->run == true)
         {
+
+        if(!video->isOpened())
+            {
+            report("video não está pronto!");
+            return;
+            }
         *video >> currentFrame;
 
         if(currentFrame.empty())
