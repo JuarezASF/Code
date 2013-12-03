@@ -1,0 +1,5 @@
+Comandos recorrentes:
+	depois de ter atribuido o arduino à variável A no matlab, os comandos são muito lemelhantes:
+
+	- A.pinMode(13, 'output') : seta o pino 13 para saída
+	- A.digitalWrite(13, 1) : escreve 'HIGH' no pino 13
