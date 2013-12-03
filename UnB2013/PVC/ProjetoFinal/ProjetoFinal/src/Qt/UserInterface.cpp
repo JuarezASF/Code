@@ -247,63 +247,6 @@ void ProjetoFinal::on_videoFileOption_currentIndexChanged(int index)
     initBG();
     runVideo();
 }
-
-//--------------------------------------------------------
-//---------------PROCESSAMENTO----------------------------
-//--------------------------------------------------------
-
-void ProjetoFinal::process()
-{
-
-    if(this->run == true)
-        {
-
-        if(!video->isOpened())
-            {
-            report("video não está pronto!");
-            return;
-            }
-        *video >> currentFrame;
-
-        if(currentFrame.empty())
-            {
-            report("frame nao pode ser capturado!");
-            pauseVideo();
-            return;
-            }
-        Mat frame;
-        Mat backG, foreG;
-
-        Mat outputFrame(currentFrame.rows,
-                        currentFrame.cols,
-                        CV_8UC3);
-
-        std::vector<std::vector<cv::Point> > contours;
-
-        currentFrame.copyTo(frame);
-
-        medianBlur ( frame, frame, 9);
-
-        auxiliarWindow->setWindow(frame, 1);
-
-        this->uptdateBG();
-        bg->operator ()(frame,foreG);
-        bg->getBackgroundImage(backG);
-
-        auxiliarWindow->setWindow(backG, 2);
-        auxiliarWindow->setWindow(foreG, 3);
-
-        cv::findContours(foreG,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
-
-        currentFrame.copyTo(outputFrame);
-        cv::drawContours(outputFrame,contours,-1,cv::Scalar(0,0,255),2);
-
-        //show Qimage using QLabel
-        setInputImg(currentFrame);
-        setOutputImg(outputFrame);
-        }
-}
-
 void ProjetoFinal::on_closeButtom_clicked()
 {
     auxiliarWindow->close();
@@ -322,3 +265,74 @@ void ProjetoFinal::on_clearButtom_clicked()
 {
     ui->logText->clear();
 }
+//--------------------------------------------------------
+//---------------PROCESSAMENTO----------------------------
+//--------------------------------------------------------
+
+void ProjetoFinal::process()
+{
+
+    if(this->run == true)
+        {
+        //------------------------------------------------
+        //-----------ABRINDO IMAGEM-----------------------
+        //------------------------------------------------
+
+        if(!video->isOpened())
+            {
+            report("video não está pronto!");
+            return;
+            }
+        *video >> currentFrame;
+
+        if(currentFrame.empty())
+            {
+            report("frame nao pode ser capturado!");
+            pauseVideo();
+            return;
+            }
+        Mat frame;
+        Mat outputFrame(currentFrame.rows,
+                        currentFrame.cols,
+                        CV_8UC3);
+
+
+
+        currentFrame.copyTo(frame);
+
+        medianBlur ( frame, frame, 9); // <==== FILTRANDO
+
+        auxiliarWindow->setWindow(frame, 1);
+
+        //------------------------------------------------
+        //-----------BACKGROUND OPERATIONS----------------
+        //------------------------------------------------
+        Mat backG, foreG, contornoImg;
+        std::vector<std::vector<cv::Point> > contours;
+        this->uptdateBG();
+        bg->operator ()(frame,foreG);
+        bg->getBackgroundImage(backG);
+        cv::findContours(foreG,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
+        currentFrame.copyTo(contornoImg);
+        cv::drawContours(contornoImg,contours,-1,cv::Scalar(0,0,255),2);
+
+        auxiliarWindow->setWindow(backG, 2);
+        auxiliarWindow->setWindow(foreG, 3);
+        auxiliarWindow->setWindow(contornoImg, 4);
+
+        Mat frameHSV;
+        cvtColor(frame, frameHSV, CV_BGR2HSV);
+        Scalar minCorHSV(170,160,60);
+        Scalar maxCorHSV(180,256,256);
+
+        outputFrame = ColorDetection::GetThresholdedImage
+                (frame,minCorHSV, maxCorHSV);
+
+
+        //show Qimage using QLabel
+        setInputImg(currentFrame);
+        setOutputImg(outputFrame);
+        }
+}
+
+

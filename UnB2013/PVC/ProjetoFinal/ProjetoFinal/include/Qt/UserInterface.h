@@ -17,6 +17,7 @@
 #include "myString.h"
 #include "secondWindow.h"
 #include "MyKalmanFilter.h"
+#include "ColorDetection.h"
 
 using namespace  cv;
 

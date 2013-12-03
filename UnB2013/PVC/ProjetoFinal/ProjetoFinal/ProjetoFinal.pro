@@ -14,7 +14,12 @@ TEMPLATE = app
 INCLUDEPATH +=  include/Qt \
                 include/OpenCV \
                 include/C++ \
-                /usr/include/opencv2
+                /usr/include/opencv2\
+                /usr/include/opencv2/core\
+                /usr/include/opencv2/imgproc\
+                /usr/include/opencv2/highgui\
+                /usr/include/opencv2/video
+
 
 
 LIBS += -L/usr/local/lib \
@@ -37,7 +42,9 @@ SOURCES += src/main.cpp\
         src/Qt/UserInterface.cpp \
         src/Qt/cv2qtimage.cpp \
         src/Qt/myTimer.cpp \
-        src/Qt/secondWindow.cpp
+        src/Qt/secondWindow.cpp \
+    src/OpenCV/ColorDetection.cpp \
+    src/Qt/PainelControle.cpp
 
 
 HEADERS  += include/C++/myString.h \
@@ -47,7 +54,10 @@ HEADERS  += include/C++/myString.h \
             include/Qt/UserInterface.h \
             include/Qt/cv2qtimage.h \
             include/Qt/myTimer.h \
-            include/Qt/secondWindow.h
+            include/Qt/secondWindow.h \
+    include/OpenCV/ColorDetection.h \
+    include/Qt/PainelControle.h
 
 FORMS    += UI/UserInterface.ui \
-            UI/secondWindow.ui
+            UI/secondWindow.ui \
+    UI/PainelControle.ui
