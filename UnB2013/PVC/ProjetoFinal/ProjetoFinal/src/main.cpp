@@ -25,6 +25,28 @@ using namespace cv;
 
 int iTau = 50;
 
+Scalar minCorHSV(0, 0, 0);
+Scalar maxCorHSV(179, 255, 255);
+
+
+/*HSV color space is consists of 3 matrices,
+ *'hue', 'saturation' and 'value'. In OpenCV,
+ * value range for  'hue', 'saturation' and
+ *'value'  are respectively 0-179, 0-255 and 0-255
+
+Orange  0-22
+Yellow 22- 38
+Green 38-75
+Blue 75-130
+Violet 130-160
+Red 160-179
+*/
+
+bool CONTROL_BGSub = false;
+bool CONTROL_COLORDETECTION = true;
+bool CONTROL_FILTER_GAUSSIAN = true;
+int SizeGaussFilter = 31;
+
 int main(int argc, char *argv[])
 {
     QApplication prog(argc, argv);

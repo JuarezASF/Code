@@ -26,10 +26,20 @@ class ProjetoFinal;
 }
 
 extern int iTau;
+extern Scalar minCorHSV;
+extern Scalar maxCorHSV;
+extern bool CONTROL_BGSub;
+extern bool CONTROL_COLORDETECTION;
+extern bool CONTROL_FILTER_GAUSSIAN;
+extern int  SizeGaussFilter;
+
+
 
 class ProjetoFinal : public QMainWindow
 {
     Q_OBJECT
+
+
 
 private:
     //Qt objects
@@ -87,6 +97,9 @@ private:
 
     void initSecondWindow();
 
+    //Módulo de Detecção de cores
+    void updateColorTrackBars();
+
 
 private slots:
 
@@ -105,7 +118,16 @@ private slots:
     void on_videoFileOption_currentIndexChanged(int index);
     void on_closeButtom_clicked();
     void on_clearButtom_clicked();
-};
+    void on_ColorMinChannelSlider_valueChanged(int value);
+    void on_ColorMaxChannelSlider_valueChanged(int value);
+    void on_ColorMinChannelOption_currentIndexChanged(int index);
+    void on_ColorMaxChannelOption_currentIndexChanged(int index);
+    void on_DefinedColorOption_currentIndexChanged(int index);
+    void on_BackGroundSubButtom_clicked();
+    void on_ColorDetectionButtom_clicked();
+    void on_BorrarButtom_clicked();
+    void on_SizeOfGaussian_currentIndexChanged(int index);
+    };
 
 #endif // PROJETOFINAL_H
 

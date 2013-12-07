@@ -9,6 +9,10 @@
 
 extern int iTau;
 
+extern Scalar minCorHSV;
+extern Scalar maxCorHSV;
+
+
 namespace Ui {
 class secondWindow;
 }
@@ -30,6 +34,7 @@ public:
 
 private slots:
     void on_shadowSlider_valueChanged(int value);
+
 
 private:
     Ui::secondWindow *ui;

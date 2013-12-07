@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>851</width>
-    <height>510</height>
+    <width>1093</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -186,7 +186,7 @@
      <string>Clear</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>50</x>
@@ -218,8 +218,151 @@
      </item>
     </layout>
    </widget>
-   <zorder>outputImg</zorder>
-   <zorder>inputImg</zorder>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>110</y>
+      <width>411</width>
+      <height>58</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLabel" name="ColorMinLabel">
+         <property name="text">
+          <string>ColorMin</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="ColorMinChannelOption"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QLabel" name="ColorMinValue">
+           <property name="text">
+            <string>value</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="ColorMinChannelSlider">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="ColorMaxLabel">
+         <property name="text">
+          <string>ColorMax</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="ColorMaxChannelOption"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="ColorMaxValue">
+           <property name="text">
+            <string>value</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSlider" name="ColorMaxChannelSlider">
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>170</y>
+      <width>252</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_8">
+     <item>
+      <widget class="QLabel" name="DefineColorLabel">
+       <property name="text">
+        <string>DefinedColor</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="DefinedColorOption"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>31</x>
+      <y>450</y>
+      <width>412</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QPushButton" name="BackGroundSubButtom">
+       <property name="text">
+        <string>BackGroundSubtract</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ColorDetectionButtom">
+       <property name="text">
+        <string>ColorDetection</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QPushButton" name="BorrarButtom">
+         <property name="text">
+          <string>Borrar</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="SizeOfGaussian"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
@@ -230,14 +373,26 @@
    <zorder>runDemoKalman</zorder>
    <zorder>videoFileOption</zorder>
    <zorder>clearButtom</zorder>
+   <zorder>ColorMinChannelOption</zorder>
+   <zorder>ColorMinLabel</zorder>
+   <zorder>ColorMinChannelSlider</zorder>
+   <zorder>ColorMinValue</zorder>
+   <zorder>layoutWidget_2</zorder>
+   <zorder>DefineColorLabel</zorder>
+   <zorder>DefinedColorOption</zorder>
+   <zorder>DefineColorButtom</zorder>
+   <zorder>BackGroundSubButtom</zorder>
+   <zorder>ColorDetectionButtom</zorder>
+   <zorder>BorrarButtom</zorder>
+   <zorder>SizeOfGaussian</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>851</width>
-     <height>25</height>
+     <width>1093</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>

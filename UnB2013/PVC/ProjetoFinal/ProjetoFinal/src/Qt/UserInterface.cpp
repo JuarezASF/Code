@@ -60,6 +60,48 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     initSecondWindow();
 
     initBG();
+
+
+    //COLOTS TRACKBARS
+    ui->ColorMinChannelOption->addItem("Canal 1");
+    ui->ColorMinChannelOption->addItem("Canal 2");
+    ui->ColorMinChannelOption->addItem("Canal 3");
+
+    ui->ColorMaxChannelOption->addItem("Canal 1");
+    ui->ColorMaxChannelOption->addItem("Canal 2");
+    ui->ColorMaxChannelOption->addItem("Canal 3");
+
+    //DEFINE COLOR BUTTOM
+    /*
+    Orange  0-22
+    Yellow 22- 38
+    Green 38-75
+    Blue 75-130
+    Violet 130-160
+    Red 160-179*/
+    ui->DefinedColorOption->addItem("Laranja");
+    ui->DefinedColorOption->addItem("Amarelo");
+    ui->DefinedColorOption->addItem("Verde");
+    ui->DefinedColorOption->addItem("Azul");
+    ui->DefinedColorOption->addItem("Roxo");
+    ui->DefinedColorOption->addItem("Vermelho");
+
+    //BUTÃO PARA BORRA IMAGEM
+    //orem : 3 5 7 9 11 13 21 31
+    ui->SizeOfGaussian->addItem("3");//0
+    ui->SizeOfGaussian->addItem("5");//1
+    ui->SizeOfGaussian->addItem("7");
+    ui->SizeOfGaussian->addItem("9");//3
+    ui->SizeOfGaussian->addItem("11");
+    ui->SizeOfGaussian->addItem("13");//5
+    ui->SizeOfGaussian->addItem("21");
+    ui->SizeOfGaussian->addItem("31");//7
+    ui->SizeOfGaussian->addItem("51");
+    ui->SizeOfGaussian->addItem("61");//9
+    ui->SizeOfGaussian->addItem("71");
+    ui->SizeOfGaussian->setCurrentIndex(7);
+
+
 }
 
 void ProjetoFinal::initSecondWindow(){
@@ -232,6 +274,48 @@ void ProjetoFinal::on_speedSlider_sliderMoved(int position)
     timer->start(position);
 }
 
+void ProjetoFinal::on_ColorMinChannelSlider_valueChanged(int value)
+{
+    ui->ColorMinValue->setText(QString::number(value));
+    switch(ui->ColorMinChannelOption->currentIndex()){
+
+        case 0:
+                minCorHSV[0] = value;
+                break;
+        case 1:
+                minCorHSV[1] = value;
+                break;
+        case 2:
+                minCorHSV[2] = value;
+                break;
+        default:
+                reportBad("Opção para cor não definida");
+                break;
+    }
+}
+
+void ProjetoFinal::on_ColorMaxChannelSlider_valueChanged(int value)
+{
+    ui->ColorMaxValue->setText(QString::number(value));
+
+    switch(ui->ColorMaxChannelOption->currentIndex()){
+
+        case 0:
+                maxCorHSV[0] = value;
+                break;
+        case 1:
+                maxCorHSV[1] = value;
+                break;
+        case 2:
+                maxCorHSV[2] = value;
+                break;
+        default:
+                reportBad("Opção para cor não definida");
+                break;
+    }
+
+}
+
 void ProjetoFinal::on_videoFileOption_currentIndexChanged(int index)
 {
     report("mudando de vídeo");
@@ -300,34 +384,48 @@ void ProjetoFinal::process()
 
         currentFrame.copyTo(frame);
 
-        medianBlur ( frame, frame, 9); // <==== FILTRANDO
+        //------------------------------------------------
+        //-----------BORRANDO IMAGEM----------------------
+        //------------------------------------------------
 
-        auxiliarWindow->setWindow(frame, 1);
+        if(CONTROL_FILTER_GAUSSIAN){
+            medianBlur ( frame, frame, SizeGaussFilter); // <==== FILTRANDO
+            auxiliarWindow->setWindow(frame, 1);
+            }
+        //------------------------------------------------
+        //-----------BACKGROUND OPERATIONS----------------
+        //------------------------------------------------
+        if(CONTROL_BGSub)
+            {
+            Mat backG, foreG, contornoImg;
+            std::vector<std::vector<cv::Point> > contours;
+            this->uptdateBG();
+            bg->operator ()(frame,foreG);
+            bg->getBackgroundImage(backG);
+            cv::findContours(foreG,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
+            currentFrame.copyTo(contornoImg);
+            cv::drawContours(contornoImg,contours,-1,cv::Scalar(0,0,255),2);
+
+            auxiliarWindow->setWindow(backG, 2);
+            auxiliarWindow->setWindow(foreG, 3);
+            auxiliarWindow->setWindow(contornoImg, 4);
+            }
 
         //------------------------------------------------
         //-----------BACKGROUND OPERATIONS----------------
         //------------------------------------------------
-        Mat backG, foreG, contornoImg;
-        std::vector<std::vector<cv::Point> > contours;
-        this->uptdateBG();
-        bg->operator ()(frame,foreG);
-        bg->getBackgroundImage(backG);
-        cv::findContours(foreG,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
-        currentFrame.copyTo(contornoImg);
-        cv::drawContours(contornoImg,contours,-1,cv::Scalar(0,0,255),2);
+        if(CONTROL_COLORDETECTION)
+            {
+              Mat frameHSV;
+              cvtColor(frame, frameHSV, CV_BGR2HSV);
 
-        auxiliarWindow->setWindow(backG, 2);
-        auxiliarWindow->setWindow(foreG, 3);
-        auxiliarWindow->setWindow(contornoImg, 4);
+             outputFrame = ColorDetection::GetThresholdedImage
+                        (frameHSV,minCorHSV, maxCorHSV);
+            }
 
-        Mat frameHSV;
-        cvtColor(frame, frameHSV, CV_BGR2HSV);
-        Scalar minCorHSV(170,160,60);
-        Scalar maxCorHSV(180,256,256);
-
-        outputFrame = ColorDetection::GetThresholdedImage
-                (frame,minCorHSV, maxCorHSV);
-
+        //------------------------------------------------
+        //-----------SAÍDA FINAL--------------------------
+        //------------------------------------------------
 
         //show Qimage using QLabel
         setInputImg(currentFrame);
@@ -336,3 +434,218 @@ void ProjetoFinal::process()
 }
 
 
+
+
+
+void ProjetoFinal::on_ColorMinChannelOption_currentIndexChanged(int index)
+{
+    QSlider *target = ui->ColorMinChannelSlider;
+    int valueToChangeTo;
+
+    switch(index){
+        case 0:
+            valueToChangeTo = minCorHSV[0];
+            target->setRange(0, 179);
+            break;
+        case 1:
+            valueToChangeTo = minCorHSV[1];
+            target->setRange(0, 255);
+            break;
+        case 2:
+            valueToChangeTo = minCorHSV[2];
+            target->setRange(0, 255);
+            break;
+        default:
+            reportBad("Caso não definido!");
+            break;
+        }
+
+    target->setValue(valueToChangeTo);
+}
+
+void ProjetoFinal::on_ColorMaxChannelOption_currentIndexChanged(int index)
+{
+        QSlider *target = ui->ColorMaxChannelSlider;
+        int valueToChangeTo;
+
+        switch(index){
+            case 0:
+                valueToChangeTo = maxCorHSV[0];
+                target->setRange(0, 179);
+                break;
+            case 1:
+                valueToChangeTo = maxCorHSV[1];
+                target->setRange(0, 255);
+                break;
+            case 2:
+                valueToChangeTo = maxCorHSV[2];
+                target->setRange(0, 255);
+                break;
+            default:
+                reportBad("Caso não definido!");
+                break;
+            }
+
+        target->setValue(valueToChangeTo);
+
+}
+
+void ProjetoFinal::on_DefinedColorOption_currentIndexChanged(int index)
+{
+        switch(index){
+            case 0://laranja 0-22
+                minCorHSV[0] = 0;
+                minCorHSV[1] = 0;
+                minCorHSV[2] = 0;
+
+                maxCorHSV[0] = 22;
+                maxCorHSV[1] = 255;
+                maxCorHSV[1] = 255;
+
+                break;
+            case 1://amarelo 22-38
+                minCorHSV[0] = 22;
+                minCorHSV[1] = 0;
+                minCorHSV[2] = 0;
+
+                maxCorHSV[0] = 38;
+                maxCorHSV[1] = 255;
+                maxCorHSV[1] = 255;
+
+                break;
+
+            case 2: // verde 38-75
+                minCorHSV[0] = 38;
+                minCorHSV[1] = 0;
+                minCorHSV[2] = 0;
+
+                maxCorHSV[0] = 75;
+                maxCorHSV[1] = 255;
+                maxCorHSV[1] = 255;
+
+                break;
+            case 3://azul 75-130
+                minCorHSV[0] = 75;
+                minCorHSV[1] = 0;
+                minCorHSV[2] = 0;
+
+                maxCorHSV[0] = 130;
+                maxCorHSV[1] = 255;
+                maxCorHSV[1] = 255;
+
+                break;
+
+            case 4:// violeta 130-160
+                minCorHSV[0] = 130;
+                minCorHSV[1] = 0;
+                minCorHSV[2] = 0;
+
+                maxCorHSV[0] = 160;
+                maxCorHSV[1] = 255;
+                maxCorHSV[1] = 255;
+
+                break;
+            case 5:// vermelho 160-179
+                minCorHSV[0] = 160;
+                minCorHSV[1] = 0;
+                minCorHSV[2] = 0;
+
+                maxCorHSV[0] = 179;
+                maxCorHSV[1] = 255;
+                maxCorHSV[1] = 255;
+
+                break;
+
+            case 6:
+                reportBad("Opção Indefinida!");
+                break;
+
+            }
+
+        this->updateColorTrackBars();
+
+}
+
+void ProjetoFinal::updateColorTrackBars()
+    {
+        QSlider *target = ui->ColorMaxChannelSlider;
+        int index = ui->ColorMaxChannelOption->currentIndex();
+        int valueToChangeTo;
+
+        switch(index){
+            case 0:
+                valueToChangeTo = maxCorHSV[0];
+                target->setRange(0, 179);
+                break;
+            case 1:
+                valueToChangeTo = maxCorHSV[1];
+                target->setRange(0, 255);
+                break;
+            case 2:
+                valueToChangeTo = maxCorHSV[2];
+                target->setRange(0, 255);
+                break;
+            default:
+                reportBad("Caso não definido!");
+                break;
+            }
+
+        target->setValue(valueToChangeTo);
+
+        target = ui->ColorMinChannelSlider;
+        index = ui->ColorMinChannelOption->currentIndex();
+
+        switch(index){
+            case 0:
+                valueToChangeTo = minCorHSV[0];
+                target->setRange(0, 179);
+                break;
+            case 1:
+                valueToChangeTo = minCorHSV[1];
+                target->setRange(0, 255);
+                break;
+            case 2:
+                valueToChangeTo = minCorHSV[2];
+                target->setRange(0, 255);
+                break;
+            default:
+                reportBad("Caso não definido!");
+                break;
+            }
+
+        target->setValue(valueToChangeTo);
+
+
+    }
+
+
+
+void ProjetoFinal::on_BackGroundSubButtom_clicked()
+{
+        if(CONTROL_BGSub == true)
+            CONTROL_BGSub = false;
+        else
+            CONTROL_BGSub = true;
+}
+
+void ProjetoFinal::on_ColorDetectionButtom_clicked()
+{
+        if(CONTROL_COLORDETECTION == true)
+            CONTROL_COLORDETECTION = false;
+        else
+            CONTROL_COLORDETECTION = true;
+}
+
+void ProjetoFinal::on_BorrarButtom_clicked()
+{
+        if(CONTROL_FILTER_GAUSSIAN == true)
+            CONTROL_FILTER_GAUSSIAN =false;
+        else
+            CONTROL_FILTER_GAUSSIAN = true;
+}
+
+void ProjetoFinal::on_SizeOfGaussian_currentIndexChanged(int index)
+{
+        //ordem : 3 5 7 9 11 13 21 31
+        SizeGaussFilter = ui->SizeOfGaussian->currentText().toInt();
+}
