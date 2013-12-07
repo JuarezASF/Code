@@ -44,7 +44,8 @@ SOURCES += src/main.cpp\
         src/Qt/myTimer.cpp \
         src/Qt/secondWindow.cpp \
     src/OpenCV/ColorDetection.cpp \
-    src/Qt/PainelControle.cpp
+    src/Qt/PainelControle.cpp \
+    src/Qt/MainLoop.cpp
 
 
 HEADERS  += include/C++/myString.h \

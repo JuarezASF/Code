@@ -63,13 +63,13 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
 
 
     //COLOTS TRACKBARS
-    ui->ColorMinChannelOption->addItem("Canal 1");
-    ui->ColorMinChannelOption->addItem("Canal 2");
-    ui->ColorMinChannelOption->addItem("Canal 3");
+    ui->ColorMinChannelOption->addItem("hue");
+    ui->ColorMinChannelOption->addItem("saturation");
+    ui->ColorMinChannelOption->addItem("value");
 
-    ui->ColorMaxChannelOption->addItem("Canal 1");
-    ui->ColorMaxChannelOption->addItem("Canal 2");
-    ui->ColorMaxChannelOption->addItem("Canal 3");
+    ui->ColorMaxChannelOption->addItem("hue");
+    ui->ColorMaxChannelOption->addItem("saturation");
+    ui->ColorMaxChannelOption->addItem("value");
 
     //DEFINE COLOR BUTTOM
     /*
@@ -349,92 +349,6 @@ void ProjetoFinal::on_clearButtom_clicked()
 {
     ui->logText->clear();
 }
-//--------------------------------------------------------
-//---------------PROCESSAMENTO----------------------------
-//--------------------------------------------------------
-
-void ProjetoFinal::process()
-{
-
-    if(this->run == true)
-        {
-        //------------------------------------------------
-        //-----------ABRINDO IMAGEM-----------------------
-        //------------------------------------------------
-
-        if(!video->isOpened())
-            {
-            report("video não está pronto!");
-            return;
-            }
-        *video >> currentFrame;
-
-        if(currentFrame.empty())
-            {
-            report("frame nao pode ser capturado!");
-            pauseVideo();
-            return;
-            }
-        Mat frame;
-        Mat outputFrame(currentFrame.rows,
-                        currentFrame.cols,
-                        CV_8UC3);
-
-
-
-        currentFrame.copyTo(frame);
-
-        //------------------------------------------------
-        //-----------BORRANDO IMAGEM----------------------
-        //------------------------------------------------
-
-        if(CONTROL_FILTER_GAUSSIAN){
-            medianBlur ( frame, frame, SizeGaussFilter); // <==== FILTRANDO
-            auxiliarWindow->setWindow(frame, 1);
-            }
-        //------------------------------------------------
-        //-----------BACKGROUND OPERATIONS----------------
-        //------------------------------------------------
-        if(CONTROL_BGSub)
-            {
-            Mat backG, foreG, contornoImg;
-            std::vector<std::vector<cv::Point> > contours;
-            this->uptdateBG();
-            bg->operator ()(frame,foreG);
-            bg->getBackgroundImage(backG);
-            cv::findContours(foreG,contours,CV_RETR_EXTERNAL,CV_CHAIN_APPROX_NONE);
-            currentFrame.copyTo(contornoImg);
-            cv::drawContours(contornoImg,contours,-1,cv::Scalar(0,0,255),2);
-
-            auxiliarWindow->setWindow(backG, 2);
-            auxiliarWindow->setWindow(foreG, 3);
-            auxiliarWindow->setWindow(contornoImg, 4);
-            }
-
-        //------------------------------------------------
-        //-----------BACKGROUND OPERATIONS----------------
-        //------------------------------------------------
-        if(CONTROL_COLORDETECTION)
-            {
-              Mat frameHSV;
-              cvtColor(frame, frameHSV, CV_BGR2HSV);
-
-             outputFrame = ColorDetection::GetThresholdedImage
-                        (frameHSV,minCorHSV, maxCorHSV);
-            }
-
-        //------------------------------------------------
-        //-----------SAÍDA FINAL--------------------------
-        //------------------------------------------------
-
-        //show Qimage using QLabel
-        setInputImg(currentFrame);
-        setOutputImg(outputFrame);
-        }
-}
-
-
-
 
 
 void ProjetoFinal::on_ColorMinChannelOption_currentIndexChanged(int index)
@@ -495,7 +409,7 @@ void ProjetoFinal::on_DefinedColorOption_currentIndexChanged(int index)
         switch(index){
             case 0://laranja 0-22
                 minCorHSV[0] = 0;
-                minCorHSV[1] = 0;
+                minCorHSV[1] = 70;
                 minCorHSV[2] = 0;
 
                 maxCorHSV[0] = 22;
@@ -505,7 +419,7 @@ void ProjetoFinal::on_DefinedColorOption_currentIndexChanged(int index)
                 break;
             case 1://amarelo 22-38
                 minCorHSV[0] = 22;
-                minCorHSV[1] = 0;
+                minCorHSV[1] = 70;
                 minCorHSV[2] = 0;
 
                 maxCorHSV[0] = 38;
@@ -526,7 +440,7 @@ void ProjetoFinal::on_DefinedColorOption_currentIndexChanged(int index)
                 break;
             case 3://azul 75-130
                 minCorHSV[0] = 75;
-                minCorHSV[1] = 0;
+                minCorHSV[1] = 70;
                 minCorHSV[2] = 0;
 
                 maxCorHSV[0] = 130;
@@ -537,7 +451,7 @@ void ProjetoFinal::on_DefinedColorOption_currentIndexChanged(int index)
 
             case 4:// violeta 130-160
                 minCorHSV[0] = 130;
-                minCorHSV[1] = 0;
+                minCorHSV[1] = 70;
                 minCorHSV[2] = 0;
 
                 maxCorHSV[0] = 160;
@@ -547,7 +461,7 @@ void ProjetoFinal::on_DefinedColorOption_currentIndexChanged(int index)
                 break;
             case 5:// vermelho 160-179
                 minCorHSV[0] = 160;
-                minCorHSV[1] = 0;
+                minCorHSV[1] = 70;
                 minCorHSV[2] = 0;
 
                 maxCorHSV[0] = 179;
