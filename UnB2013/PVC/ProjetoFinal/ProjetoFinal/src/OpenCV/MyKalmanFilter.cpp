@@ -360,7 +360,7 @@ void runDemo3(ProjetoFinal &mainWindow){
     Mat img(500, 500, CV_8UC3);
 
     KalmanFilter KF(6, 2, 0);
-    //kalman filter com 4 variáveis de estado e 2 de medida
+    //kalman filter com 6 variáveis de estado e 2 de medida
 
     Mat_<float> state(6, 1); /* (x, y, Vx, Vy, Ax, Ay) */
     //vairável para guardar estado

@@ -322,46 +322,6 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>31</x>
-      <y>450</y>
-      <width>412</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_10">
-     <item>
-      <widget class="QPushButton" name="BackGroundSubButtom">
-       <property name="text">
-        <string>BackGroundSubtract</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ColorDetectionButtom">
-       <property name="text">
-        <string>ColorDetection</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
-       <item>
-        <widget class="QPushButton" name="BorrarButtom">
-         <property name="text">
-          <string>Borrar</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="SizeOfGaussian"/>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
    <widget class="QLabel" name="GlobalModeLabel">
     <property name="geometry">
      <rect>
@@ -398,7 +358,7 @@
      <string>Clear Past</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>690</x>
@@ -437,6 +397,50 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>32</x>
+      <y>450</y>
+      <width>496</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <widget class="QPushButton" name="BackGroundSubButtom">
+       <property name="text">
+        <string>BackGroundSubtract</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ColorDetectionButtom">
+       <property name="text">
+        <string>ColorDetection</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="BorrarButtom">
+       <property name="text">
+        <string>Borrar</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="SizeOfGaussian"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="InitKalmanButtom">
+       <property name="text">
+        <string>Init Kalman</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
@@ -454,9 +458,7 @@
    <zorder>GlobalModeLabel</zorder>
    <zorder>GlobalModeOption</zorder>
    <zorder>ClearPastButtom</zorder>
-   <zorder>ColorDetectionThresholdLabel</zorder>
-   <zorder>ColorDetectionThresholdSlider</zorder>
-   <zorder>ColorDetectionThresholdSliderValue</zorder>
+   <zorder>InitKalmanButtom</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

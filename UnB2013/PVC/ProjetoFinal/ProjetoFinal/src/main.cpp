@@ -49,6 +49,8 @@ bool CONTROL_FILTER_GAUSSIAN = true;
 bool CONTROL_MODE_RUN         = true;
 bool CONTROL_MODE_CALIBRATION = false;
 
+bool CONTROL_KALMAN = false;
+
 int SizeGaussFilter = 31;
 
 int ColorDetectionThreshold = 30;

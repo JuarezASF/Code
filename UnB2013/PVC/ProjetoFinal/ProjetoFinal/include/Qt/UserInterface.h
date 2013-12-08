@@ -20,6 +20,7 @@
 #include "MyKalmanFilter.h"
 #include "ColorDetection.h"
 #include "myMath.h"
+#include "Filtros.h"
 
 using namespace  cv;
 
@@ -39,6 +40,8 @@ extern bool CONTROL_MODE_RUN;
 extern bool CONTROL_MODE_CALIBRATION;
 
 extern int ColorDetectionThreshold;
+
+extern bool CONTROL_KALMAN;
 
 class ProjetoFinal : public QMainWindow
 {
@@ -120,6 +123,7 @@ private:
     KalmanFilter *redKF, *blueKF, *greenKF;
     vector<Point> kalmanHistory[3];
     void initKFs();
+    void clearKFs();
 
 
 private slots:
@@ -151,6 +155,7 @@ private slots:
     void on_GlobalModeOption_currentIndexChanged(int index);
     void on_ClearPastButtom_clicked();
     void on_ColorDetectionThresholdSlider_valueChanged(int value);
+    void on_InitKalmanButtom_clicked();
     };
 
 #endif // PROJETOFINAL_H

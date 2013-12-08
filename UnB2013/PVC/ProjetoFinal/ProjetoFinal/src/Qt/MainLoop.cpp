@@ -67,6 +67,7 @@ void ProjetoFinal::process()
         //------------------------------------------------
         if(CONTROL_COLORDETECTION)
             {
+                frame.copyTo(outputFrame);
                 if(CONTROL_MODE_CALIBRATION){
                     Mat frameHSV;
                     cvtColor(frame, frameHSV, CV_BGR2HSV);
@@ -84,7 +85,8 @@ void ProjetoFinal::process()
                         Draw::Cross(currentFrame,targetDetected, Scalar(255, 0, 0), 10);
 
                     }
-                if(CONTROL_MODE_RUN){
+                if(CONTROL_MODE_RUN)
+                    {
                         //as cores para pintar e a serem trackeadas
                         //estão definidas na função setColor (ou algo assim)
                         //é uma função da interface
@@ -96,37 +98,48 @@ void ProjetoFinal::process()
                             this->DetectColoredObjects(frame,rangesToDetect, sucesso);
 
                 //FILTRAGEM COM KALMAN
-
-                vector<Point> kalmanCenters;
-                kalmanCenters.resize(centers.size());
-                for(int i = 0; i < 3; i++)
+                    vector<Point> kalmanCenters;
+                    vector<Scalar> colorsToPaintKalman;
+                    if(CONTROL_KALMAN)
                     {
-                        KalmanFilter *KF;
-                        switch(i){//determina qual KF processar
-                            case 0:
-                                KF = redKF;
-                                break;
-                            case 1:
-                                KF = greenKF;
-                                break;
-                            case 2:
-                                KF = blueKF;
-                                break;
-                            default:
-                                reportBad("Opção Inválida ao inicial KF's");
-                                break;
-                            }
-                        Mat_<float> measurement(2,1);
-                        measurement(0) = centers[i].x;
-                        measurement(1) = centers[i].y;
+                    kalmanCenters.resize(centers.size());
+                    for(int i = 0; i < 3; i++)
+                        {
+                            KalmanFilter *KF;
+                            switch(i){//determina qual KF processar
+                                case 0:
+                                    KF = redKF;
+                                    break;
+                                case 1:
+                                    KF = greenKF;
+                                    break;
+                                case 2:
+                                    KF = blueKF;
+                                    break;
+                                default:
+                                    reportBad("Opção Inválida ao inicial KF's");
+                                    break;
+                                }
+                            Mat_<float> measurement(2,1);
+                            measurement(0) = centers[i].x;
+                            measurement(1) = centers[i].y;
 
-                        KF->predict();
-                        //corrige com o novo ponto medido
+                            Mat estimated;
+                            Mat prediction = KF->predict();
+                            if(sucesso[i] == true)
+                                {
+                                estimated = KF->correct(measurement);
+                                }
+                            else{
+                                Mat_<float> predictedMeasurement(2,1);
+                                predictedMeasurement(0) = prediction.at<float>(0);
+                                predictedMeasurement(1) = prediction.at<float>(1);
+                                estimated = KF->correct(predictedMeasurement);
+                                KF->errorCovPre.copyTo(KF->errorCovPost);
+                                }
+                            Point statePt(estimated.at<float>(0),estimated.at<float>(1));
 
-                        Mat estimated = KF->correct(measurement);
-                        Point statePt(estimated.at<float>(0),estimated.at<float>(1));
-
-                        kalmanCenters[i] = statePt;
+                            kalmanCenters[i] = statePt;
 
                         }
 
@@ -137,11 +150,17 @@ void ProjetoFinal::process()
                                 Vec3f currentCircle(kalmanCenters[i].x, kalmanCenters[i].y,
                                       radiusKalmanCircles);
                                 kalmanCircles.push_back(currentCircle);
+
+                                Scalar currentColor;
+                                if(i == 0)
+                                    currentColor = Scalar (0,255,0) + colorsToPaint[i];
+                                else
+                                    currentColor = Scalar (0,0,255) + colorsToPaint[i];
+                                colorsToPaintKalman.push_back(currentColor);
+
                             }
-
-                        frame.copyTo(outputFrame);
                         Draw::Circles(outputFrame, kalmanCircles, colorsToPaint);
-
+                    }
 
                         float crossSize = 10;
                         Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, sucesso);
@@ -150,28 +169,38 @@ void ProjetoFinal::process()
                         //VISÃO DO PASSADO
                         if(pastMode == true)
                         {
-                                if(pastHistory[0].size() > 100)
-                                    ClearPast();
+                                //if(pastHistory[0].size() > 100)
+                                  //  ClearPast();
 
                                 bool AddToPast = true;
                                 for(int i = 0; i < 3; i++)
                                     {
-                                        if(sucesso[i] == false)
+                                        if(sucesso[i] == false){
                                             AddToPast = false;
-                                     }
+                                         }
+                                    }
 
                                 if(AddToPast == true)
                                  {
                                     for(int i = 0; i < 3; i++)
-                                       pastHistory[i].push_back(centers[i]);
-                                 }
+                                       {
+                                            pastHistory[i].push_back(centers[i]);
+                                            if(CONTROL_KALMAN)
+                                                kalmanHistory[i].push_back(kalmanCenters[i]);
+                                        }
+                                    }
 
 
                                 for(unsigned int n = 0; n < 3; n++)
                                     if(sucesso[n] == true && pastHistory[n].size() > 5)
                                         for (unsigned int i = 0; i < pastHistory[n].size()-1; i++)
-                                            Draw::dashedLine(outputFrame, pastHistory[n][i], pastHistory[n][i+1],
+                                           {
+                                                Draw::Line(outputFrame, pastHistory[n][i], pastHistory[n][i+1],
                                                 colorsToPaint[n]);
+                                                if(CONTROL_KALMAN)
+                                                Draw::Line(outputFrame, kalmanHistory[n][i], kalmanHistory[n][i+1],
+                                                    colorsToPaintKalman[n], 2);
+                                            }
                         }
                     }
 

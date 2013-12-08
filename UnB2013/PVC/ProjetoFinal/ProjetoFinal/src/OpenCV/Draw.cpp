@@ -69,9 +69,9 @@ void Draw::dashedLine(Mat &img, const Point &start, const Point &end,
 }
 
 void Draw::Line(Mat &img, const Point &start, const Point & end,
-					const Scalar &color)
+					const Scalar &color, int witdh)
 {
-	line(img, start, end, color, 1);
+	line(img, start, end, color, witdh);
 }
 
 void Draw::Text(Mat &img, Point origin, string text,

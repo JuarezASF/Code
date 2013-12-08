@@ -28,7 +28,7 @@ public:
 			const Point & end, const Scalar &color, int dashSize = 2);
 
 	static void Line(Mat &img, const Point &start,
-			const Point & end, const Scalar &color);
+			const Point & end, const Scalar &color, int witdh = 3);
 
 	static void Text(Mat &img, Point origin, string text,
 			Scalar color, double fontScale);

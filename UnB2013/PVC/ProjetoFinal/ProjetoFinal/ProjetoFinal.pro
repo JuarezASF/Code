@@ -45,7 +45,8 @@ SOURCES += src/main.cpp\
         src/Qt/secondWindow.cpp \
     src/OpenCV/ColorDetection.cpp \
     src/Qt/PainelControle.cpp \
-    src/Qt/MainLoop.cpp
+    src/Qt/MainLoop.cpp \
+    Filtros.cpp
 
 
 HEADERS  += include/C++/myString.h \
@@ -57,7 +58,8 @@ HEADERS  += include/C++/myString.h \
             include/Qt/myTimer.h \
             include/Qt/secondWindow.h \
     include/OpenCV/ColorDetection.h \
-    include/Qt/PainelControle.h
+    include/Qt/PainelControle.h \
+    Filtros.h
 
 FORMS    += UI/UserInterface.ui \
             UI/secondWindow.ui \

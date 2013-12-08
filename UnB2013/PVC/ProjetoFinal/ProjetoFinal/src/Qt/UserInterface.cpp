@@ -109,10 +109,6 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     //DEFINE CORES PARA DETECTAR NO MODO GLOBAL
     setColorsToDetect();
 
-    //INICIA FILTRO DE KALMAN
-    initKFs();
-
-
 
 }
 
@@ -314,8 +310,11 @@ void ProjetoFinal::on_videoFileOption_currentIndexChanged(int index)
         }
     ClearPast();
     initBG();
+    //clearKFs();
+    //initKFs();
     runVideo();
-}
+
+    }
 void ProjetoFinal::on_closeButtom_clicked()
 {
     auxiliarWindow->close();
@@ -608,8 +607,8 @@ void ProjetoFinal::on_GlobalModeOption_currentIndexChanged(int index)
 
 void ProjetoFinal::setColorsToDetect(){
         Scalar RGB_RED(0,0,255);
-        Scalar colorMinRed(160,70,50);
-        Scalar colorMaxRed(179, 255, 255);
+        Scalar colorMinRed(0,70,50);
+        Scalar colorMaxRed(22, 255, 255);
         vector<Scalar> rangeRed;
         rangeRed.push_back(colorMinRed);
         rangeRed.push_back(colorMaxRed);
@@ -642,9 +641,15 @@ void ProjetoFinal::setColorsToDetect(){
 
 void ProjetoFinal::ClearPast(){
         for(unsigned int i = 0; i < 3; i++)
+            {
             if(!pastHistory[i].empty())
                 pastHistory[i].clear();
+            if(CONTROL_KALMAN)
+                if(!kalmanHistory[i].empty())
+                    kalmanHistory[i].clear();
+            }
     return;
+
     }
 
 void ProjetoFinal::on_ClearPastButtom_clicked()
@@ -673,6 +678,10 @@ vector<Point> ProjetoFinal::DetectColoredObjects(Mat &RGB_Input,
                         ColorDetection::GetThresholdedImage(
                             HSV_Input, colorMin,colorMax);
 
+                Filtros::Erosion(BinaryImg, BinaryImg, 3);
+                Filtros::Erosion(BinaryImg, BinaryImg, 3);
+                Filtros::Dilation(BinaryImg, BinaryImg, 3);
+
                 auxiliarWindow->setWindow(BinaryImg, i+2);
 
                 bool currentSucess;
@@ -694,7 +703,61 @@ vector<Point> ProjetoFinal::DetectColoredObjects(Mat &RGB_Input,
 //-------------------------------------------------------
 //--------------------KALMAN FILTER MODE-----------------
 //-------------------------------------------------------
+/*
+void ProjetoFinal::initKFs(){
+        redKF   = new KalmanFilter(4, 2, 0);
+        greenKF = new KalmanFilter(4, 2, 0);
+        blueKF  = new KalmanFilter(4, 2, 0);
+        //kalman filter com 4 variáveis de estado e 2 de medida
 
+        for(int i = 0; i < 3; i++)
+        {//apenas copiei e colei a inicialização do runDemo3
+        KalmanFilter *KF;
+        switch(i){//determina qual KF inicializar
+            case 0:
+                KF = redKF;
+                break;
+            case 1:
+                KF = greenKF;
+                break;
+            case 2:
+                KF = blueKF;
+                break;
+            default:
+                reportBad("Opção Inválida ao inicial KF's");
+                break;
+            }
+
+            //condições iniciais de posição
+            KF->statePre.at<float>(0) = 0;
+            KF->statePre.at<float>(1) = 0;
+            //condições iniciais de velocidade
+            KF->statePre.at<float>(2) = 0;
+            KF->statePre.at<float>(3) = 0;
+
+            KF->transitionMatrix =
+                *(
+                    Mat_<float>(4,4) <<//		Sx	Sy	Vx	Vy
+
+                                             1,	0,	0,	0,
+                                             0,	1,	0,	0,
+                                         0,	0,	1,	0,
+                                             0,	0,	0,	1
+                                );
+            setIdentity(KF->measurementMatrix);
+            //erro no processo de medida??
+            setIdentity(KF->processNoiseCov, Scalar::all(1e-4));
+
+            //erro nas pedidas?
+            setIdentity(KF->measurementNoiseCov, Scalar::all(1e-1));
+
+            //erro a posteriori?
+            setIdentity(KF->errorCovPost, Scalar::all(.1));
+
+        }
+
+    }
+            */
 void ProjetoFinal::initKFs(){
         redKF   = new KalmanFilter(6, 2, 0);
         greenKF = new KalmanFilter(6, 2, 0);
@@ -731,13 +794,13 @@ void ProjetoFinal::initKFs(){
 
             KF->transitionMatrix =
                 *(
-                    Mat_<float>(6, 6) <</*		Sx	Sy	Vx	Vy	Ax		Ay	*/
-                                        /*Sx*/	 1,	0,	1,	0,	0.5,	0,
-                                        /*Sy*/	 0,	1,	0,	1,	0,		0.5,
-                                        /*Vx*/	 0,	0,	1,	0,	1,		0,
-                                        /*Vy*/	 0,	0,	0,	1,	0,		1,
-                                        /*Ax*/	 0,	0,	0,	0,	1,		0,
-                                        /*Ay*/	 0,	0,	0,	0,	0,		1
+                    Mat_<float>(6, 6) <</*                Sx        Sy        Vx        Vy        Ax                Ay        */
+                                        /*Sx*/         1,        0,        1,        0,        0.5,        0,
+                                        /*Sy*/         0,        1,        0,        1,        0,                0.5,
+                                        /*Vx*/         0,        0,        1,        0,        1,                0,
+                                        /*Vy*/         0,        0,        0,        1,        0,                1,
+                                        /*Ax*/         0,        0,        0,        0,        1,                0,
+                                        /*Ay*/         0,        0,        0,        0,        0,                1
                                 );
             KF->measurementMatrix =
                     *(
@@ -750,7 +813,7 @@ void ProjetoFinal::initKFs(){
             setIdentity(KF->processNoiseCov, Scalar::all(1e-4));
 
             //erro nas pedidas?
-            setIdentity(KF->measurementNoiseCov, Scalar::all(1e-1));
+            setIdentity(KF->measurementNoiseCov, Scalar::all(1e-3));
 
             //erro a posteriori?
             setIdentity(KF->errorCovPost, Scalar::all(.1));
@@ -758,3 +821,13 @@ void ProjetoFinal::initKFs(){
         }
 
     }
+void ProjetoFinal::on_InitKalmanButtom_clicked()
+{
+        if(CONTROL_KALMAN == true)
+            CONTROL_KALMAN = false;
+        else
+            CONTROL_KALMAN = true;
+
+        //INICIA FILTRO DE KALMAN
+        initKFs();
+}
