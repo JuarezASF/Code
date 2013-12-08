@@ -813,7 +813,7 @@ void ProjetoFinal::initKFs(){
             setIdentity(KF->processNoiseCov, Scalar::all(1e-4));
 
             //erro nas pedidas?
-            setIdentity(KF->measurementNoiseCov, Scalar::all(1e-3));
+            setIdentity(KF->measurementNoiseCov, Scalar::all(1e-1));
 
             //erro a posteriori?
             setIdentity(KF->errorCovPost, Scalar::all(.1));
@@ -830,4 +830,10 @@ void ProjetoFinal::on_InitKalmanButtom_clicked()
 
         //INICIA FILTRO DE KALMAN
         initKFs();
+}
+
+void ProjetoFinal::on_raioSlider_valueChanged(int value)
+{
+    Raio = value;
+    ui->raioValueLabel->setText(QString::number(value));
 }

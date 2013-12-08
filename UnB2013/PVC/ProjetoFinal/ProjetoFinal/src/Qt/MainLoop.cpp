@@ -145,7 +145,7 @@ void ProjetoFinal::process()
 
                         //DRAWING KALMAN'S CENTERS
                         vector<Vec3f> kalmanCircles;
-                        float radiusKalmanCircles = 20;
+                        float radiusKalmanCircles = Raio;
                         for(unsigned int i = 0; i < kalmanCenters.size(); i++){
                                 Vec3f currentCircle(kalmanCenters[i].x, kalmanCenters[i].y,
                                       radiusKalmanCircles);
@@ -165,6 +165,59 @@ void ProjetoFinal::process()
                         float crossSize = 10;
                         Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, sucesso);
                         //VISÃO DO FUTURO
+                        if(futureMode == true && CONTROL_KALMAN == true){
+                        for(int i = 0; i < 3; i++)
+                            {
+                                future[i].clear();
+                                KalmanFilter *KF;
+                                switch(i){//determina qual KF processar
+                                    case 0:
+                                        KF = redKF;
+                                        break;
+                                    case 1:
+                                        KF = greenKF;
+                                        break;
+                                    case 2:
+                                        KF = blueKF;
+                                        break;
+                                    default:
+                                        reportBad("Opção Inválida ao inicial KF's");
+                                        break;
+                                    }
+                        KalmanFilter DelfusOracle = myMath::copyKF(*KF);
+                        int futureSize = 50;
+                        for(int j = 0; j < futureSize; j++)
+                            //CALCULA PONTOS DO FUTURO
+                            {
+                            Mat prediction = DelfusOracle.predict();
+                            Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
+                            future[i].push_back(predictPt);
+
+                            Mat_<float> predictedMeasurement(2,1);
+                            predictedMeasurement(0) = prediction.at<float>(0);
+                            predictedMeasurement(1) = prediction.at<float>(1);
+                            DelfusOracle.correct(predictedMeasurement);
+                            DelfusOracle.errorCovPre.copyTo(DelfusOracle.errorCovPost);
+
+                            }
+
+                        //DEZENHA PONTOS DO FUTURO
+                        vector<Vec3f> kalmanFutureCircles;
+                        vector<Scalar> ColorsToPaintFuture;
+                        for(unsigned int n = 0; n < future[i].size(); n++){
+                                int KalmanFutureRaio = 2;
+                                Vec3f currentCircle(future[i][n].x, future[i][n].y,
+                                      KalmanFutureRaio);
+                                kalmanFutureCircles.push_back(currentCircle);
+
+                                Scalar currentColor;
+                                    currentColor = colorsToPaint[i];
+                                ColorsToPaintFuture.push_back(currentColor);
+                            }
+                            Draw::Circles(outputFrame, kalmanFutureCircles, ColorsToPaintFuture);
+                        }//end for each color
+                        }//end if futuro
+
 
                         //VISÃO DO PASSADO
                         if(pastMode == true)

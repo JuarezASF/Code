@@ -55,6 +55,8 @@ int SizeGaussFilter = 31;
 
 int ColorDetectionThreshold = 30;
 
+int Raio = 20;
+
 int main(int argc, char *argv[])
 {
     QApplication prog(argc, argv);

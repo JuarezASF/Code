@@ -440,6 +440,45 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>220</y>
+      <width>311</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="raioLabel">
+       <property name="text">
+        <string>raio</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="raioValueLabel">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSlider" name="raioSlider">
+       <property name="maximum">
+        <number>100</number>
+       </property>
+       <property name="value">
+        <number>20</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
@@ -459,6 +498,9 @@
    <zorder>GlobalModeOption</zorder>
    <zorder>ClearPastButtom</zorder>
    <zorder>InitKalmanButtom</zorder>
+   <zorder>raioLabel</zorder>
+   <zorder>raioValueLabel</zorder>
+   <zorder>raioSlider</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

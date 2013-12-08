@@ -43,6 +43,8 @@ extern int ColorDetectionThreshold;
 
 extern bool CONTROL_KALMAN;
 
+extern int Raio;
+
 class ProjetoFinal : public QMainWindow
 {
     Q_OBJECT
@@ -116,6 +118,7 @@ private:
     vector<vector<Scalar> > rangesToDetect;
     vector<Scalar> colorsToPaint;
     vector<Point> pastHistory[3];
+    vector<Point> future[3];
     //histórico para objetos da ordem [R,G,B] = [0,1,2]
 
 
@@ -156,6 +159,7 @@ private slots:
     void on_ClearPastButtom_clicked();
     void on_ColorDetectionThresholdSlider_valueChanged(int value);
     void on_InitKalmanButtom_clicked();
+    void on_raioSlider_valueChanged(int value);
     };
 
 #endif // PROJETOFINAL_H
