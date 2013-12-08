@@ -109,6 +109,9 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     //DEFINE CORES PARA DETECTAR NO MODO GLOBAL
     setColorsToDetect();
 
+    //INICIA FILTRO DE KALMAN
+    initKFs();
+
 
 
 }
@@ -218,6 +221,13 @@ QPoint ProjetoFinal::getMousePos(){
     return mouseCursor->pos();
 }
 
+void ProjetoFinal::on_runDemoKalman_clicked()
+{
+    pauseVideo();
+    MyKalmanFilter::runDemo2();
+}
+
+
 //--------------------------------------------------------
 //---------------INTERFACE TEXTUAL------------------------
 //--------------------------------------------------------
@@ -239,6 +249,11 @@ void ProjetoFinal::reportBad(string text)
 
 void ProjetoFinal::reportWarning(string text){
     ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::on_clearButtom_clicked()
+{
+    ui->logText->clear();
 }
 
 //--------------------------------------------------------
@@ -285,6 +300,32 @@ void ProjetoFinal::on_speedSlider_sliderMoved(int position)
     timer->start(position);
 }
 
+void ProjetoFinal::on_videoFileOption_currentIndexChanged(int index)
+{
+    report("mudando de vídeo");
+
+    if(index == 0)
+        initVideo();
+    else
+        {
+        videoAtual = index - 1;
+        //subtraimos 1 pq o 0 e a webcam
+        initVideo(fileNames[videoAtual].c_str());
+        }
+    ClearPast();
+    initBG();
+    runVideo();
+}
+void ProjetoFinal::on_closeButtom_clicked()
+{
+    auxiliarWindow->close();
+    exit(0);
+}
+
+//--------------------------------------------------------
+//---------------CONTROLE DE DETECÇÃO DE COR--------------
+//--------------------------------------------------------
+
 void ProjetoFinal::on_ColorMinChannelSlider_valueChanged(int value)
 {
     ui->ColorMinValue->setText(QString::number(value));
@@ -327,40 +368,7 @@ void ProjetoFinal::on_ColorMaxChannelSlider_valueChanged(int value)
 
 }
 
-void ProjetoFinal::on_videoFileOption_currentIndexChanged(int index)
-{
-    report("mudando de vídeo");
 
-    if(index == 0)
-        initVideo();
-    else
-        {
-        videoAtual = index - 1;
-        //subtraimos 1 pq o 0 e a webcam
-        initVideo(fileNames[videoAtual].c_str());
-        }
-    ClearPast();
-    initBG();
-    runVideo();
-}
-void ProjetoFinal::on_closeButtom_clicked()
-{
-    auxiliarWindow->close();
-    exit(0);
-}
-
-
-void ProjetoFinal::on_runDemoKalman_clicked()
-{
-    pauseVideo();
-    MyKalmanFilter::runDemo2();
-}
-
-
-void ProjetoFinal::on_clearButtom_clicked()
-{
-    ui->logText->clear();
-}
 
 
 void ProjetoFinal::on_ColorMinChannelOption_currentIndexChanged(int index)
@@ -683,5 +691,70 @@ vector<Point> ProjetoFinal::DetectColoredObjects(Mat &RGB_Input,
 
     }
 
+//-------------------------------------------------------
+//--------------------KALMAN FILTER MODE-----------------
+//-------------------------------------------------------
 
+void ProjetoFinal::initKFs(){
+        redKF   = new KalmanFilter(6, 2, 0);
+        greenKF = new KalmanFilter(6, 2, 0);
+        blueKF  = new KalmanFilter(6, 2, 0);
+        //kalman filter com 4 variáveis de estado e 2 de medida
 
+        for(int i = 0; i < 3; i++)
+        {//apenas copiei e colei a inicialização do runDemo3
+        KalmanFilter *KF;
+        switch(i){//determina qual KF inicializar
+            case 0:
+                KF = redKF;
+                break;
+            case 1:
+                KF = greenKF;
+                break;
+            case 2:
+                KF = blueKF;
+                break;
+            default:
+                reportBad("Opção Inválida ao inicial KF's");
+                break;
+            }
+
+            //condições iniciais de posição
+            KF->statePre.at<float>(0) = 0;
+            KF->statePre.at<float>(1) = 0;
+            //condições iniciais de velocidade
+            KF->statePre.at<float>(2) = 0;
+            KF->statePre.at<float>(3) = 0;
+            //condições iniciais de aceleração
+            KF->statePre.at<float>(4) = 0;
+            KF->statePre.at<float>(5) = 0;
+
+            KF->transitionMatrix =
+                *(
+                    Mat_<float>(6, 6) <</*		Sx	Sy	Vx	Vy	Ax		Ay	*/
+                                        /*Sx*/	 1,	0,	1,	0,	0.5,	0,
+                                        /*Sy*/	 0,	1,	0,	1,	0,		0.5,
+                                        /*Vx*/	 0,	0,	1,	0,	1,		0,
+                                        /*Vy*/	 0,	0,	0,	1,	0,		1,
+                                        /*Ax*/	 0,	0,	0,	0,	1,		0,
+                                        /*Ay*/	 0,	0,	0,	0,	0,		1
+                                );
+            KF->measurementMatrix =
+                    *(
+                    Mat_<float>(2,6) <<
+                                1, 0, 1, 0, 0.5, 0,
+                                0, 1, 0, 1, 0, 0.5
+                        );
+
+            //erro no processo de medida??
+            setIdentity(KF->processNoiseCov, Scalar::all(1e-4));
+
+            //erro nas pedidas?
+            setIdentity(KF->measurementNoiseCov, Scalar::all(1e-1));
+
+            //erro a posteriori?
+            setIdentity(KF->errorCovPost, Scalar::all(.1));
+
+        }
+
+    }

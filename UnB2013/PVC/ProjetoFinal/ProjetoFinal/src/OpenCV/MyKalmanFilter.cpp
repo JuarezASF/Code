@@ -465,8 +465,8 @@ void runDemo3(ProjetoFinal &mainWindow){
                 DelfusOracle.correct(predictedMeasurement);
                 DelfusOracle.errorCovPre.copyTo(DelfusOracle.errorCovPost);
                 }
-            KF.predict();
 
+            KF.predict();
             //corrige com o novo ponto medido
             Mat estimated = KF.correct(measurement);
             Point statePt(estimated.at<float>(0),estimated.at<float>(1));

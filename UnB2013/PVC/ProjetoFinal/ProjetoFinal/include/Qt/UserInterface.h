@@ -12,12 +12,14 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/video/background_segm.hpp>
+#include <opencv2/video/tracking.hpp>
 
 #include "cv2qtimage.h"
 #include "myString.h"
 #include "secondWindow.h"
 #include "MyKalmanFilter.h"
 #include "ColorDetection.h"
+#include "myMath.h"
 
 using namespace  cv;
 
@@ -70,11 +72,6 @@ public:
     //controle de execução
     bool run;
 
-private:
-    vector<vector<Scalar> > rangesToDetect;
-    vector<Scalar> colorsToPaint;
-    vector<Point> pastHistory[3];
-    //histórico para objetos da ordem [R,G,B] = [0,1,2]
 
 public:
     explicit ProjetoFinal(QWidget *parent = 0);
@@ -113,6 +110,16 @@ private:
     vector<Point> DetectColoredObjects(Mat &RGB_Input,
                     vector<vector<Scalar> > rangesToDetect,
                                        vector<bool> &sucesso);
+    vector<vector<Scalar> > rangesToDetect;
+    vector<Scalar> colorsToPaint;
+    vector<Point> pastHistory[3];
+    //histórico para objetos da ordem [R,G,B] = [0,1,2]
+
+
+    //MODULO FILTRO DE KALMAN
+    KalmanFilter *redKF, *blueKF, *greenKF;
+    vector<Point> kalmanHistory[3];
+    void initKFs();
 
 
 private slots:

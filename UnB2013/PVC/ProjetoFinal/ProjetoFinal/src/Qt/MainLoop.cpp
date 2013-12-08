@@ -89,34 +89,72 @@ void ProjetoFinal::process()
                         //estão definidas na função setColor (ou algo assim)
                         //é uma função da interface
 
+                        //MEDIDA DA DETECÇÃO DE MOVIMENTO
                         vector<bool> sucesso;
                         sucesso.resize(3, false);
                         vector<Point> centers =
                             this->DetectColoredObjects(frame,rangesToDetect, sucesso);
 
+                //FILTRAGEM COM KALMAN
+
+                vector<Point> kalmanCenters;
+                kalmanCenters.resize(centers.size());
+                for(int i = 0; i < 3; i++)
+                    {
+                        KalmanFilter *KF;
+                        switch(i){//determina qual KF processar
+                            case 0:
+                                KF = redKF;
+                                break;
+                            case 1:
+                                KF = greenKF;
+                                break;
+                            case 2:
+                                KF = blueKF;
+                                break;
+                            default:
+                                reportBad("Opção Inválida ao inicial KF's");
+                                break;
+                            }
+                        Mat_<float> measurement(2,1);
+                        measurement(0) = centers[i].x;
+                        measurement(1) = centers[i].y;
+
+                        KF->predict();
+                        //corrige com o novo ponto medido
+
+                        Mat estimated = KF->correct(measurement);
+                        Point statePt(estimated.at<float>(0),estimated.at<float>(1));
+
+                        kalmanCenters[i] = statePt;
+
+                        }
                         frame.copyTo(outputFrame);
 
                         float crossSize = 10;
                         Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, sucesso);
+                        //VISÃO DO FUTURO
 
-                        bool AddToPast = true;
-                        for(int i = 0; i < 3; i++)
-                            {
-                                if(sucesso[i] == false)
-                                    AddToPast = false;
-                             }
-
-                        if(AddToPast == true)
-                         {
-                            for(int i = 0; i < 3; i++)
-                               pastHistory[i].push_back(centers[i]);
-                         }
-
-                        //for(int i = 0; i < 3; i++)
-                          //  pastHistory[i].push_back(centers[i]);
-
+                        //VISÃO DO PASSADO
                         if(pastMode == true)
                         {
+                                if(pastHistory[0].size() > 100)
+                                    ClearPast();
+
+                                bool AddToPast = true;
+                                for(int i = 0; i < 3; i++)
+                                    {
+                                        if(sucesso[i] == false)
+                                            AddToPast = false;
+                                     }
+
+                                if(AddToPast == true)
+                                 {
+                                    for(int i = 0; i < 3; i++)
+                                       pastHistory[i].push_back(centers[i]);
+                                 }
+
+
                                 for(unsigned int n = 0; n < 3; n++)
                                     if(sucesso[n] == true && pastHistory[n].size() > 5)
                                         for (unsigned int i = 0; i < pastHistory[n].size()-1; i++)
