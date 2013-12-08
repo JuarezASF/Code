@@ -101,6 +101,14 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     ui->SizeOfGaussian->addItem("71");
     ui->SizeOfGaussian->setCurrentIndex(7);
 
+    //GLOBAL MODE BUTTOM
+    ui->GlobalModeOption->addItem("Run");
+    ui->GlobalModeOption->addItem("Calibration");
+
+    //DEFINE CORES PARA DETECTAR NO MODO GLOBAL
+    setColorsToDetect();
+
+
 
 }
 
@@ -563,3 +571,52 @@ void ProjetoFinal::on_SizeOfGaussian_currentIndexChanged(int index)
         //ordem : 3 5 7 9 11 13 21 31
         SizeGaussFilter = ui->SizeOfGaussian->currentText().toInt();
 }
+
+void ProjetoFinal::on_GlobalModeOption_currentIndexChanged(int index)
+{
+        switch(index){
+            case 0:
+                CONTROL_MODE_RUN = true;
+                CONTROL_MODE_CALIBRATION =  false;
+ //               ui->ColorMaxChannelSlider->set
+                break;
+            case 1:
+                CONTROL_MODE_RUN = false;
+                CONTROL_MODE_CALIBRATION =  true;
+                break;
+            default:
+                reportBad("Opção não definida em GlobalModeOption!");
+                break;
+            }
+}
+
+void ProjetoFinal::setColorsToDetect(){
+        Scalar RGB_RED(0,0,255);
+        Scalar colorMinRed(160,70,0);
+        Scalar colorMaxRed(179, 255, 255);
+        vector<Scalar> rangeRed;
+        rangeRed.push_back(colorMinRed);
+        rangeRed.push_back(colorMaxRed);
+
+        Scalar RGB_BLUE(255,0,0);
+        Scalar colorMinBlue(75, 70, 0);
+        Scalar colorMaxBlue(130, 255, 255);
+        vector<Scalar> rangeBlue;
+        rangeBlue.push_back(colorMinBlue);
+        rangeBlue.push_back(colorMaxBlue);
+
+        Scalar RGB_GREEN(0,255,0);
+        Scalar colorMinYellow(22, 70, 0);
+        Scalar colorMaxYellow(38, 255, 255);
+        vector<Scalar> rangeYellow;
+        rangeYellow.push_back(colorMinYellow);
+        rangeYellow.push_back(colorMaxYellow);
+
+        rangesToDetect.push_back(rangeRed);
+        rangesToDetect.push_back(rangeBlue);
+        rangesToDetect.push_back(rangeYellow);
+
+        colorsToPaint.push_back(RGB_RED);
+        colorsToPaint.push_back(RGB_BLUE);
+        colorsToPaint.push_back(RGB_GREEN);
+    }

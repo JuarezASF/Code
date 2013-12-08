@@ -51,3 +51,27 @@ Dividing moment10 by area gives the X coordinate of the yellow ball,
         return result;
 
     }
+
+vector<Point> ColorDetection::DetectColoredObjects(Mat &RGB_Input,
+                vector<vector<Scalar> > rangesToDetect){
+        vector<Point> centers;
+        Mat HSV_Input;
+        cvtColor(RGB_Input, HSV_Input, CV_BGR2HSV);
+
+        for(unsigned int i = 0; i < rangesToDetect.size(); i++){
+                Scalar colorMin = rangesToDetect[i][0];
+                Scalar colorMax = rangesToDetect[i][1];
+
+                Mat BinaryImg =
+                        ColorDetection::GetThresholdedImage(
+                            HSV_Input, colorMin,colorMax);
+                Point currentCenter =
+                        ColorDetection::FindCenter(BinaryImg);
+
+                centers.push_back(currentCenter);
+            }
+
+        return centers;
+
+    }
+

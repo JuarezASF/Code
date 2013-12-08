@@ -19,6 +19,30 @@ void Draw::Cross(Mat &img, const Point center,
 				color, 2, CV_AA, 0);
 }
 
+void Draw::Crosses(Mat &img, vector<Point> points,
+					vector<Scalar> colors ,float d)
+	{
+
+		bool MODE_SINGLE_COLOR = false;
+
+		if(points.size() != colors.size())
+			MODE_SINGLE_COLOR = true;
+
+		for(unsigned int i = 0; i < points.size(); i++)				{
+			Scalar *currentColor;
+			if(MODE_SINGLE_COLOR)
+				currentColor =
+						new Scalar(255, 255, 255);
+			else
+				currentColor =
+						new Scalar(colors[i]);
+			Draw::Cross(img, points[i],												*currentColor,d);
+
+			delete currentColor;
+			}
+	}
+
+
 void Draw::dashedLine(Mat &img, const Point &start, const Point &end,
 					const Scalar &color, int dashSize)
 {

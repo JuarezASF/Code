@@ -33,7 +33,8 @@ extern bool CONTROL_COLORDETECTION;
 extern bool CONTROL_FILTER_GAUSSIAN;
 extern int  SizeGaussFilter;
 
-
+extern bool CONTROL_MODE_RUN;
+extern bool CONTROL_MODE_CALIBRATION;
 
 class ProjetoFinal : public QMainWindow
 {
@@ -67,6 +68,9 @@ public:
     //controle de execução
     bool run;
 
+private:
+    vector<vector<Scalar> > rangesToDetect;
+    vector<Scalar> colorsToPaint;
 public:
     explicit ProjetoFinal(QWidget *parent = 0);
     ~ProjetoFinal();
@@ -99,6 +103,7 @@ private:
 
     //Módulo de Detecção de cores
     void updateColorTrackBars();
+    void setColorsToDetect();
 
 
 private slots:
@@ -127,6 +132,7 @@ private slots:
     void on_ColorDetectionButtom_clicked();
     void on_BorrarButtom_clicked();
     void on_SizeOfGaussian_currentIndexChanged(int index);
+    void on_GlobalModeOption_currentIndexChanged(int index);
     };
 
 #endif // PROJETOFINAL_H

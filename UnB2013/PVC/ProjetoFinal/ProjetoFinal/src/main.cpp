@@ -45,6 +45,10 @@ Red 160-179
 bool CONTROL_BGSub = false;
 bool CONTROL_COLORDETECTION = true;
 bool CONTROL_FILTER_GAUSSIAN = true;
+
+bool CONTROL_MODE_RUN         = true;
+bool CONTROL_MODE_CALIBRATION = false;
+
 int SizeGaussFilter = 31;
 
 int main(int argc, char *argv[])

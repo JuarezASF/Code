@@ -67,15 +67,32 @@ void ProjetoFinal::process()
         //------------------------------------------------
         if(CONTROL_COLORDETECTION)
             {
-              Mat frameHSV;
-              cvtColor(frame, frameHSV, CV_BGR2HSV);
+                if(CONTROL_MODE_CALIBRATION){
+                    Mat frameHSV;
+                    cvtColor(frame, frameHSV, CV_BGR2HSV);
 
-             outputFrame = ColorDetection::GetThresholdedImage
-                        (frameHSV,minCorHSV, maxCorHSV);
+                    outputFrame = ColorDetection::GetThresholdedImage
+                                  (frameHSV,minCorHSV, maxCorHSV);
 
-             Point targetDetected = ColorDetection::FindCenter(outputFrame);
+                    Point targetDetected = ColorDetection::FindCenter(outputFrame);
 
-             Draw::Cross(currentFrame,targetDetected, Scalar(255, 0, 0), 10);
+                    Draw::Cross(currentFrame,targetDetected, Scalar(255, 0, 0), 10);
+
+                    }
+                if(CONTROL_MODE_RUN){
+                        //as cores para pintar e a serem trackeadas
+                        //estão definidas na função setColor (ou algo assim)
+                        //é uma função da interface
+
+                        vector<Point> centers =
+                            ColorDetection::DetectColoredObjects(frame,rangesToDetect);
+
+                        frame.copyTo(outputFrame);
+
+                        float crossSize;
+                        Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize);
+
+                    }
 
             }
 

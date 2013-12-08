@@ -21,6 +21,9 @@ public:
 
     static Point FindCenter(Mat &imgBin);
 
+    static vector<Point> DetectColoredObjects(Mat &rgbImg,
+                    vector<vector<Scalar> > rangesTodetect);
+
 };
 
 #endif // COLORDETECTION_H

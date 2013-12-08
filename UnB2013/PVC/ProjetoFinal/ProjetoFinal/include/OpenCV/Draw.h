@@ -20,6 +20,9 @@ public:
 	static void Cross(Mat &img, const Point center,
 			const Scalar &color, float d);
 
+	static void Crosses(Mat &img, vector<Point> points,
+						vector<Scalar> colors ,float d);
+
 	static void dashedLine(Mat &img, const Point &start,
 			const Point & end, const Scalar &color, int dashSize = 2);
 
