@@ -35,6 +35,13 @@ public:
 
 	static void Text_in_a_Box(Mat &img, Point origin, string text,
 			Scalar color, double fontScale);
+
+	static void Circles(Mat &src, vector<Vec3f> circles,
+								vector<Scalar> colors);
+	/**circles deve conter: (x, y, R) = [0,1,2]
+	onde x e y são as coordenadas do centro e
+	R é o raio do círculo*/
+
 };
 
 #endif /* DRAW_H_ */

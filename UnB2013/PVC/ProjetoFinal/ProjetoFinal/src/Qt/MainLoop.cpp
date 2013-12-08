@@ -129,7 +129,19 @@ void ProjetoFinal::process()
                         kalmanCenters[i] = statePt;
 
                         }
+
+                        //DRAWING KALMAN'S CENTERS
+                        vector<Vec3f> kalmanCircles;
+                        float radiusKalmanCircles = 20;
+                        for(unsigned int i = 0; i < kalmanCenters.size(); i++){
+                                Vec3f currentCircle(kalmanCenters[i].x, kalmanCenters[i].y,
+                                      radiusKalmanCircles);
+                                kalmanCircles.push_back(currentCircle);
+                            }
+
                         frame.copyTo(outputFrame);
+                        Draw::Circles(outputFrame, kalmanCircles, colorsToPaint);
+
 
                         float crossSize = 10;
                         Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, sucesso);

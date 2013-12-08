@@ -115,3 +115,17 @@ void Draw::Text_in_a_Box(Mat &img, Point origin, string text,
 
 }
 
+void Draw::Circles(Mat &src, vector<Vec3f> circles,
+							vector<Scalar> colors){
+	/// Draw the circles detected
+	  for( size_t i = 0; i < circles.size(); i++ )
+	  {
+		  Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+		  int radius = cvRound(circles[i][2]);
+		  // circle center
+		  circle( src, center, 3, colors[i], -1, 8, 0 );
+		  // circle outline
+		  circle( src, center, radius, colors[i], 3, 8, 0 );
+	   }
+}
+
