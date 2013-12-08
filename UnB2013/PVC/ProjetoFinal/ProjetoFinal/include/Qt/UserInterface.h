@@ -36,6 +36,8 @@ extern int  SizeGaussFilter;
 extern bool CONTROL_MODE_RUN;
 extern bool CONTROL_MODE_CALIBRATION;
 
+extern int ColorDetectionThreshold;
+
 class ProjetoFinal : public QMainWindow
 {
     Q_OBJECT
@@ -71,6 +73,9 @@ public:
 private:
     vector<vector<Scalar> > rangesToDetect;
     vector<Scalar> colorsToPaint;
+    vector<Point> pastHistory[3];
+    //histórico para objetos da ordem [R,G,B] = [0,1,2]
+
 public:
     explicit ProjetoFinal(QWidget *parent = 0);
     ~ProjetoFinal();
@@ -104,6 +109,10 @@ private:
     //Módulo de Detecção de cores
     void updateColorTrackBars();
     void setColorsToDetect();
+    void ClearPast();
+    vector<Point> DetectColoredObjects(Mat &RGB_Input,
+                    vector<vector<Scalar> > rangesToDetect,
+                                       vector<bool> &sucesso);
 
 
 private slots:
@@ -133,6 +142,8 @@ private slots:
     void on_BorrarButtom_clicked();
     void on_SizeOfGaussian_currentIndexChanged(int index);
     void on_GlobalModeOption_currentIndexChanged(int index);
+    void on_ClearPastButtom_clicked();
+    void on_ColorDetectionThresholdSlider_valueChanged(int value);
     };
 
 #endif // PROJETOFINAL_H

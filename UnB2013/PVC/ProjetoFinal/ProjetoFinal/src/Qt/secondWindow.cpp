@@ -17,7 +17,6 @@ void secondWindow::setWindow(const cv::Mat &img, int n)
 {
     QImage myQImg = Cv2QtImage::Mat2QImage(img);
     QPixmap myQpix = QPixmap::fromImage(myQImg);
-    myQpix =  myQpix.scaled(ui->window1->size(),  Qt::IgnoreAspectRatio);
 
     QLabel *target;
 
@@ -51,6 +50,10 @@ void secondWindow::setWindow(const cv::Mat &img, int n)
             target = ui->window8;
             break;
     }
+
+    myQpix =  myQpix.scaled(target->size());
+    //myQpix =  myQpix.scaled(target->size(),  Qt::IgnoreAspectRatio);
+
     target->setPixmap(myQpix);
 }
 

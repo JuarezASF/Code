@@ -19,10 +19,11 @@ public:
                                     Scalar colorMin,
                                     Scalar colorMax);
 
-    static Point FindCenter(Mat &imgBin);
+    static Point FindCenter(Mat &imgBin, int threshold, bool &sucesso);
 
     static vector<Point> DetectColoredObjects(Mat &rgbImg,
-                    vector<vector<Scalar> > rangesTodetect);
+                    vector<vector<Scalar> > rangesTodetect,
+                        int colorThreshold,vector<bool> &sucesso);
 
 };
 

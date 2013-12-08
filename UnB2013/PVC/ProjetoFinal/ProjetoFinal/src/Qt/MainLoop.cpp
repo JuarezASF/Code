@@ -74,9 +74,14 @@ void ProjetoFinal::process()
                     outputFrame = ColorDetection::GetThresholdedImage
                                   (frameHSV,minCorHSV, maxCorHSV);
 
-                    Point targetDetected = ColorDetection::FindCenter(outputFrame);
+                    bool sucesso;
 
-                    Draw::Cross(currentFrame,targetDetected, Scalar(255, 0, 0), 10);
+                    Point targetDetected = ColorDetection::FindCenter(outputFrame,
+                                                                      ColorDetectionThreshold,
+                                                                      sucesso);
+
+                    if(sucesso)
+                        Draw::Cross(currentFrame,targetDetected, Scalar(255, 0, 0), 10);
 
                     }
                 if(CONTROL_MODE_RUN){
@@ -84,14 +89,40 @@ void ProjetoFinal::process()
                         //estão definidas na função setColor (ou algo assim)
                         //é uma função da interface
 
+                        vector<bool> sucesso;
+                        sucesso.resize(3, false);
                         vector<Point> centers =
-                            ColorDetection::DetectColoredObjects(frame,rangesToDetect);
+                            this->DetectColoredObjects(frame,rangesToDetect, sucesso);
 
                         frame.copyTo(outputFrame);
 
-                        float crossSize;
-                        Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize);
+                        float crossSize = 10;
+                        Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, sucesso);
 
+                        bool AddToPast = true;
+                        for(int i = 0; i < 3; i++)
+                            {
+                                if(sucesso[i] == false)
+                                    AddToPast = false;
+                             }
+
+                        if(AddToPast == true)
+                         {
+                            for(int i = 0; i < 3; i++)
+                               pastHistory[i].push_back(centers[i]);
+                         }
+
+                        //for(int i = 0; i < 3; i++)
+                          //  pastHistory[i].push_back(centers[i]);
+
+                        if(pastMode == true)
+                        {
+                                for(unsigned int n = 0; n < 3; n++)
+                                    if(sucesso[n] == true && pastHistory[n].size() > 5)
+                                        for (unsigned int i = 0; i < pastHistory[n].size()-1; i++)
+                                            Draw::dashedLine(outputFrame, pastHistory[n][i], pastHistory[n][i+1],
+                                                colorsToPaint[n]);
+                        }
                     }
 
             }

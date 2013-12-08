@@ -15,7 +15,8 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     //botões de passado e futuro
     connect(ui->pastButtom, SIGNAL(stateChanged(int)), this, SLOT(on_pastButtom_stateChanged(int)));
     connect(ui->futureButtom, SIGNAL(stateChanged(int)), this, SLOT(on_futureButtom_stateChanged(int)));
-    pastMode = false;
+    ui->pastButtom->setChecked(true);
+    pastMode = true;
     futureMode = false;
 
     //set cursor
@@ -204,6 +205,7 @@ void ProjetoFinal::setOutputImg(const cv::Mat &img){
 void ProjetoFinal::on_pastButtom_stateChanged(int arg1)
 {
     pastMode = ui->pastButtom->isChecked();
+    ClearPast();
 }
 
 void ProjetoFinal::on_futureButtom_stateChanged(int arg1)
@@ -274,6 +276,7 @@ void ProjetoFinal::on_restartButtom_clicked()
     runVideo();
     report("Reiniciando o vídeo\n");
     initBG();
+    ClearPast();
 }
 
 void ProjetoFinal::on_speedSlider_sliderMoved(int position)
@@ -336,6 +339,7 @@ void ProjetoFinal::on_videoFileOption_currentIndexChanged(int index)
         //subtraimos 1 pq o 0 e a webcam
         initVideo(fileNames[videoAtual].c_str());
         }
+    ClearPast();
     initBG();
     runVideo();
 }
@@ -540,7 +544,11 @@ void ProjetoFinal::updateColorTrackBars()
 
     }
 
-
+void ProjetoFinal::on_ColorDetectionThresholdSlider_valueChanged(int value)
+{
+    ui->ColorDetectionThresholdSliderValue->setText(QString::number(value));
+    ColorDetectionThreshold = value;
+}
 
 void ProjetoFinal::on_BackGroundSubButtom_clicked()
 {
@@ -592,31 +600,88 @@ void ProjetoFinal::on_GlobalModeOption_currentIndexChanged(int index)
 
 void ProjetoFinal::setColorsToDetect(){
         Scalar RGB_RED(0,0,255);
-        Scalar colorMinRed(160,70,0);
+        Scalar colorMinRed(160,70,50);
         Scalar colorMaxRed(179, 255, 255);
         vector<Scalar> rangeRed;
         rangeRed.push_back(colorMinRed);
         rangeRed.push_back(colorMaxRed);
 
-        Scalar RGB_BLUE(255,0,0);
-        Scalar colorMinBlue(75, 70, 0);
-        Scalar colorMaxBlue(130, 255, 255);
-        vector<Scalar> rangeBlue;
-        rangeBlue.push_back(colorMinBlue);
-        rangeBlue.push_back(colorMaxBlue);
-
         Scalar RGB_GREEN(0,255,0);
-        Scalar colorMinYellow(22, 70, 0);
+        Scalar colorMinYellow(22, 70, 50);
         Scalar colorMaxYellow(38, 255, 255);
         vector<Scalar> rangeYellow;
         rangeYellow.push_back(colorMinYellow);
         rangeYellow.push_back(colorMaxYellow);
 
+        Scalar RGB_BLUE(255,0,0);
+        Scalar colorMinBlue(75, 70, 50);
+        Scalar colorMaxBlue(130, 255, 255);
+        vector<Scalar> rangeBlue;
+        rangeBlue.push_back(colorMinBlue);
+        rangeBlue.push_back(colorMaxBlue);
+
+
         rangesToDetect.push_back(rangeRed);
-        rangesToDetect.push_back(rangeBlue);
         rangesToDetect.push_back(rangeYellow);
+        rangesToDetect.push_back(rangeBlue);
+
 
         colorsToPaint.push_back(RGB_RED);
-        colorsToPaint.push_back(RGB_BLUE);
         colorsToPaint.push_back(RGB_GREEN);
+        colorsToPaint.push_back(RGB_BLUE);
     }
+
+
+void ProjetoFinal::ClearPast(){
+        for(unsigned int i = 0; i < 3; i++)
+            if(!pastHistory[i].empty())
+                pastHistory[i].clear();
+    return;
+    }
+
+void ProjetoFinal::on_ClearPastButtom_clicked()
+{
+        ClearPast();
+
+    }
+
+//-------------------------------------------------------
+//--------------------DETECTA OBJETOS--------------------
+//-------------------------------------------------------
+
+vector<Point> ProjetoFinal::DetectColoredObjects(Mat &RGB_Input,
+                vector<vector<Scalar> > rangesToDetect,
+                                                 vector<bool> &sucesso)
+    {
+        vector<Point> centers;
+        Mat HSV_Input;
+        cvtColor(RGB_Input, HSV_Input, CV_BGR2HSV);
+
+        for(unsigned int i = 0; i < rangesToDetect.size(); i++){
+                Scalar colorMin = rangesToDetect[i][0];
+                Scalar colorMax = rangesToDetect[i][1];
+
+                Mat BinaryImg =
+                        ColorDetection::GetThresholdedImage(
+                            HSV_Input, colorMin,colorMax);
+
+                auxiliarWindow->setWindow(BinaryImg, i+2);
+
+                bool currentSucess;
+
+                Point currentCenter =
+                        ColorDetection::FindCenter(BinaryImg,
+                                                   ColorDetectionThreshold,
+                                                   currentSucess);
+
+                sucesso[i] = currentSucess;
+
+                centers.push_back(currentCenter);
+            }
+
+        return centers;
+
+    }
+
+
+

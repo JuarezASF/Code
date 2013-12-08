@@ -16,7 +16,7 @@ Mat ColorDetection::GetThresholdedImage(Mat &imgHSV,
        return imgThresh;
 }
 
-Point ColorDetection::FindCenter(Mat &imgBin)
+Point ColorDetection::FindCenter(Mat &imgBin, int threshold, bool &sucesso)
     /*calcula o centro do objeto com técnicas de momento:
 (from OpenCV documentation)
 Moments moments(InputArray array, bool binaryImage=false )
@@ -48,12 +48,15 @@ Dividing moment10 by area gives the X coordinate of the yellow ball,
 
         Point result(iPosX, iPosY);
 
-        return result;
+        sucesso = (myMoment.m00 > threshold)? true : false;
 
+        return result;
     }
 
 vector<Point> ColorDetection::DetectColoredObjects(Mat &RGB_Input,
-                vector<vector<Scalar> > rangesToDetect){
+                vector<vector<Scalar> > rangesToDetect, int colorThreshold,
+                                                   vector<bool> &sucesso)
+    {
         vector<Point> centers;
         Mat HSV_Input;
         cvtColor(RGB_Input, HSV_Input, CV_BGR2HSV);
@@ -65,8 +68,13 @@ vector<Point> ColorDetection::DetectColoredObjects(Mat &RGB_Input,
                 Mat BinaryImg =
                         ColorDetection::GetThresholdedImage(
                             HSV_Input, colorMin,colorMax);
+
+                bool currentSucess;
+
                 Point currentCenter =
-                        ColorDetection::FindCenter(BinaryImg);
+                        ColorDetection::FindCenter(BinaryImg, colorThreshold,
+                                                   currentSucess);
+                sucesso[i] = currentSucess;
 
                 centers.push_back(currentCenter);
             }

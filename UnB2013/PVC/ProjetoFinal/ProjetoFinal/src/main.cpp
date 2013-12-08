@@ -51,6 +51,8 @@ bool CONTROL_MODE_CALIBRATION = false;
 
 int SizeGaussFilter = 31;
 
+int ColorDetectionThreshold = 30;
+
 int main(int argc, char *argv[])
 {
     QApplication prog(argc, argv);
