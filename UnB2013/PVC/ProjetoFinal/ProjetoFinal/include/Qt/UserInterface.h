@@ -92,6 +92,7 @@ public:
     //funções para imprimir texto(atualmente são todas iguais)
     void report(string text);
     void reportGood(string text);
+    void reportGood(QString text);
     void reportBad(string text);
     void reportWarning(string text);
 
@@ -160,9 +161,15 @@ private slots:
     void on_ColorDetectionThresholdSlider_valueChanged(int value);
     void on_InitKalmanButtom_clicked();
     void on_raioSlider_valueChanged(int value);
+    void on_saveButtom_clicked();
+    void on_SaveInputButtom_clicked();
     };
 
 #endif // PROJETOFINAL_H
+
+
+
+
 
 
 

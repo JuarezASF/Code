@@ -109,7 +109,9 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     //DEFINE CORES PARA DETECTAR NO MODO GLOBAL
     setColorsToDetect();
 
-
+    //SALVAR IMAGEM DE SAÍDA
+    ui->SaveLineEdit->setText("../images/.jpg");
+    ui->SaveInputEdit->setText("../images/input.jpg");
 }
 
 void ProjetoFinal::initSecondWindow(){
@@ -236,6 +238,11 @@ void ProjetoFinal::report(string text)
 void ProjetoFinal::reportGood(string text)
 {
     ui->logText->appendPlainText(QString(text.c_str()));
+}
+
+void ProjetoFinal::reportGood(QString text)
+{
+    ui->logText->appendPlainText(text);
 }
 
 void ProjetoFinal::reportBad(string text)
@@ -607,8 +614,10 @@ void ProjetoFinal::on_GlobalModeOption_currentIndexChanged(int index)
 
 void ProjetoFinal::setColorsToDetect(){
         Scalar RGB_RED(0,0,255);
-        Scalar colorMinRed(0,70,50);
-        Scalar colorMaxRed(22, 255, 255);
+        //Scalar colorMinRed(0,70,50);
+        //Scalar colorMaxRed(22, 255, 255);
+        Scalar colorMinRed(160,70,50);
+        Scalar colorMaxRed(179, 255, 255);
         vector<Scalar> rangeRed;
         rangeRed.push_back(colorMinRed);
         rangeRed.push_back(colorMaxRed);
@@ -836,4 +845,38 @@ void ProjetoFinal::on_raioSlider_valueChanged(int value)
 {
     Raio = value;
     ui->raioValueLabel->setText(QString::number(value));
+}
+
+void ProjetoFinal::on_saveButtom_clicked()
+{
+    QString file = ui->SaveLineEdit->text();
+
+    const QPixmap *img = ui->outputImg->pixmap();
+
+    bool sucesso = img->save(file, "JPG", 100);
+
+    if(sucesso == true)
+        {
+            ui->SaveLineEdit->setText("../images/.jpg");
+            reportGood("imagem de saída salva em :" + file);
+        }
+    else
+        reportBad("Imagem não pode ser salva!");
+}
+
+void ProjetoFinal::on_SaveInputButtom_clicked()
+{
+        QString file = ui->SaveInputEdit->text();
+
+        const QPixmap *img = ui->inputImg->pixmap();
+
+        bool sucesso = img->save(file, "JPG", 100);
+
+        if(sucesso == true)
+            {
+                ui->SaveLineEdit->setText("../images/input.jpg");
+                reportGood("imagem de entrada salva em :" + file);
+            }
+        else
+            reportBad("Imagem não pode ser salva!");
 }

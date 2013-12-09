@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1093</width>
-    <height>565</height>
+    <width>1104</width>
+    <height>605</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -397,7 +397,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>32</x>
@@ -440,7 +440,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>690</x>
@@ -479,6 +479,65 @@
      </item>
     </layout>
    </widget>
+   <widget class="QWidget" name="layoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>490</y>
+      <width>491</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QLabel" name="SaveInputLabel">
+       <property name="text">
+        <string>input save to: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="SaveInputEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="SaveInputButtom">
+       <property name="text">
+        <string>save</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>460</y>
+      <width>491</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_9">
+     <item>
+      <widget class="QLabel" name="SaveLabel">
+       <property name="text">
+        <string>output save to: </string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="SaveLineEdit"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="saveButtom">
+       <property name="text">
+        <string>save</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
    <zorder>layoutWidget</zorder>
@@ -497,17 +556,17 @@
    <zorder>GlobalModeLabel</zorder>
    <zorder>GlobalModeOption</zorder>
    <zorder>ClearPastButtom</zorder>
-   <zorder>InitKalmanButtom</zorder>
-   <zorder>raioLabel</zorder>
-   <zorder>raioValueLabel</zorder>
-   <zorder>raioSlider</zorder>
+   <zorder>SaveLineEdit</zorder>
+   <zorder>SaveLabel</zorder>
+   <zorder>saveButtom</zorder>
+   <zorder>layoutWidget_2</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1093</width>
+     <width>1104</width>
      <height>20</height>
     </rect>
    </property>
