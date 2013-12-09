@@ -165,7 +165,9 @@ void ProjetoFinal::process()
                         float crossSize = 10;
                         Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, sucesso);
                         //VISÃO DO FUTURO
+
                         if(futureMode == true && CONTROL_KALMAN == true){
+                        int futureSize = 50;
                         for(int i = 0; i < 3; i++)
                             {
                                 future[i].clear();
@@ -185,7 +187,7 @@ void ProjetoFinal::process()
                                         break;
                                     }
                         KalmanFilter DelfusOracle = myMath::copyKF(*KF);
-                        int futureSize = 50;
+
                         for(int j = 0; j < futureSize; j++)
                             //CALCULA PONTOS DO FUTURO
                             {
@@ -215,9 +217,41 @@ void ProjetoFinal::process()
                                 ColorsToPaintFuture.push_back(currentColor);
                             }
                             Draw::Circles(outputFrame, kalmanFutureCircles, ColorsToPaintFuture);
-                        }//end for each color
-                        }//end if futuro
 
+                        }//end for each color
+
+                        for(unsigned int n = futureSize - 15; n < futureSize; n++){
+                                for(int i = 0; i < 3; i++)
+                                    for(int j = 3; j > i; j--)
+                                        {
+                                            float distance =
+                                                    pow(future[i][n].x - future[j][n].x, 2) +
+                                                    pow(future[i][n].y - future[j][n].y, 2);
+                                            distance = sqrt(distance);
+
+                                            float sumRadius = 2*Raio;
+
+                                            if(distance < sumRadius)
+                                                {
+                                                    float xColision =
+                                                            (future[i][n].x + future[j][n].x)*0.5;
+                                                    float yColision =
+                                                            (future[i][n].y + future[j][n].y)*0.5;
+
+                                                    Point colisionPoint(xColision, yColision);
+
+                                                    Scalar xColor(0, 0, 0);
+
+                                                    int xSize = 10;
+                                                    Draw::Cross(outputFrame, colisionPoint, xColor, xSize);
+
+                                                }
+
+                                        }
+
+                            }
+
+                        }//end if futuro
 
                         //VISÃO DO PASSADO
                         if(pastMode == true)
