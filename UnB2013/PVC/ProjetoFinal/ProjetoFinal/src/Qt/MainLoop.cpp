@@ -96,8 +96,9 @@ void ProjetoFinal::process()
                         sucesso.resize(3, false);
                         vector<Point> centers =
                             this->DetectColoredObjects(frame,rangesToDetect, sucesso);
-
-                //FILTRAGEM COM KALMAN
+                   //---------------------------------------------
+                   //---------Filtrando com Kalman----------------
+                   //---------------------------------------------
                     vector<Point> kalmanCenters;
                     vector<Scalar> colorsToPaintKalman;
                     if(CONTROL_KALMAN)
@@ -128,24 +129,34 @@ void ProjetoFinal::process()
                             Mat prediction = KF->predict();
                             if(sucesso[i] == true)
                                 {
+                                //caso a detecção tenha sido um sucesso jogamos a nova medida no filtro
+                                //ao chamar correct já estamos adicionando a nova medida ao filtro
                                 estimated = KF->correct(measurement);
                                 }
                             else{
+                                /*caso a medição tenha falhada realimentamos o filtro com a própria
+                                predição anterior*/
                                 Mat_<float> predictedMeasurement(2,1);
                                 predictedMeasurement(0) = prediction.at<float>(0);
                                 predictedMeasurement(1) = prediction.at<float>(1);
                                 estimated = KF->correct(predictedMeasurement);
                                 KF->errorCovPre.copyTo(KF->errorCovPost);
+                                //copiar a covPre para covPos [dica de um usuário de algum fórum]
                                 }
                             Point statePt(estimated.at<float>(0),estimated.at<float>(1));
 
                             kalmanCenters[i] = statePt;
+                            /*existe o centro medido pela previsão e o centro que o filtro de kalman
+                            acredita ser o real. O centro de kalman é uma ponderação das medidas e do modelo
+                            com conhecimento prévio de um erro aleatório*/
 
                         }
 
                         //DRAWING KALMAN'S CENTERS
                         vector<Vec3f> kalmanCircles;
                         float radiusKalmanCircles = Raio;
+                        //raio é uma variável global definida na interface em tempo de execução
+
                         for(unsigned int i = 0; i < kalmanCenters.size(); i++){
                                 Vec3f currentCircle(kalmanCenters[i].x, kalmanCenters[i].y,
                                       radiusKalmanCircles);
@@ -160,12 +171,13 @@ void ProjetoFinal::process()
 
                             }
                         Draw::Circles(outputFrame, kalmanCircles, colorsToPaint);
-                    }
+                    }// fim if filtro de kalman
 
                         float crossSize = 10;
                         Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, sucesso);
-                        //VISÃO DO FUTURO
-
+                   //---------------------------------------------
+                   //---------VISÃO DO FUTURO---------------------
+                   //---------------------------------------------
                         if(futureMode == true && CONTROL_KALMAN == true){
                         int futureSize = 50;
                         for(int i = 0; i < 3; i++)
@@ -186,70 +198,74 @@ void ProjetoFinal::process()
                                         reportBad("Opção Inválida ao inicial KF's");
                                         break;
                                     }
-                        KalmanFilter DelfusOracle = myMath::copyKF(*KF);
+                                KalmanFilter DelfusOracle = myMath::copyKF(*KF);
+                                /*para ver o futuro copiamos o estado do filtro atual e
+                                  o realimentamos com suas próprias previsões um número fixo de vezes*/
+                                for(int j = 0; j < futureSize; j++)
+                                    //CALCULA PONTOS DO FUTURO
+                                    {
+                                    Mat prediction = DelfusOracle.predict();
+                                    Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
+                                    future[i].push_back(predictPt);
 
-                        for(int j = 0; j < futureSize; j++)
-                            //CALCULA PONTOS DO FUTURO
-                            {
-                            Mat prediction = DelfusOracle.predict();
-                            Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
-                            future[i].push_back(predictPt);
+                                    Mat_<float> predictedMeasurement(2,1);
+                                    predictedMeasurement(0) = prediction.at<float>(0);
+                                    predictedMeasurement(1) = prediction.at<float>(1);
+                                    DelfusOracle.correct(predictedMeasurement);
+                                    DelfusOracle.errorCovPre.copyTo(DelfusOracle.errorCovPost);
+                                    //copiamos covPre para covPost seguindo a dica de um fórum
+                                    //o Vidal não gosta dessa dica, diz ele que isso engana o filtro
+                                     }
 
-                            Mat_<float> predictedMeasurement(2,1);
-                            predictedMeasurement(0) = prediction.at<float>(0);
-                            predictedMeasurement(1) = prediction.at<float>(1);
-                            DelfusOracle.correct(predictedMeasurement);
-                            DelfusOracle.errorCovPre.copyTo(DelfusOracle.errorCovPost);
+                                //DEZENHA PONTOS DO FUTURO
+                                vector<Vec3f> kalmanFutureCircles;
+                                vector<Scalar> ColorsToPaintFuture;
+                                for(unsigned int n = 0; n < future[i].size(); n++)
+                                    {
+                                        int KalmanFutureRaio = 2;
+                                        Vec3f currentCircle(future[i][n].x, future[i][n].y,
+                                              KalmanFutureRaio);
+                                        kalmanFutureCircles.push_back(currentCircle);
 
-                            }
+                                        Scalar currentColor;
+                                            currentColor = colorsToPaint[i];
+                                    ColorsToPaintFuture.push_back(currentColor);
+                                    }
+                                Draw::Circles(outputFrame, kalmanFutureCircles, ColorsToPaintFuture);
 
-                        //DEZENHA PONTOS DO FUTURO
-                        vector<Vec3f> kalmanFutureCircles;
-                        vector<Scalar> ColorsToPaintFuture;
-                        for(unsigned int n = 0; n < future[i].size(); n++){
-                                int KalmanFutureRaio = 2;
-                                Vec3f currentCircle(future[i][n].x, future[i][n].y,
-                                      KalmanFutureRaio);
-                                kalmanFutureCircles.push_back(currentCircle);
-
-                                Scalar currentColor;
-                                    currentColor = colorsToPaint[i];
-                                ColorsToPaintFuture.push_back(currentColor);
-                            }
-                            Draw::Circles(outputFrame, kalmanFutureCircles, ColorsToPaintFuture);
-
-                        }//end for each color
-
-                        for(unsigned int n = futureSize - 15; n < futureSize; n++){
-                                for(int i = 0; i < 3; i++)
-                                    for(int j = 3; j > i; j--)
-                                        {
-                                            float distance =
-                                                    pow(future[i][n].x - future[j][n].x, 2) +
-                                                    pow(future[i][n].y - future[j][n].y, 2);
-                                            distance = sqrt(distance);
-
-                                            float sumRadius = 2*Raio;
-
-                                            if(distance < sumRadius)
+                            }//end for each color
+                                /*para as últimas 15 estados futuros prevista pelo filtro
+                                  medimos a distância entre todas as partículas procurando por colisões */
+                                for(unsigned int n = futureSize - 15; n < futureSize; n++){
+                                        for(int i = 0; i < 3; i++)
+                                            for(int j = 3; j > i; j--)
                                                 {
-                                                    float xColision =
-                                                            (future[i][n].x + future[j][n].x)*0.5;
-                                                    float yColision =
-                                                            (future[i][n].y + future[j][n].y)*0.5;
+                                                    float distance =
+                                                            pow(future[i][n].x - future[j][n].x, 2) +
+                                                            pow(future[i][n].y - future[j][n].y, 2);
+                                                    distance = sqrt(distance);
 
-                                                    Point colisionPoint(xColision, yColision);
+                                                    float sumRadius = 2*Raio;
 
-                                                    Scalar xColor(0, 0, 0);
+                                                    if(distance < sumRadius)
+                                                        {
+                                                            float xColision =
+                                                                    (future[i][n].x + future[j][n].x)*0.5;
+                                                            float yColision =
+                                                                    (future[i][n].y + future[j][n].y)*0.5;
 
-                                                    int xSize = 10;
-                                                    Draw::Cross(outputFrame, colisionPoint, xColor, xSize);
+                                                            Point colisionPoint(xColision, yColision);
+
+                                                            Scalar xColor(0, 0, 0);
+
+                                                            int xSize = 10;
+                                                            Draw::Cross(outputFrame, colisionPoint, xColor, xSize);
+
+                                                        }
 
                                                 }
 
-                                        }
-
-                            }
+                                    }
 
                         }//end if futuro
 
@@ -262,6 +278,9 @@ void ProjetoFinal::process()
                                 bool AddToPast = true;
                                 for(int i = 0; i < 3; i++)
                                     {
+                                        //se qualquer uma das detecções de centro falhar, ignoramos o estaso
+                                        //e não o adicionamos na memória. Um estado completo deve possuir informações
+                                        //de todos os centros!
                                         if(sucesso[i] == false){
                                             AddToPast = false;
                                          }
@@ -280,6 +299,8 @@ void ProjetoFinal::process()
 
                                 for(unsigned int n = 0; n < 3; n++)
                                     if(sucesso[n] == true && pastHistory[n].size() > 5)
+                                        //se tivermos um número suficiente(5 funciona) de pontos no passado
+                                        //e o centro foi achado, então imprimimos o passado
                                         for (unsigned int i = 0; i < pastHistory[n].size()-1; i++)
                                            {
                                                 Draw::Line(outputFrame, pastHistory[n][i], pastHistory[n][i+1],
