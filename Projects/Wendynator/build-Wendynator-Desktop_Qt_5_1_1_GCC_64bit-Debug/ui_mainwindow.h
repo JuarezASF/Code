@@ -38,20 +38,20 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(559, 369);
+        MainWindow->resize(497, 537);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         logText = new QTextEdit(centralWidget);
         logText->setObjectName(QStringLiteral("logText"));
-        logText->setGeometry(QRect(60, 190, 451, 121));
+        logText->setGeometry(QRect(10, 340, 451, 121));
         logText->setReadOnly(true);
         InputImg = new QLabel(centralWidget);
         InputImg->setObjectName(QStringLiteral("InputImg"));
-        InputImg->setGeometry(QRect(120, 10, 301, 171));
+        InputImg->setGeometry(QRect(20, 10, 391, 311));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 559, 19));
+        menuBar->setGeometry(QRect(0, 0, 497, 19));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -67,7 +67,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Wendynator", 0));
         InputImg->setText(QString());
     } // retranslateUi
 

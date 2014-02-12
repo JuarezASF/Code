@@ -38,9 +38,18 @@ LIBS += -L/usr/local/lib \
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    cv2qtimage.cpp
+    cv2qtimage.cpp \
+    ColorDetection.cpp \
+    ColorSensor.cpp \
+    Draw.cpp \
+    myMath.cpp
 
 HEADERS  += mainwindow.h \
-    cv2qtimage.h
+    cv2qtimage.h \
+    InterfaceSensor.h \
+    ColorDetection.h \
+    ColorSensor.h \
+    Draw.h \
+    myMath.h
 
 FORMS    += mainwindow.ui

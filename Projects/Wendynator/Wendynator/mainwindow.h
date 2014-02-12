@@ -4,6 +4,7 @@
 //C++ LIBS
 #include <string>
 #include <iostream>
+#include <vector>
 
 //QT LIBS
 #include <QMainWindow>
@@ -19,6 +20,9 @@
 
 //MY LIBS
 #include "cv2qtimage.h"
+#include "InterfaceSensor.h"
+#include "ColorSensor.h"
+#include "Draw.h"
 
 
 using namespace cv;
@@ -26,6 +30,14 @@ using namespace cv;
 namespace Ui {
 class MainWindow;
 }
+
+namespace SensorType{
+    enum{
+        ColorSensor
+    };
+}
+
+extern unsigned char _CONTOTROL_SensorType;
 
 class MainWindow : public QMainWindow
 {
@@ -38,12 +50,17 @@ public:
 private://membros
     cv::VideoCapture *videoInput;
     cv::Mat currentFrame;
+    InterfaceSensor *mySensor;
 
 private:
     Ui::MainWindow *ui;
     QTimer *clock;
     void initVideo();
     void report(const string text);
+    void reportGood(const string text);
+    void reportBad(const string text);
+    void setWindow1(Mat &img);
+    void setSensorType(unsigned char type);
 
 private slots:
         void process();

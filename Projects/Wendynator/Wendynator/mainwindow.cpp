@@ -29,27 +29,49 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::process(){
+void MainWindow::process()
+{
 
     VideoCapture *video = videoInput;
 
     if(!video->isOpened())
         {
-        report("video não está pronto!");
+        reportBad("video não está pronto!");
         return;
         }
     *video >> currentFrame;
 
-    Mat img(currentFrame);
+    setSensorType(SensorType::ColorSensor);
 
+    Mat RGB_Input(currentFrame);
+    Mat RGB_Output(currentFrame);
+
+    if(_CONTOTROL_SensorType == SensorType::ColorSensor)
+        {
+        Scalar colorMin(38,0,0);
+        Scalar colorMax(75, 255, 255);
+        ((ColorSensor*) mySensor)->setRange(colorMin, colorMax);
+        }
+    try{
+        Point center = mySensor->currentPosition(RGB_Input);
+        Draw::Cross(RGB_Output,center, Scalar(255,0,0), 5);
+        //string msg = "(" + center.x + ", " + center.y + ")";
+        //report(msg)
+        }
+    catch(const char *strException){
+        string errorMsg(strException);
+        reportBad(errorMsg);
+        }
+
+    setWindow1(RGB_Output);
+}
+
+void MainWindow::setWindow1(Mat &img){
     QImage myQImg = Cv2QtImage::Mat2QImage(img);
     QPixmap myQpix = QPixmap::fromImage(myQImg);
     myQpix =  myQpix.scaled(ui->InputImg->size(),  Qt::IgnoreAspectRatio);
 
     ui->InputImg->setPixmap(myQpix);
-
-
-
 }
 
 void MainWindow::initVideo(){
@@ -62,10 +84,31 @@ void MainWindow::initVideo(){
     }
 
     if(!videoInput->isOpened())
-        report("webcam 0 nao pode ser aberta");
+        reportBad("webcam 0 nao pode ser aberta");
 
 }
 
 void MainWindow::report(const string text){
+    ui->logText->setTextColor(QColor("blue"));
     ui->logText->append(QString(text.c_str()));
+}
+
+void MainWindow::reportGood(const string text){
+    ui->logText->setTextColor(QColor("green"));
+    ui->logText->append(QString(text.c_str()));
+}
+void MainWindow::reportBad(const string text){
+    ui->logText->setTextColor(QColor("red"));
+    ui->logText->append(QString(text.c_str()));
+}
+
+
+
+void MainWindow::setSensorType(unsigned char type){
+    switch(type){
+    case(SensorType::ColorSensor):
+        mySensor = new ColorSensor();
+        _CONTOTROL_SensorType = SensorType::ColorSensor;
+    break;
+    }
 }
