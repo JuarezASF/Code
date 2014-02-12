@@ -30,6 +30,7 @@ ProjetoFinal::ProjetoFinal(QWidget *parent) :
     //timer : define tempo entre leitura de um frame e outro!
     timer = new QTimer(this);
     /*======>*/timer->start(20);
+    //AQUI DEFINI-SE CHAMAR PROCESS TODA VEZ QUE O TEMPO ESGOTAR
     connect(timer, SIGNAL(timeout()), this, SLOT(process()));
 
     nVideos = 3;
