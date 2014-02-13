@@ -129,3 +129,8 @@ void Draw::Circles(Mat &src, vector<Vec3f> circles,
 	   }
 }
 
+void Draw::addAll(Mat &src, vector<Mat> &masks){
+    for(int i = 0; i < masks.size(); i++)
+        //src = src + masks[i];
+    addWeighted(src,0.8, masks[i], 100, 0, src);
+}

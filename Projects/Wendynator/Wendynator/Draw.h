@@ -38,6 +38,8 @@ public:
 
 	static void Circles(Mat &src, vector<Vec3f> circles,
 								vector<Scalar> colors);
+
+    static void addAll(Mat &src, vector<Mat> &masks);
 	/**circles deve conter: (x, y, R) = [0,1,2]
 	onde x e y são as coordenadas do centro e
 	R é o raio do círculo*/
