@@ -36,3 +36,11 @@ QImage Cv2QtImage::Mat2QImage(const Mat &mat)
         return QImage();
     }
 }
+
+ void Cv2QtImage::setLabelImage(QLabel *target, const Mat &img){
+     QImage myQImg = Cv2QtImage::Mat2QImage(img);
+     QPixmap myQpix = QPixmap::fromImage(myQImg);
+     myQpix =  myQpix.scaled(target->size(),  Qt::IgnoreAspectRatio);
+
+     target->setPixmap(myQpix);
+ }

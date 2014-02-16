@@ -43,7 +43,8 @@ SOURCES += main.cpp\
     ColorSensor.cpp \
     Draw.cpp \
     myMath.cpp \
-    TemplateMatchSensor.cpp
+    TemplateMatchSensor.cpp \
+    TemplateSensorConfigWindows.cpp
 
 HEADERS  += mainwindow.h \
     cv2qtimage.h \
@@ -53,6 +54,8 @@ HEADERS  += mainwindow.h \
     Draw.h \
     myMath.h \
     TemplateMatchSensor.h \
-    SetTemplateWindows.h
+    SetTemplateWindows.h \
+    TemplateSensorConfigWindows.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    TemplateSensorConfigWindows.ui

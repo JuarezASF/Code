@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     videoInput = NULL;
     initVideo();
 
-    //START CLOCK (APÓS CÂMERA SER INICIALIZADA)
+    //START CLOCK (PÓS CÂMERA SER INICIALIZADA)
     this->clock->start(50);
     //lança evento timeout() a cada 500 milisegundos
 
@@ -83,6 +83,7 @@ void MainWindow::setWindow1(Mat &img){
     myQpix =  myQpix.scaled(ui->InputImg->size(),  Qt::IgnoreAspectRatio);
 
     ui->InputImg->setPixmap(myQpix);
+
 }
 
 void MainWindow::initVideo(){
@@ -143,6 +144,9 @@ void MainWindow::on_SensorTypeSetButton_clicked()
         delete mySensor;
         mySensor = new TemplateMatchSensor();
         _CONTOTROL_SensorType = option;
+        templateConfigWindow = new TemplateSensorConfigWindows(currentFrame, mySensor);
+        templateConfigWindow->setWindowTitle("Configuração do Sensor de Template Matching");
+        templateConfigWindow->show();
         break;
     default:
         throw "Tipo de sensor inválido! Tipo antigo mantido!!";
@@ -151,16 +155,14 @@ void MainWindow::on_SensorTypeSetButton_clicked()
 
 }
 
+
+
+
 vector<Point> MainWindow::getTemplate(){
     QPoint first, second;
-    report("Iniciando modo de captura de template:");
+    report(string("Iniciando modo de captura de template:"));
     _CONTROL_SET_MATCHING_TEMPLATE_MODE = true;
     _CONTROL_SET_MATCHING_TEMPLATE_FIRST_POINT_MODE = true;
 
 
-
-
-
 }//end GetTemplate
-
-

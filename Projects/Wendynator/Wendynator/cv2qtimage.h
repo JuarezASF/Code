@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QDebug>
 #include <QTimer>
+#include <QLabel>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -21,6 +22,8 @@ public:
 
 public:
     static QImage Mat2QImage(const Mat &img);
+
+    static void setLabelImage(QLabel *target, const Mat &img);
 };
 
 #endif // CV2QTIMAGE_H

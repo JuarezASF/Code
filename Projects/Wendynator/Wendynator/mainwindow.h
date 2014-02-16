@@ -13,6 +13,7 @@
 #include <QMouseEvent>
 #include <QTransform>
 #include <QLabel>
+#include <QRubberBand>
 
 //OPENCV LIBS
 #include <opencv2/core/core.hpp>
@@ -27,6 +28,9 @@
 #include "ColorSensor.h"
 #include "Draw.h"
 #include "TemplateMatchSensor.h"
+
+//MYQLIBS
+#include "TemplateSensorConfigWindows.h"
 
 
 using namespace cv;
@@ -63,6 +67,8 @@ private://membros
     cv::Point template_left_bottom, template_right_top;
     vector<Mat> masks;
 
+    TemplateSensorConfigWindows *templateConfigWindow;
+
 private:
     Ui::MainWindow *ui;
     QTimer *clock;
@@ -75,60 +81,10 @@ private:
     void setSensorType(unsigned char type);
     vector<Point> getTemplate();
 
-private slots:
+
+protected slots:
         void process();
         void on_SensorTypeSetButton_clicked();
-
-public:
-        class SetTemplateWindow : public QLabel {
-
-        public:
-            QPoint &first, &second;
-
-        public:
-            SetTemplateWindow(QPoint &Fir, QPoint &Sec, QWidget *parent = 0, Qt::WindowFlags f = 0)
-                        : first(Fir), second(Sec), QLabel(parent, f){
-                setMouseTracking(true);
-                setMinimumSize(480, 400);
-            }
-
-            void mouseMoveEvent(QMouseEvent *ev) {
-                if(_CONTROL_SET_MATCHING_TEMPLATE_MODE)
-                {
-                    if(_CONTROL_SET_MATCHING_TEMPLATE_FIRST_POINT_MODE)
-                    {
-                    QPoint pos = ev->pos();
-                    report(QString("%1, %2").arg(pos.x()).arg(pos.y()));
-                    }
-                    if(_CONTROL_SET_MATCHING_TEMPLATE_SECOND_POINT_MODE)
-                    {
-                        QPoint pos = ev->pos();
-                        report((QString("%1, %2").arg(pos.x()).arg(pos.y())));
-
-                    }
-
-                }
-               }//end mouseMoveEvent
-
-            void mousePressEvent(QMouseEvent *eventPress){
-                if(_CONTROL_SET_MATCHING_TEMPLATE_MODE){
-                    if(_CONTROL_SET_MATCHING_TEMPLATE_FIRST_POINT_MODE)
-                    {
-                        first = eventPress->pos();
-                        _CONTROL_SET_MATCHING_TEMPLATE_FIRST_POINT_MODE = false;
-                        _CONTROL_SET_MATCHING_TEMPLATE_SECOND_POINT_MODE = true;
-                    }
-                    if(_CONTROL_SET_MATCHING_TEMPLATE_SECOND_POINT_MODE)
-                    {
-                        second = eventPress->pos();
-                        _CONTROL_SET_MATCHING_TEMPLATE_SECOND_POINT_MODE = false;
-                        _CONTROL_SET_MATCHING_TEMPLATE_MODE = false;
-                    }
-
-                }
-            }//end mousePressevent
-        };
-
 
 };
 
