@@ -1,10 +1,9 @@
-#include "mainwindow.h"
+#include "MainWindow/mainwindow.h"
 #include <QApplication>
 
-unsigned char _CONTOTROL_SensorType = 0;
-bool _CONTROL_SET_MATCHING_TEMPLATE_MODE = false;
-bool _CONTROL_SET_MATCHING_TEMPLATE_FIRST_POINT_MODE = false;
-bool _CONTROL_SET_MATCHING_TEMPLATE_SECOND_POINT_MODE = false;
+unsigned char _CONTROL_SensorType = 0;
+bool _CONTROL_SensorSetted = false;
+
 
 
 int main(int argc, char *argv[])

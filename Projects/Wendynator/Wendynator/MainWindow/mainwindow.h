@@ -41,15 +41,14 @@ class MainWindow;
 
 namespace SensorType{
     enum{
+        NONE,
         ColorSensor,
         MatchingSensor
     };
 }
 
-extern unsigned char _CONTOTROL_SensorType;
-extern bool _CONTROL_SET_MATCHING_TEMPLATE_MODE;
-extern bool _CONTROL_SET_MATCHING_TEMPLATE_FIRST_POINT_MODE;
-extern bool _CONTROL_SET_MATCHING_TEMPLATE_SECOND_POINT_MODE;
+extern unsigned char _CONTROL_SensorType;
+extern bool _CONTROL_SensorSetted;
 
 class MainWindow : public QMainWindow
 {
@@ -64,7 +63,6 @@ private://membros
     cv::Mat currentFrame;
     cv::Mat RGB_Output;
     InterfaceSensor *mySensor;
-    cv::Point template_left_bottom, template_right_top;
     vector<Mat> masks;
 
     TemplateSensorConfigWindows *templateConfigWindow;
@@ -74,18 +72,18 @@ private:
     QTimer *clock;
     void initVideo();
     void report(const string text);
-    void report(QString text);
     void reportGood(const string text);
     void reportBad(const string text);
     void setWindow1(Mat &img);
     void setSensorType(unsigned char type);
-    vector<Point> getTemplate();
-
+    void drawDetectedObject(Point &center);
 
 protected slots:
         void process();
         void on_SensorTypeSetButton_clicked();
 
+private slots:
+        void on_pushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

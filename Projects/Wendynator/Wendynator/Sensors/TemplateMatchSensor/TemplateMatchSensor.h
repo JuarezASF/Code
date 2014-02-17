@@ -43,6 +43,8 @@ public:
     Point currentPosition();
     void setTemplateMat(Mat &tpl);
     void setMatchAlgorithm(int type);
+    int getTplWidth();
+    int getTplHeigh();
 };
 
 #endif // TEMPLATEMATCHSENSOR_H

@@ -24,9 +24,13 @@ MainWindow::MainWindow(QWidget *parent) :
     //lança evento timeout() a cada 500 milisegundos
 
     //set opções de sensor
-    ui->SensorTypeComboBox->addItem("[0] : Color Sensor");
-    ui->SensorTypeComboBox->addItem("[1] : TemplateMatching Sensor");
+    ui->SensorTypeComboBox->addItem("[0] : NONE");
+    ui->SensorTypeComboBox->addItem("[1] : Color Sensor");
+    ui->SensorTypeComboBox->addItem("[2] : TemplateMatching Sensor");
 
+    mySensor = NULL;
+    setSensorType(SensorType::NONE);
+    report("Por favor, escolha e configure um tipo de sensor");
 }
 
 MainWindow::~MainWindow()
@@ -34,61 +38,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::process()
-{
 
-    VideoCapture *video = videoInput;
-
-    if(!video->isOpened())
-        {
-        reportBad("video não está pronto!");
-        return;
-        }
-    *video >> currentFrame;
-
-    setSensorType(SensorType::ColorSensor);
-
-    Mat RGB_Input(currentFrame);
-    currentFrame.copyTo(RGB_Output);
-
-    if(_CONTOTROL_SensorType == SensorType::ColorSensor)
-        {
-        Scalar colorMin(38,0,0);
-        Scalar colorMax(75, 255, 255);
-        ((ColorSensor*) mySensor)->setRange(colorMin, colorMax);
-        }
-    try{
-        Point center = mySensor->currentPosition(RGB_Input);
-        Mat maskCenter(RGB_Output.rows,
-                       RGB_Output.cols,
-                       RGB_Output.type(),
-                       Scalar(0,0,0));
-        Draw::Cross(maskCenter,center, Scalar(255,0,0), 25);
-        masks.push_back(maskCenter);
-        //string msg = "(" + center.x + ", " + center.y + ")";
-        //report(msg)
-        }
-    catch(const char *strException){
-        string errorMsg(strException);
-        reportBad(errorMsg);
-        }
-    Draw::addAll(RGB_Output, masks);
-    masks.clear();
-    setWindow1(RGB_Output);
-}
-
-void MainWindow::setWindow1(Mat &img){
-    QImage myQImg = Cv2QtImage::Mat2QImage(img);
-    QPixmap myQpix = QPixmap::fromImage(myQImg);
-    myQpix =  myQpix.scaled(ui->InputImg->size(),  Qt::IgnoreAspectRatio);
-
-    ui->InputImg->setPixmap(myQpix);
-
-}
 
 void MainWindow::initVideo(){
     if(videoInput == NULL)
-        videoInput = new VideoCapture(0);
+        videoInput = new VideoCapture(1);
     else
     {
         videoInput->release();
@@ -105,10 +59,7 @@ void MainWindow::report(const string text){
     ui->logText->append(QString(text.c_str()));
 }
 
-void MainWindow::report(QString text){
-    ui->logText->setTextColor(QColor("blue"));
-    ui->logText->append(text);
-}
+
 
 void MainWindow::reportGood(const string text){
     ui->logText->setTextColor(QColor("green"));
@@ -123,46 +74,111 @@ void MainWindow::reportBad(const string text){
 
 void MainWindow::setSensorType(unsigned char type){
     switch(type){
+    case(SensorType::NONE):
+        if(mySensor) delete mySensor;
+        mySensor = NULL;
+        _CONTROL_SensorType = SensorType::NONE;
+        _CONTROL_SensorSetted = false;
+        reportBad("Sensor setado para NULO!");
+        break;
     case(SensorType::ColorSensor):
+        if(mySensor) delete mySensor;
         mySensor = new ColorSensor();
-        _CONTOTROL_SensorType = SensorType::ColorSensor;
-    break;
+        _CONTROL_SensorType = SensorType::ColorSensor;
+        reportGood("Sensor de cor criado!");
+        break;
+    case(SensorType::MatchingSensor):
+        if(mySensor)
+        {
+            if(_CONTROL_SensorType != SensorType::MatchingSensor)
+                {
+                delete mySensor;
+                report("Antigo sensor destruído!");
+
+                mySensor = new TemplateMatchSensor();
+                reportGood("Sensor de matching criado!");
+                }
+            else
+                {
+                report("basta configurar");
+                }
+        }
+        else
+            {
+            mySensor = new TemplateMatchSensor();
+            reportGood("Sensor de matching criado!");
+            }
+
+        _CONTROL_SensorType = SensorType::MatchingSensor;
+
+        break;
     }
+}
+
+void configureColorSensor(InterfaceSensor *sensor){
+    ColorSensor *target = (ColorSensor*) sensor;
+    Scalar colorMin(38,0,0);
+    Scalar colorMax(75, 255, 255);
+    target->setRange(colorMin, colorMax);
 }
 
 void MainWindow::on_SensorTypeSetButton_clicked()
 {
+    _CONTROL_SensorSetted = false;
+
     int option = ui->SensorTypeComboBox->currentIndex();
 
     switch(option){
+    case(SensorType::NONE):
+        setSensorType(option);
+        break;
     case(SensorType::ColorSensor):
-        delete mySensor;
-        mySensor = new ColorSensor();
-        _CONTOTROL_SensorType = option;
+        setSensorType(option);
+        report("Configuração automática do sensor de cor setada");
+        configureColorSensor(mySensor);
+        _CONTROL_SensorSetted = true;
         break;
     case(SensorType::MatchingSensor):
-        delete mySensor;
-        mySensor = new TemplateMatchSensor();
-        _CONTOTROL_SensorType = option;
-        templateConfigWindow = new TemplateSensorConfigWindows(currentFrame, mySensor);
+        setSensorType(option);
+        report("lançando janela de congifuração do sensor de matching");
+        templateConfigWindow = new TemplateSensorConfigWindows(currentFrame, mySensor, this);
         templateConfigWindow->setWindowTitle("Configuração do Sensor de Template Matching");
         templateConfigWindow->show();
         break;
     default:
-        throw "Tipo de sensor inválido! Tipo antigo mantido!!";
+        throw "Tipo de sensor inválido!";
+        setSensorType(SensorType::NONE);
         break;
     }
 
 }
 
+void MainWindow::on_pushButton_clicked()
+{
+    ui->logText->clear();
+}
 
+void MainWindow::drawDetectedObject(Point &center){
 
+    Mat mask(RGB_Output.rows,
+                   RGB_Output.cols,
+                   RGB_Output.type(),
+                   Scalar(0,0,0));
 
-vector<Point> MainWindow::getTemplate(){
-    QPoint first, second;
-    report(string("Iniciando modo de captura de template:"));
-    _CONTROL_SET_MATCHING_TEMPLATE_MODE = true;
-    _CONTROL_SET_MATCHING_TEMPLATE_FIRST_POINT_MODE = true;
+    switch(_CONTROL_SensorType){
+    case(SensorType::ColorSensor):
+        Draw::Cross(mask,center, Scalar(255,255,255), 25);
+        break;
+    case(SensorType::MatchingSensor):
+        int w = ((TemplateMatchSensor *)mySensor)->getTplWidth();
+        int h = ((TemplateMatchSensor *)mySensor)->getTplHeigh();
 
+        Point leftTop(center.x - w/2, center.y - h/2);
+        Point rightBottom(center.x + w/2, center.y + h/2);
 
-}//end GetTemplate
+        rectangle( mask, leftTop, rightBottom, Scalar::all(255), 2, 8, 0 );
+        break;
+    }
+
+    masks.push_back(mask);
+}

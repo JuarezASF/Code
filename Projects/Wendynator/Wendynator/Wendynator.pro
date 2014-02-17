@@ -41,7 +41,8 @@ SOURCES += \
     myMath/myMath.cpp \
     MainWindow/mainwindow.cpp \
     Draw/Draw.cpp \
-    cv2qtimage/cv2qtimage.cpp
+    cv2qtimage/cv2qtimage.cpp \
+    MainWindow/MainLoop.cpp
 HEADERS  += \
     Sensors/ColorDetection/ColorDetection.h \
     Sensors/ColorSensor/ColorSensor.h \

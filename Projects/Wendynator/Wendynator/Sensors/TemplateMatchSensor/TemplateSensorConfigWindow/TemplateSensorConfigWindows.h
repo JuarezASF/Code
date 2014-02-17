@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QRubberBand>
 #include <QRect>
+#include <QMessageBox>
 
 //OPENCV LIBS
 #include <opencv2/core/core.hpp>
@@ -24,25 +25,29 @@
 #include "Draw/Draw.h"
 #include "Sensors/TemplateMatchSensor/TemplateMatchSensor.h"
 
-
-
 namespace Ui {
 class TemplateSensorConfigWindows;
 }
+
+extern bool _CONTROL_SensorSetted;
 
 class TemplateSensorConfigWindows : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TemplateSensorConfigWindows(Mat frame, InterfaceSensor *sensor,
+    explicit TemplateSensorConfigWindows(Mat frame, InterfaceSensor *sensor, QMainWindow *pai,
                                          QWidget *parent = 0);
     ~TemplateSensorConfigWindows();
 
 private:
     QPoint origin;
+    QMainWindow *father;
     QRubberBand *rubberBand;
     cv::Mat currentFrame;
+    cv::Mat ROI;
+    QPoint leftBottom, leftTop, rightTop, rightBottom;
+    TemplateMatchSensor *mySensor;
 
 
 private:

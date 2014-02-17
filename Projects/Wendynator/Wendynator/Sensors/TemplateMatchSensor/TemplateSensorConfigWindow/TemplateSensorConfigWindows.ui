@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1170</width>
-    <height>543</height>
+    <width>1026</width>
+    <height>660</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QLabel" name="templateImg">
    <property name="geometry">
     <rect>
-     <x>700</x>
-     <y>80</y>
-     <width>151</width>
-     <height>141</height>
+     <x>710</x>
+     <y>380</y>
+     <width>191</width>
+     <height>171</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -33,7 +33,7 @@
    <property name="geometry">
     <rect>
      <x>720</x>
-     <y>230</y>
+     <y>340</y>
      <width>91</width>
      <height>20</height>
     </rect>
@@ -45,8 +45,8 @@
   <widget class="QPushButton" name="okButtom">
    <property name="geometry">
     <rect>
-     <x>910</x>
-     <y>220</y>
+     <x>740</x>
+     <y>290</y>
      <width>80</width>
      <height>21</height>
     </rect>
@@ -58,8 +58,8 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>910</x>
-     <y>110</y>
+     <x>710</x>
+     <y>120</y>
      <width>131</width>
      <height>21</height>
     </rect>
@@ -71,8 +71,8 @@
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>910</x>
-     <y>140</y>
+     <x>710</x>
+     <y>150</y>
      <width>151</width>
      <height>51</height>
     </rect>
@@ -101,7 +101,7 @@
       <item>
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>high</string>
+         <string>heigh</string>
         </property>
        </widget>
       </item>
@@ -131,6 +131,54 @@
    <property name="text">
     <string/>
    </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>710</x>
+     <y>220</y>
+     <width>151</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>leftTop</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="leftTopValueLabel">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>rightBottom</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="rightBottomValueLabel">
+        <property name="text">
+         <string>0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

@@ -66,3 +66,11 @@ void TemplateMatchSensor::setTemplateMat(Mat &tpl){
 
         matchingAlgorithm = type;
     }
+
+    int TemplateMatchSensor::getTplWidth(){
+        return templateMat.cols;
+    }
+
+    int TemplateMatchSensor::getTplHeigh(){
+        return templateMat.rows;
+    }
