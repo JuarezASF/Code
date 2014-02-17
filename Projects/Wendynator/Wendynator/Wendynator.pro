@@ -34,25 +34,28 @@ LIBS += -L/usr/local/lib \
 
 SOURCES += \
     main.cpp \
-    Sensors/ColorDetection/ColorDetection.cpp \
+    Sensors/ColorSensor/ColorDetection/ColorDetection.cpp \
     Sensors/ColorSensor/ColorSensor.cpp \
     Sensors/TemplateMatchSensor/TemplateMatchSensor.cpp \
-    Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.cpp \
+    Sensors/TemplateMatchSensor/TemplateSensorConfigWindow/TemplateSensorConfigWindows.cpp \
     myMath/myMath.cpp \
     MainWindow/mainwindow.cpp \
     Draw/Draw.cpp \
     cv2qtimage/cv2qtimage.cpp \
-    MainWindow/MainLoop.cpp
+    MainWindow/MainLoop.cpp \
+    Sensors/ColorSensor/ColorSensorConfig/ColorSensorConfig.cpp
 HEADERS  += \
-    Sensors/ColorDetection/ColorDetection.h \
+    Sensors/ColorSensor/ColorDetection/ColorDetection.h \
     Sensors/ColorSensor/ColorSensor.h \
     Sensors/TemplateMatchSensor/TemplateMatchSensor.h \
-    Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.h \
+    Sensors/TemplateMatchSensor/TemplateSensorConfigWindow/TemplateSensorConfigWindows.h \
     Sensors/InterfaceSensor.h \
     myMath/myMath.h \
     MainWindow/mainwindow.h \
     Draw/Draw.h \
-    cv2qtimage/cv2qtimage.h
+    cv2qtimage/cv2qtimage.h \
+    Sensors/ColorSensor/ColorSensorConfig/ColorSensorConfig.h
 FORMS    += \
-    Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.ui \
-    MainWindow/mainwindow.ui
+    Sensors/TemplateMatchSensor/TemplateSensorConfigWindow/TemplateSensorConfigWindows.ui \
+    MainWindow/mainwindow.ui \
+    Sensors/ColorSensor/ColorSensorConfig/ColorSensorConfig.ui

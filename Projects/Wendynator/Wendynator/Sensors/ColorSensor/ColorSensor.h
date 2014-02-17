@@ -6,7 +6,7 @@
 
 //My LIBS
 #include "Sensors/InterfaceSensor.h"
-#include "Sensors/ColorDetection/ColorDetection.h"
+#include "Sensors/ColorSensor/ColorDetection/ColorDetection.h"
 
 
 using namespace cv;
@@ -29,6 +29,8 @@ public:
     Point currentPosition(Mat RGB_Input);
     Point currentPosition();
     void setRange(Scalar setColorMin, Scalar setColorMax);
+
+
 };
 
 #endif // COLORSENSOR_H

@@ -31,11 +31,15 @@ MainWindow::MainWindow(QWidget *parent) :
     mySensor = NULL;
     setSensorType(SensorType::NONE);
     report("Por favor, escolha e configure um tipo de sensor");
+    colorConfigWindow = NULL;
+    templateConfigWindow = NULL;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete colorConfigWindow;
+    delete templateConfigWindow;
 }
 
 
@@ -134,14 +138,18 @@ void MainWindow::on_SensorTypeSetButton_clicked()
         break;
     case(SensorType::ColorSensor):
         setSensorType(option);
-        report("Configuração automática do sensor de cor setada");
-        configureColorSensor(mySensor);
+        if(!colorConfigWindow)
+            colorConfigWindow = new ColorSensorConfig(currentFrame, mySensor);
+        colorConfigWindow->show();
+
+
         _CONTROL_SensorSetted = true;
         break;
     case(SensorType::MatchingSensor):
         setSensorType(option);
         report("lançando janela de congifuração do sensor de matching");
-        templateConfigWindow = new TemplateSensorConfigWindows(currentFrame, mySensor, this);
+        if(!templateConfigWindow)
+            templateConfigWindow = new TemplateSensorConfigWindows(currentFrame, mySensor, this);
         templateConfigWindow->setWindowTitle("Configuração do Sensor de Template Matching");
         templateConfigWindow->show();
         break;

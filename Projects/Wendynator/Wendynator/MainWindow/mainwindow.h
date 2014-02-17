@@ -28,9 +28,10 @@
 #include "Sensors/ColorSensor/ColorSensor.h"
 #include "Draw/Draw.h"
 #include "Sensors/TemplateMatchSensor/TemplateMatchSensor.h"
+#include "Sensors/ColorSensor/ColorSensorConfig/ColorSensorConfig.h"
 
 //MYQLIBS
-#include "Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.h"
+#include "Sensors/TemplateMatchSensor/TemplateSensorConfigWindow/TemplateSensorConfigWindows.h"
 
 
 using namespace cv;
@@ -66,6 +67,7 @@ private://membros
     vector<Mat> masks;
 
     TemplateSensorConfigWindows *templateConfigWindow;
+    ColorSensorConfig *colorConfigWindow;
 
 private:
     Ui::MainWindow *ui;
