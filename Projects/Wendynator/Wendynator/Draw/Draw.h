@@ -11,7 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "myMath.h"
+#include "myMath/myMath.h"
 
 using namespace cv;
 

@@ -23,14 +23,14 @@
 #include <opencv2/video/tracking.hpp>
 
 //MY LIBS
-#include "cv2qtimage.h"
-#include "InterfaceSensor.h"
-#include "ColorSensor.h"
-#include "Draw.h"
-#include "TemplateMatchSensor.h"
+#include "cv2qtimage/cv2qtimage.h"
+#include "Sensors/InterfaceSensor.h"
+#include "Sensors/ColorSensor/ColorSensor.h"
+#include "Draw/Draw.h"
+#include "Sensors/TemplateMatchSensor/TemplateMatchSensor.h"
 
 //MYQLIBS
-#include "TemplateSensorConfigWindows.h"
+#include "Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.h"
 
 
 using namespace cv;

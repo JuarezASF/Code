@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 //MYLIBS
-#include "InterfaceSensor.h"
+#include "Sensors/InterfaceSensor.h"
 
 using namespace cv;
 using namespace std;

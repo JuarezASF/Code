@@ -5,8 +5,8 @@
 #include <opencv2/core/core.hpp>
 
 //My LIBS
-#include "InterfaceSensor.h"
-#include "ColorDetection.h"
+#include "Sensors/InterfaceSensor.h"
+#include "Sensors/ColorDetection/ColorDetection.h"
 
 
 using namespace cv;

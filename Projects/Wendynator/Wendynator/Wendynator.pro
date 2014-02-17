@@ -11,15 +11,11 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Wendynator
 TEMPLATE = app
 
-INCLUDEPATH +=  include/Qt \
-                include/OpenCV \
-                include/C++ \
-                /usr/include/opencv2\
+INCLUDEPATH +=  /usr/include/opencv2\
                 /usr/include/opencv2/core\
                 /usr/include/opencv2/imgproc\
                 /usr/include/opencv2/highgui\
-                /usr/include/opencv2/video
-
+                /usr/include/opencv2/video\
 
 
 LIBS += -L/usr/local/lib \
@@ -36,26 +32,26 @@ LIBS += -L/usr/local/lib \
         -lopencv_flann
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    cv2qtimage.cpp \
-    ColorDetection.cpp \
-    ColorSensor.cpp \
-    Draw.cpp \
-    myMath.cpp \
-    TemplateMatchSensor.cpp \
-    TemplateSensorConfigWindows.cpp
-
-HEADERS  += mainwindow.h \
-    cv2qtimage.h \
-    InterfaceSensor.h \
-    ColorDetection.h \
-    ColorSensor.h \
-    Draw.h \
-    myMath.h \
-    TemplateMatchSensor.h \
-    SetTemplateWindows.h \
-    TemplateSensorConfigWindows.h
-
-FORMS    += mainwindow.ui \
-    TemplateSensorConfigWindows.ui
+SOURCES += \
+    main.cpp \
+    Sensors/ColorDetection/ColorDetection.cpp \
+    Sensors/ColorSensor/ColorSensor.cpp \
+    Sensors/TemplateMatchSensor/TemplateMatchSensor.cpp \
+    Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.cpp \
+    myMath/myMath.cpp \
+    MainWindow/mainwindow.cpp \
+    Draw/Draw.cpp \
+    cv2qtimage/cv2qtimage.cpp
+HEADERS  += \
+    Sensors/ColorDetection/ColorDetection.h \
+    Sensors/ColorSensor/ColorSensor.h \
+    Sensors/TemplateMatchSensor/TemplateMatchSensor.h \
+    Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.h \
+    Sensors/InterfaceSensor.h \
+    myMath/myMath.h \
+    MainWindow/mainwindow.h \
+    Draw/Draw.h \
+    cv2qtimage/cv2qtimage.h
+FORMS    += \
+    Sensors/TemplateSensorConfigWindow/TemplateSensorConfigWindows.ui \
+    MainWindow/mainwindow.ui
