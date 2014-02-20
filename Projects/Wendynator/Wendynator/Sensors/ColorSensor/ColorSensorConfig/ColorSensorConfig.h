@@ -33,6 +33,9 @@ namespace Ui {
 class ColorSensorConfig;
 }
 
+extern bool _CONTROL_SensorSetted;
+
+
 class ColorSensorConfig : public QWidget
 {
     Q_OBJECT
@@ -47,16 +50,33 @@ private:
     void errorMsg(string msg);
     void updateColorTrackBars();
     int     minCorHSV[3], maxCorHSV[3];
-    cv::Mat input;
-    cv::Mat output;
+    cv::Mat inputImg;
+    cv::Mat outputImg;
     ColorSensor *mySensor;
+
+public:
+    void setCurrentImg(Mat &inputImg);
+    void setSensor(InterfaceSensor *sensor);
+
+private:
+    void setOutputImg(Mat &frame);
+
+
 private slots:
 
     void on_ColorMinChannelSlider_valueChanged(int value);
     void on_ColorMaxChannelSlider_valueChanged(int value);
+
     void on_ColorMinChannelOption_currentIndexChanged(int index);
     void on_ColorMaxChannelOption_currentIndexChanged(int index);
+
     void on_DefinedColorOption_currentIndexChanged(int index);
+    void on_okButtom_clicked();
+    void findThresholdImg();
+
+
+signals:
+    void rangeChanged();
 };
 
 #endif // COLORSENSORCONFIG_H

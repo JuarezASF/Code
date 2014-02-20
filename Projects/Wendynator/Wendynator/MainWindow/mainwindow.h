@@ -72,6 +72,7 @@ private://membros
 private:
     Ui::MainWindow *ui;
     QTimer *clock;
+    bool openVideo(int n);
     void initVideo();
     void report(const string text);
     void reportGood(const string text);

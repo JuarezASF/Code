@@ -39,3 +39,5 @@ void ColorSensor::setRange(Scalar setColorMin, Scalar setColorMax){
     }
     initialized = true;
 }
+
+

@@ -43,19 +43,39 @@ MainWindow::~MainWindow()
 }
 
 
-
-void MainWindow::initVideo(){
+bool MainWindow::openVideo(int n){
     if(videoInput == NULL)
-        videoInput = new VideoCapture(1);
+        videoInput = new VideoCapture(n);
     else
     {
         videoInput->release();
-        videoInput->open(0);
+        videoInput->open(n);
     }
 
-    if(!videoInput->isOpened())
-        reportBad("webcam 0 nao pode ser aberta");
+    if(!videoInput->isOpened()){
+       stringstream msg;
+       msg << "webcam " << n << " não pode ser aberta";
+       reportBad(msg.str());
+       return false;
+    }
 
+    if(videoInput->isOpened())
+        return true;
+   }
+
+void MainWindow::initVideo(){
+    bool sucesso;
+    for(int i = 0; i < 10; i++)
+    {
+        sucesso = openVideo(i);
+        if(sucesso)
+            break;
+    }
+    if(sucesso == false)
+    {
+        reportBad("Nenhum vídeo de 0 à 10 pode ser inicializado!");
+        this->clock->stop();
+    }
 }
 
 void MainWindow::report(const string text){
@@ -80,16 +100,36 @@ void MainWindow::setSensorType(unsigned char type){
     switch(type){
     case(SensorType::NONE):
         if(mySensor) delete mySensor;
-        mySensor = NULL;
+             mySensor = NULL;
         _CONTROL_SensorType = SensorType::NONE;
         _CONTROL_SensorSetted = false;
         reportBad("Sensor setado para NULO!");
         break;
     case(SensorType::ColorSensor):
-        if(mySensor) delete mySensor;
-        mySensor = new ColorSensor();
+        if(mySensor)
+           {
+            if(_CONTROL_SensorType != SensorType::ColorSensor)
+                {
+                delete mySensor;
+                report("Antigo sensor destruído");
+
+                mySensor = new ColorSensor;
+                reportGood("Novo sensor de cor criado!");
+                }
+            else
+                {
+                report("Basta configurar o sensor de cor!");
+                this->colorConfigWindow->setCurrentImg(currentFrame);
+                }
+            }
+        else
+            {
+            mySensor = new ColorSensor();
+            reportGood("Sensor de cor criado!");
+            }
+
         _CONTROL_SensorType = SensorType::ColorSensor;
-        reportGood("Sensor de cor criado!");
+
         break;
     case(SensorType::MatchingSensor):
         if(mySensor)
@@ -105,6 +145,7 @@ void MainWindow::setSensorType(unsigned char type){
             else
                 {
                 report("basta configurar");
+                this->templateConfigWindow->setCurrentImg(currentFrame);
                 }
         }
         else
@@ -117,13 +158,6 @@ void MainWindow::setSensorType(unsigned char type){
 
         break;
     }
-}
-
-void configureColorSensor(InterfaceSensor *sensor){
-    ColorSensor *target = (ColorSensor*) sensor;
-    Scalar colorMin(38,0,0);
-    Scalar colorMax(75, 255, 255);
-    target->setRange(colorMin, colorMax);
 }
 
 void MainWindow::on_SensorTypeSetButton_clicked()
@@ -140,10 +174,9 @@ void MainWindow::on_SensorTypeSetButton_clicked()
         setSensorType(option);
         if(!colorConfigWindow)
             colorConfigWindow = new ColorSensorConfig(currentFrame, mySensor);
+        colorConfigWindow->setSensor(mySensor);
+        colorConfigWindow->setWindowTitle("Configuração do Sensor de Cor");
         colorConfigWindow->show();
-
-
-        _CONTROL_SensorSetted = true;
         break;
     case(SensorType::MatchingSensor):
         setSensorType(option);

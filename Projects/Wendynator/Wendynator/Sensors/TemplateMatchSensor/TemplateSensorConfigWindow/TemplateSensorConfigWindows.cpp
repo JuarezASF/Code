@@ -12,10 +12,7 @@ TemplateSensorConfigWindows::TemplateSensorConfigWindows(Mat frame, InterfaceSen
 
     rubberBand = NULL;
 
-    ui->inputImg->setGeometry(50, 40, frame.cols, frame.rows);
-    Cv2QtImage::setLabelImage(ui->inputImg, frame);
-
-    frame.copyTo(currentFrame);
+    this->setCurrentImg(frame);
 
     mySensor = (TemplateMatchSensor *) sensor;
 
@@ -94,3 +91,10 @@ void TemplateSensorConfigWindows::on_okButtom_clicked()
         msg.exec();
     }
 }
+
+    void TemplateSensorConfigWindows::setCurrentImg(const Mat &frame){
+        ui->inputImg->setGeometry(50, 40, frame.cols, frame.rows);
+        Cv2QtImage::setLabelImage(ui->inputImg, frame);
+        frame.copyTo(this->currentFrame);
+
+    }

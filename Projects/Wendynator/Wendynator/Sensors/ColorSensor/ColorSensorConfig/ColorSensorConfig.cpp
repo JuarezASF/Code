@@ -31,10 +31,28 @@ ColorSensorConfig::ColorSensorConfig(Mat &inputImg, InterfaceSensor *sensor, QWi
     ui->DefinedColorOption->addItem("Roxo");
     ui->DefinedColorOption->addItem("Vermelho");
 
-//    mySensor = (ColorSensor *)sensor;
-  //  inputImg.copyTo(input);
 
-    //Cv2QtImage::setLabelImage(ui->inputImgLabel, inputImg);
+    //não sei porque não estava funcionando sem definir explicitamente o tamanho
+    ui->inputImg->setGeometry(1, 1, 220, 220);
+    ui->outputImgLabel->setGeometry(1, 221, 220, 220);
+
+    setCurrentImg(inputImg);
+
+    mySensor = (ColorSensor *) sensor;
+
+    connect(this, SIGNAL(rangeChanged()), this, SLOT(findThresholdImg()));
+
+    minCorHSV[0] = 100;
+    minCorHSV[1] = 0;
+    minCorHSV[2] = 0;
+
+    maxCorHSV[0] = 179;
+    maxCorHSV[1] = 255;
+    maxCorHSV[2] = 255;
+
+    this->updateColorTrackBars();
+    emit rangeChanged();
+
 }
 
 ColorSensorConfig::~ColorSensorConfig()
@@ -60,6 +78,9 @@ void ColorSensorConfig::on_ColorMinChannelSlider_valueChanged(int value)
                 errorMsg("Opção para cor não definida");
                 break;
     }
+
+     emit rangeChanged();
+
 }
 
 void ColorSensorConfig::on_ColorMaxChannelSlider_valueChanged(int value)
@@ -81,6 +102,8 @@ void ColorSensorConfig::on_ColorMaxChannelSlider_valueChanged(int value)
                 errorMsg("Opção para cor não definida");
                 break;
     }
+
+    emit rangeChanged();
 
 }
 
@@ -213,6 +236,7 @@ void ColorSensorConfig::on_DefinedColorOption_currentIndexChanged(int index)
             }
 
         this->updateColorTrackBars();
+        emit rangeChanged();
 
 }
 
@@ -273,3 +297,51 @@ void ColorSensorConfig::errorMsg(string msg){
     msgBox.setText(QString(msg.c_str()));
     msgBox.exec();
 }
+
+    void ColorSensorConfig::setCurrentImg(Mat &frame){
+        Cv2QtImage::setLabelImage(ui->inputImg, frame);
+        frame.copyTo(this->inputImg);
+    }
+
+    void ColorSensorConfig::setOutputImg(Mat &frame){
+        Cv2QtImage::setLabelImage(ui->outputImgLabel, frame);
+        frame.copyTo(this->outputImg);
+    }
+
+void ColorSensorConfig::on_okButtom_clicked()
+{
+    Scalar minColor(minCorHSV[0], minCorHSV[1], minCorHSV[2]);
+    Scalar maxColor(maxCorHSV[0], maxCorHSV[1], maxCorHSV[2]);
+
+    if( maxColor[0] < minColor[0] || maxColor[1] < minColor[1] || maxColor[2] < minColor[2] )
+    {
+        errorMsg(string("Range inválido! Escolha novamente"));
+    }
+
+    else{
+    mySensor->setRange(minColor, maxColor);
+    _CONTROL_SensorSetted = true;
+    this->close();
+    }
+}
+
+void ColorSensorConfig::findThresholdImg(){
+    Mat HSV_Input;
+    cvtColor(inputImg, HSV_Input, CV_BGR2HSV);
+
+    Scalar colorMin(minCorHSV[0], minCorHSV[1], minCorHSV[2]);
+    Scalar colorMax(maxCorHSV[0], maxCorHSV[1], maxCorHSV[2]);
+
+
+    Mat BinaryImg =
+                ColorDetection::GetThresholdedImage(
+                     HSV_Input, colorMin,colorMax);
+
+    setOutputImg(BinaryImg);
+
+}
+
+void ColorSensorConfig::setSensor(InterfaceSensor *sensor){
+    this->mySensor = (ColorSensor *)sensor;
+}
+

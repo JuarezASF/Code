@@ -48,7 +48,8 @@ private:
     cv::Mat ROI;
     QPoint leftBottom, leftTop, rightTop, rightBottom;
     TemplateMatchSensor *mySensor;
-
+public:
+    void setCurrentImg(const Mat &Img);
 
 private:
     Ui::TemplateSensorConfigWindows *ui;
