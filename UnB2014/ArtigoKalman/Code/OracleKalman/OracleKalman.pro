@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     ColorSensor.cpp \
     ColorDetection.cpp \
     ObjectToDetect.cpp \
-    QString2Strings.cpp
+    QString2Strings.cpp \
+    Filtros.cpp
 
 
 HEADERS  += widget.h \
@@ -53,6 +54,7 @@ HEADERS  += widget.h \
     ColorSensor.h \
     ColorDetection.h \
     ObjectToDetect.h \
-    QString2String.h
+    QString2String.h \
+    Filtros.h
 
 FORMS    += widget.ui

@@ -57,6 +57,25 @@ Widget::Widget(QWidget *parent) :
     this->updateColorTrackBars();
     emit rangeChanged();
 
+    //numero de falhas iniiais zerado
+    //sera usado para controlar erros de abertura de camera
+    numberOfFailure = 0;
+
+    //BUTÃO PARA BORRA IMAGEM
+    //orem : 3 5 7 9 11 13 21 31
+    ui->SizeOfGaussian->addItem("3");//0
+    ui->SizeOfGaussian->addItem("5");//1
+    ui->SizeOfGaussian->addItem("7");
+    ui->SizeOfGaussian->addItem("9");//3
+    ui->SizeOfGaussian->addItem("11");
+    ui->SizeOfGaussian->addItem("13");//5
+    ui->SizeOfGaussian->addItem("21");
+    ui->SizeOfGaussian->addItem("31");//7
+    ui->SizeOfGaussian->addItem("51");
+    ui->SizeOfGaussian->addItem("61");//9
+    ui->SizeOfGaussian->addItem("71");
+    ui->SizeOfGaussian->setCurrentIndex(7);
+
 
 
 }
@@ -84,6 +103,8 @@ bool Widget::openVideo(int n){
 
     if(videoInput->isOpened())
         return true;
+    else
+        return false;
    }
 
 void Widget::initVideo(){
@@ -375,6 +396,11 @@ void Widget::findThresholdImg(){
 void Widget::addColorToTracking(vector<Scalar> &range){
 
     Mat HSV_Input;
+    if(currentFrame.empty())
+        {
+        errorMsg("O video ainda nao foi inicializado!");
+        return;
+        }
     cvtColor(currentFrame, HSV_Input, CV_BGR2HSV);
 
     Mat BinaryImg =
@@ -401,8 +427,11 @@ void Widget::addColorToTracking(vector<Scalar> &range){
 
     report(reportMsg.toStdString());
 
-
     ui->trackedColorsList->addItem(targetName);
+
+    //adiciona espaço no vetor de sucessos
+    detectionSucess.resize(detectionSucess.size()+1);
+    objectsCenter.resize(objectsCenter.size()+1);
 }
 
 void Widget::on_addTotrackingButtom_clicked()
@@ -442,9 +471,153 @@ void Widget::on_trackedColorsList_currentIndexChanged(int index)
 
 void Widget::on_deleteButtom_clicked()
 {
-    int index = ui->trackedColorsList->currentIndex();
+    unsigned int index = ui->trackedColorsList->currentIndex();
     if(index > targets.size())
         errorMsg("Valor Inválido!");
     targets.erase(targets.begin()+index);
     ui->trackedColorsList->removeItem(index);
+}
+
+void Widget::pauseVideo(){
+    this->clock->stop();
+    reportBad("O video esta sendo pausado");
+}
+
+void Widget::on_BorrarButtom_clicked()
+{
+    if(CONTROL_FILTER_GAUSSIAN == true)
+        CONTROL_FILTER_GAUSSIAN =false;
+    else
+        CONTROL_FILTER_GAUSSIAN = true;
+
+}
+
+void Widget::on_SizeOfGaussian_currentIndexChanged(int )
+{
+    //ordem : 3 5 7 9 11 13 21 31
+    SizeGaussFilter = ui->SizeOfGaussian->currentText().toInt();
+}
+
+void Widget::on_futureButtom_stateChanged(int)
+{
+    CONTROL_SEE_FUTURE = ui->futureButtom->isChecked();
+}
+
+void Widget::on_pastButtom_stateChanged(int)
+{
+    CONTROL_SEE_PAST = ui->pastButtom->isChecked();
+}
+
+vector<Point> Widget::findTargets(Mat &RGB_Input){
+    vector<Point> centers;
+    Mat HSV_Input;
+    cvtColor(RGB_Input, HSV_Input, CV_BGR2HSV);
+
+    for(unsigned int i = 0; i < targets.size(); i++){
+        Scalar colorMin = targets[i]->colorRange[0];
+        Scalar colorMax = targets[i]->colorRange[1];
+
+        Mat BinaryImg =
+            ColorDetection::GetThresholdedImage(
+                        HSV_Input, colorMin,colorMax);
+
+        //filtragem de ruidos
+        Filtros::Erosion(BinaryImg, BinaryImg, 3);
+        Filtros::Erosion(BinaryImg, BinaryImg, 3);
+        Filtros::Dilation(BinaryImg, BinaryImg, 3);
+
+        int ColorDetectionThreshold = 20;
+
+        bool sucessoAtual;
+
+        Point currentCenter =
+                   ColorDetection::FindCenter(BinaryImg,
+                                           ColorDetectionThreshold,
+                                           sucessoAtual);
+        detectionSucess[i] = sucessoAtual;
+
+        centers.push_back(currentCenter);
+        }
+
+    return centers;
+}
+
+vector<Point> Widget::findKalmanCenters(vector<Point> dataInput){
+    vector<Point> kalmanCenters;
+    if(dataInput.empty()){
+        errorMsg("Nao ha objetos a serem detectados!");
+        return kalmanCenters;
+    }
+    kalmanCenters.resize(dataInput.size());
+    KalmanFilter *KF;
+
+    for(unsigned int i = 0; i < targets.size(); i++){
+        KF = targets[i]->KF;
+
+        //apenas conversao de estruturas usadas
+        Mat_<float> measurement(2,1);
+        measurement(0) = dataInput[i].x;
+        measurement(1) = dataInput[i].y;
+
+        Mat estimated;
+        Mat prediction = KF->predict();
+        if(detectionSucess[i] == true)
+            {
+            //caso a detecção tenha sido um sucesso jogamos a nova medida no filtro
+            //ao chamar correct já estamos adicionando a nova medida ao filtro
+            estimated = KF->correct(measurement);
+            }
+        else{
+            /*caso a medição tenha falhada realimentamos o filtro com a própria
+            predição anterior*/
+            Mat_<float> predictedMeasurement(2,1);
+            predictedMeasurement(0) = prediction.at<float>(0);
+            predictedMeasurement(1) = prediction.at<float>(1);
+            estimated = KF->correct(predictedMeasurement);
+            KF->errorCovPre.copyTo(KF->errorCovPost);
+            //copiar a covPre para covPos [dica de um usuário de algum fórum]
+            }
+        Point statePt(estimated.at<float>(0),estimated.at<float>(1));
+
+        kalmanCenters[i] = statePt;
+        /*existe o centro medido pela previsão e o centro que o filtro de kalman
+        acredita ser o real. O centro de kalman é uma ponderação das medidas e do modelo
+        com conhecimento prévio de um erro aleatório*/
+    }
+
+    return kalmanCenters;
+}
+
+void Widget::drawDetectionResult(Mat &outputFrame, vector<Point> &centers){
+    float crossSize = 10;
+
+    //procura cores para desenhar
+    vector<Scalar> colorsToPaint;
+    for(unsigned int i = 0; i < centers.size(); i++)
+             colorsToPaint.push_back(targets[i]->colorPaint);
+
+
+    Draw::Crosses(outputFrame, centers, colorsToPaint, crossSize, detectionSucess);
+}
+
+void Widget::drawKalmanResult(Mat &outputFrame, vector<Point> &kalmanCenters){
+    vector<Vec3f> kalmanCircles;
+    vector<Scalar> colorsToPaint;
+
+    float radiusKalmanCircles = Raio;
+    //raio é uma variável global definida na interface em tempo de execução
+
+    if(kalmanCenters.size() != targets.size())
+        reportBad("O numero de elementos a desenhar e diferente do numero de alvos procurados!");
+
+    //gera circulos a serem desenhados
+    for(unsigned int i = 0; i < kalmanCenters.size(); i++){
+            Vec3f currentCircle(kalmanCenters[i].x, kalmanCenters[i].y,
+                  radiusKalmanCircles);
+            kalmanCircles.push_back(currentCircle);
+
+            colorsToPaint.push_back(targets[i]->colorPaint);
+    }
+
+    Draw::Circles(outputFrame, kalmanCircles, colorsToPaint);
 }
