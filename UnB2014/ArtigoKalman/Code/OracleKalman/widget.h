@@ -31,6 +31,7 @@
 #include "ColorSensor.h"
 #include "ColorDetection.h"
 #include "ObjectToDetect.h"
+#include "QString2String.h"
 
 
 
@@ -94,6 +95,8 @@ signals:
 
 private slots:
     void on_addTotrackingButtom_clicked();
+    void on_trackedColorsList_currentIndexChanged(int index);
+    void on_deleteButtom_clicked();
 };
 
 #endif // WIDGET_H

@@ -388,11 +388,19 @@ void Widget::addColorToTracking(vector<Scalar> &range){
 
     ObjectToDetect *newTarget = new ObjectToDetect(range, color, initialPos);
 
-    report("Objeto Criado!");
-
     targets.push_back(newTarget);
 
    QString targetName = QString("Objeto ") + QString::number(newTarget->name);
+
+   QString reportMsg = targetName + QString(" criado!\n");
+   /*reportMsg.append(QString("\t from (%1, %2, %3) to (%4, %5, %6)").arg(QString::number(range[0][0]),
+           QString::number(range[0][1]), QString::number(range[0][2]), QString::number(range[1][0]),
+           QString::number(range[1][1]), QString::number(range[1][2])));
+   */
+   reportMsg.append(QString("\t from %1 to %2").arg(QString2String::Scalar2QString(range[0]),QString2String::Scalar2QString(range[1]) ));
+
+    report(reportMsg.toStdString());
+
 
     ui->trackedColorsList->addItem(targetName);
 }
@@ -414,4 +422,29 @@ void Widget::on_addTotrackingButtom_clicked()
     addColorToTracking(range);
     }
 
+}
+
+
+void Widget::on_trackedColorsList_currentIndexChanged(int index)
+{
+    if(targets.size() > 1){
+    ObjectToDetect *target = targets[index];
+    Scalar minCor = (target->colorRange)[0];
+    Scalar maxCor = (target->colorRange)[1];
+
+    minCorHSV[0] = minCor[0]; minCorHSV[1] = minCor[1]; minCorHSV[2] = minCor[2];
+    maxCorHSV[0] = maxCor[0]; maxCorHSV[1] = maxCor[1]; maxCorHSV[2] = maxCor[2];
+
+    updateColorTrackBars();
+    }
+}
+
+
+void Widget::on_deleteButtom_clicked()
+{
+    int index = ui->trackedColorsList->currentIndex();
+    if(index > targets.size())
+        errorMsg("Valor Inválido!");
+    targets.erase(targets.begin()+index);
+    ui->trackedColorsList->removeItem(index);
 }

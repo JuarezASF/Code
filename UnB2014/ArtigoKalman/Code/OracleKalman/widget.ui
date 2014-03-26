@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>490</x>
-     <y>440</y>
+     <y>460</y>
      <width>91</width>
      <height>51</height>
     </rect>
@@ -232,6 +232,168 @@
       </property>
       <property name="text">
        <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>491</x>
+     <y>371</y>
+     <width>81</width>
+     <height>52</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="FuturePastLayout">
+    <item>
+     <widget class="QCheckBox" name="futureButtom">
+      <property name="text">
+       <string>Future</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="pastButtom">
+      <property name="text">
+       <string>Past</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QPushButton" name="ClearPastButtom">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>430</y>
+     <width>80</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Clear Past</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="BorrarButtom">
+   <property name="geometry">
+    <rect>
+     <x>594</x>
+     <y>370</y>
+     <width>80</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Borrar</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="SizeOfGaussian">
+   <property name="geometry">
+    <rect>
+     <x>680</x>
+     <y>370</y>
+     <width>79</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_4">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>410</y>
+     <width>311</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <item>
+     <widget class="QLabel" name="raioLabel">
+      <property name="text">
+       <string>raio</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="raioValueLabel">
+      <property name="text">
+       <string>30</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSlider" name="raioSlider">
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="value">
+       <number>20</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_5">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>440</y>
+     <width>491</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_9">
+    <item>
+     <widget class="QLabel" name="SaveLabel">
+      <property name="text">
+       <string>output save to: </string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="SaveLineEdit"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="saveButtom">
+      <property name="text">
+       <string>save</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_6">
+   <property name="geometry">
+    <rect>
+     <x>590</x>
+     <y>470</y>
+     <width>491</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_10">
+    <item>
+     <widget class="QLabel" name="SaveInputLabel">
+      <property name="text">
+       <string>input save to: </string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="SaveInputEdit"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="SaveInputButtom">
+      <property name="text">
+       <string>save</string>
       </property>
      </widget>
     </item>

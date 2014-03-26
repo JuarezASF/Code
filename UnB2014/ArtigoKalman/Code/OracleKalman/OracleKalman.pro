@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     cv2qtimage.cpp \
     ColorSensor.cpp \
     ColorDetection.cpp \
-    ObjectToDetect.cpp
+    ObjectToDetect.cpp \
+    QString2Strings.cpp
 
 
 HEADERS  += widget.h \
@@ -51,6 +52,7 @@ HEADERS  += widget.h \
     cv2qtimage.h \
     ColorSensor.h \
     ColorDetection.h \
-    ObjectToDetect.h
+    ObjectToDetect.h \
+    QString2String.h
 
 FORMS    += widget.ui
