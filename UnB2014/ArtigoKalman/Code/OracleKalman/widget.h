@@ -34,9 +34,13 @@
 #include "QString2String.h"
 #include "Filtros.h"
 
+//GNUPLOT
+#include "gnuplot-iostream.h"
+
 extern bool CONTROL_FILTER_GAUSSIAN;
 extern bool CONTROL_SEE_FUTURE;
 extern bool CONTROL_SEE_PAST;
+extern bool CONTROL_GNUPLOT;
 
 namespace Ui {
 class Widget;
@@ -103,6 +107,9 @@ private:
     void drawFuturePrediction(Mat &outputFrame,vector<vector<Point> > &future);
     void drawPastHistory(Mat &outputFrame);
 
+    //gnuplot
+    void showGnuplot();
+
 
     //borrar imagem
     int SizeGaussFilter;
@@ -135,6 +142,7 @@ private slots:
     void on_pastButtom_stateChanged(int arg1);
     void on_raioSlider_valueChanged(int value);
     void on_ClearPastButtom_clicked();
+    void on_gnuplotButton_clicked();
 };
 
 #endif // WIDGET_H

@@ -30,7 +30,10 @@ LIBS += -L/usr/local/lib \
         -lopencv_objdetect \
         -lopencv_contrib \
         -lopencv_legacy \
-        -lopencv_flann
+        -lopencv_flann \
+        -lboost_iostreams \
+        -lboost_system \
+        -lboost_filesystem
 
 
 SOURCES += main.cpp\
@@ -55,6 +58,7 @@ HEADERS  += widget.h \
     ColorDetection.h \
     ObjectToDetect.h \
     QString2String.h \
-    Filtros.h
+    Filtros.h \
+    gnuplot-iostream.h
 
 FORMS    += widget.ui

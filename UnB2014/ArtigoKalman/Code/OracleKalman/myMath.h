@@ -11,6 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/video/tracking.hpp>
 #include <cmath>
+#include <unistd.h>
 
 using namespace cv;
 
@@ -19,6 +20,11 @@ public:
 	static double mod(Point &A);
 
 	static KalmanFilter copyKF(KalmanFilter &origin);
+
+
+    static void mysleep(unsigned millis) {
+        ::usleep(millis * 1000);
+    }
 };
 
 #endif /* MYMATH_H_ */

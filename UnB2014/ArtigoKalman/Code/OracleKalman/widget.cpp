@@ -723,3 +723,35 @@ void Widget::on_ClearPastButtom_clicked()
     for (unsigned int i = 0; i < pastHistory.size(); i++)
         pastHistory[i].clear();
 }
+
+void Widget::on_gnuplotButton_clicked()
+{
+    showGnuplot();
+}
+
+
+void Widget::showGnuplot(){
+    Gnuplot gp;
+
+    std::cout << "Press Ctrl-C to quit (closing gnuplot window doesn't quit)." << std::endl;
+
+    gp << "set yrange [-1:1]\n";
+
+    const int N = 1000;
+    std::vector<double> pts(N);
+
+    double theta = 0;
+    while(1) {
+        for(int i=0; i<N; i++) {
+            double alpha = (double(i)/N-0.5) * 10;
+            pts[i] = sin(alpha*8.0 + theta) * exp(-alpha*alpha/2.0);
+        }
+
+        gp << "plot '-' binary" << gp.binFmt1d(pts, "array") << "with lines notitle\n";
+        gp.sendBinary1d(pts);
+        gp.flush();
+
+        theta += 0.2;
+        myMath::mysleep(100);
+    }
+}
