@@ -76,6 +76,13 @@ Widget::Widget(QWidget *parent) :
     ui->SizeOfGaussian->addItem("71");
     ui->SizeOfGaussian->setCurrentIndex(7);
 
+    pastHistoryMaxSize = 100;
+
+    int RaioInicial = 30;
+    Raio = RaioInicial;
+    ui->raioValueLabel->setText(QString::number(RaioInicial));
+    ui->raioSlider->setValue(RaioInicial);
+
 
 
 }
@@ -432,6 +439,7 @@ void Widget::addColorToTracking(vector<Scalar> &range){
     //adiciona espaço no vetor de sucessos
     detectionSucess.resize(detectionSucess.size()+1);
     objectsCenter.resize(objectsCenter.size()+1);
+    pastHistory.resize(pastHistory.size() + 1);
 }
 
 void Widget::on_addTotrackingButtom_clicked()
@@ -449,6 +457,7 @@ void Widget::on_addTotrackingButtom_clicked()
     range.push_back(maxColor);
 
     addColorToTracking(range);
+
     }
 
 }
@@ -476,6 +485,7 @@ void Widget::on_deleteButtom_clicked()
         errorMsg("Valor Inválido!");
     targets.erase(targets.begin()+index);
     ui->trackedColorsList->removeItem(index);
+    pastHistory.erase(pastHistory.begin()+index);
 }
 
 void Widget::pauseVideo(){
@@ -620,4 +630,96 @@ void Widget::drawKalmanResult(Mat &outputFrame, vector<Point> &kalmanCenters){
     }
 
     Draw::Circles(outputFrame, kalmanCircles, colorsToPaint);
+}
+
+void Widget::on_raioSlider_valueChanged(int value)
+{
+    Raio = value;
+    ui->raioValueLabel->setText(QString::number(value));
+}
+
+vector<vector<Point> > Widget::predictFuture(int futureSize){
+    vector<vector<Point> > future;
+    future.resize(targets.size());
+
+    for(unsigned int i = 0; i < targets.size(); i++)
+        {
+        KalmanFilter *KF;
+        KF = targets[i]->KF;
+
+        KalmanFilter DelfusOracle = myMath::copyKF(*KF);
+            /*para ver o futuro copiamos o estado do filtro atual e
+              o realimentamos com suas próprias previsões um número fixo de vezes*/
+        for(int j = 0; j < futureSize; j++)
+                //CALCULA PONTOS DO FUTURO
+            {
+
+            Mat prediction = DelfusOracle.predict();
+            Point predictPt(prediction.at<float>(0),prediction.at<float>(1));
+
+            future[i].push_back(predictPt);
+
+            Mat_<float> predictedMeasurement(2,1);
+            predictedMeasurement(0) = prediction.at<float>(0);
+            predictedMeasurement(1) = prediction.at<float>(1);
+
+            DelfusOracle.correct(predictedMeasurement);
+
+            DelfusOracle.errorCovPre.copyTo(DelfusOracle.errorCovPost);
+                //copiamos covPre para covPost seguindo a dica de um fórum
+                //o Vidal não gosta dessa dica, diz ele que isso engana o filtro
+            }
+
+
+        }//end for each color
+
+    return future;
+}
+
+void Widget::drawFuturePrediction(Mat &outputFrame,vector<vector<Point> > &future){
+    //DEZENHA PONTOS DO FUTURO
+    for(unsigned int i = 0; i < targets.size(); i++){
+        vector<Vec3f> kalmanFutureCircles;
+        vector<Scalar> ColorsToPaintFuture;
+        for(unsigned int n = 0; n < future[i].size(); n++)
+            {
+                int KalmanFutureRaio = 2;
+                Vec3f currentCircle(future[i][n].x, future[i][n].y,
+                      KalmanFutureRaio);
+                kalmanFutureCircles.push_back(currentCircle);
+
+                //ColorsToPaintFuture.push_back(targets[i]->colorPaint);
+                ColorsToPaintFuture.push_back(Scalar(255, 255, 255));
+
+            }
+        Draw::Circles(outputFrame, kalmanFutureCircles, ColorsToPaintFuture);
+    }
+}
+
+
+void Widget::addToPastHistory(vector<Point> &kalmanCenters){
+
+    if(!pastHistory.empty())
+        if(pastHistory[0].size() > pastHistoryMaxSize)
+                for (unsigned int i = 0; i < pastHistory.size(); i++)
+                    pastHistory[i].clear();
+
+    for(unsigned int i = 0; i < pastHistory.size(); i++)
+        pastHistory[i].push_back(kalmanCenters[i]);
+
+}
+
+void Widget::drawPastHistory(Mat &outputFrame){
+    for(unsigned int n = 0; n < pastHistory.size(); n++)
+            for (unsigned int i = 0; i < pastHistory[n].size() - 1; i++)
+                    Draw::Line(outputFrame, pastHistory[n][i], pastHistory[n][i+1],
+                            targets[n]->colorPaint);
+
+}
+
+
+void Widget::on_ClearPastButtom_clicked()
+{
+    for (unsigned int i = 0; i < pastHistory.size(); i++)
+        pastHistory[i].clear();
 }

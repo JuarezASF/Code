@@ -41,25 +41,32 @@ void Widget::process()
     if(CONTROL_FILTER_GAUSSIAN){
         medianBlur ( frame, frame, SizeGaussFilter);
         }
-
+    frame.copyTo(outputFrame);
     //------------------------------------------------
     //-----------DETECÇÃO DE OBJETOS POR COR----------
     //------------------------------------------------
-
     if(!targets.empty())
         {
-        frame.copyTo(outputFrame);
-
         //acha centro dos objetos
         vector<Point> centers =
             this->findTargets(frame);
+       //atualiza os filtros de kalman
         vector<Point> kalmanCenters = this->findKalmanCenters(centers);
 
         drawDetectionResult(outputFrame, centers);
         drawKalmanResult(outputFrame, kalmanCenters);
 
+        if(CONTROL_SEE_FUTURE){
+            vector<vector<Point> > future = this->predictFuture(30);
+            drawFuturePrediction(outputFrame, future);
+            }
+        if(CONTROL_SEE_PAST){
+            addToPastHistory(kalmanCenters);
+            drawPastHistory(outputFrame);
+        }
 
-        }//end if(!targents.empty())
+   }//end if(!targents.empty())
 
+    Cv2QtImage::setLabelImage(ui->OutputImg, outputFrame);
 }
 

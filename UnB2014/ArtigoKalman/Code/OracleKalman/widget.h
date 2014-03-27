@@ -66,6 +66,10 @@ private://membros
     //controla raio com que objetos sao desenhados
     float Raio;
 
+    //guarda histórico do passado
+    vector<vector<Point> > pastHistory;
+    unsigned int pastHistoryMaxSize;
+
 
 private:
     //inicializacao de video
@@ -90,11 +94,14 @@ private:
     vector<bool> detectionSucess;
     vector<Point> findTargets(Mat &RGB_Input);
     vector<Point> findKalmanCenters(vector<Point> dataInput);
+    vector<vector<Point> > predictFuture(int futureSize);
+    void addToPastHistory(vector<Point> &kalmanCenters);
 
     //desenhando resultados
     void drawDetectionResult(Mat &outputFrame, vector<Point> &centers);
     void drawKalmanResult(Mat &outputFrame, vector<Point>    &kalmanCenters);
-
+    void drawFuturePrediction(Mat &outputFrame,vector<vector<Point> > &future);
+    void drawPastHistory(Mat &outputFrame);
 
 
     //borrar imagem
@@ -126,6 +133,8 @@ private slots:
     void on_SizeOfGaussian_currentIndexChanged(int index);
     void on_futureButtom_stateChanged(int arg1);
     void on_pastButtom_stateChanged(int arg1);
+    void on_raioSlider_valueChanged(int value);
+    void on_ClearPastButtom_clicked();
 };
 
 #endif // WIDGET_H

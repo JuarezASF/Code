@@ -129,8 +129,23 @@ void Draw::Circles(Mat &src, vector<Vec3f> circles,
 	   }
 }
 
+void Draw::Circles(Mat &src, vector<Vec3f> circles,
+                            Scalar color){
+    /// Draw the circles detected
+      for( size_t i = 0; i < circles.size(); i++ )
+      {
+          Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+          int radius = cvRound(circles[i][2]);
+          // circle center
+          circle( src, center, 3, color, -1, 8, 0 );
+          // circle outline
+          circle( src, center, radius, color, 3, 8, 0 );
+       }
+}
+
+
 void Draw::addAll(Mat &src, vector<Mat> &masks){
-    for(int i = 0; i < masks.size(); i++)
+    for(unsigned int i = 0; i < masks.size(); i++)
         //src = src + masks[i];
     addWeighted(src,0.8, masks[i], 100, 0, src);
 }
