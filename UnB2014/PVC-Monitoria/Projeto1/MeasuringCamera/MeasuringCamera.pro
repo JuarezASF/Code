@@ -5,7 +5,8 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     JASF.cpp \
-    ColorDetection.cpp
+    ColorDetection.cpp \
+    Filtros.cpp
 
 INCLUDEPATH +=  /usr/include/opencv2\
                 /usr/include/opencv2/core\
@@ -30,4 +31,5 @@ LIBS += -L/usr/local/lib \
 HEADERS += \
     JASF.h \
     ColorDetection.h \
-    Auxiliar.h
+    Auxiliar.h \
+    Filtros.h
