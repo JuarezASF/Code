@@ -130,6 +130,16 @@ void reset()
   catch (IOException e) {}
 }
 
+void reset(int canal)
+{ try
+   {mid.writeByte(kanal+176);         //-----mensagem do tipo control change
+    mid.writeByte(canal);               
+    mid.writeByte(0);
+    mid.flush();
+  }
+  catch (IOException e) {}
+}
+
 void note_off(int kanal, int tecla, int pesq, int pdir)
 { try
   { mid.writeByte(kanal+128);         //note-off
