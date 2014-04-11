@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>myGUI4</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>src/myGUI4/IP_buttom.png</name>
+			<type>1</type>
+			<location>/home/juarez408/workspaces/EclipseJAVA/myGUI4/src/myGUI4/IP_buttom.png</location>
+		</link>
+		<link>
+			<name>src/myGUI4/JF_buttom.png</name>
+			<type>1</type>
+			<location>/home/juarez408/workspaces/EclipseJAVA/myGUI4/src/myGUI4/JF_buttom.png</location>
+		</link>
+	</linkedResources>
+</projectDescription>
