@@ -1,87 +1,220 @@
+import javax.swing.Icon;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JTextField;
 import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.ImageIcon;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
-
+import java.awt.Image;
 
 public class GUI extends JFrame
-implements ActionListener{
-
+implements ActionListener, ChangeListener{
+	
+	private ImageIcon playI, pauseI, stopI, fwI, bwI;
+	private int iconSize[];
+	
 	private JButton playB;
 	private JButton stopB;
-	private JButton forwardB, backwardB;
+	private JButton fwB, bwB;
 	private boolean running;
 	
-	JTextArea logArea;
-	private JScrollPane logPane;
+	private JSlider currentPositionSlider;
 	
+	private LogWindow log;
+	
+	private JLabel timeLabel;
+	private JLabel resolLabel;
+	private JLabel durationLabel;
+	private JLabel numTiqLabel;
+	private JLabel durTiqLabel;
+	private JLabel durSemLabel;
+	private JLabel numSemLabel;
+	private JLabel andaLabel;
+	private JLabel fileName;
 	
 	public GUI(){
-		super("Introdução a Computação Sônica - Trabalho 1");
-		setLayout(new FlowLayout());
+		//DEFINE TÍTULO DA JANELA
+		super("Introdução a Computação Sônica - Trabalho 1");		
+		//DEFINE LAYOUT do JFRAME
+		//setLayout(new FlowLayout());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(500, 400);
+		
+		JPanel painel, centro, baixo, direita;
+		
+		painel = new JPanel();
+		BorderLayout BL = new BorderLayout();
+		painel.setLayout(BL);
+		
+		baixo = new JPanel();
+		baixo.setLayout(new GridLayout(1, 6));
+		
+		centro = new JPanel();
+		GridLayout GL2 = new GridLayout(10, 1);
+		centro.setLayout(GL2);
 		
 		running = false;
 		
-		playB = new JButton("play");
+		//DEFINIÇÃO DE ÍCONES
+		iconSize = new int[2];
+		iconSize[0] = 30;
+		iconSize[1] = 30;
+		playI = createImageIcon("images/play/style1.png");
+		pauseI = createImageIcon("images/pause/style1.png");
+		stopI = createImageIcon("images/stop/style1.png");
+		fwI = createImageIcon("images/forward/style1.png");
+		bwI = createImageIcon("images/backward/style1.png");
+		
+		//CRIA E DEFINE BUTÕES
+		playB = new JButton();
+		playB.setIcon(playI);
 		playB.addActionListener(this);
 		playB.setActionCommand("play/pause");
 		
-		
-		stopB = new JButton("stop");
+		stopB = new JButton();
+		stopB.setIcon(stopI);
 		stopB.addActionListener(this);
 		stopB.setActionCommand("stop");
 		
-		forwardB = new JButton(">>");
-		forwardB.addActionListener(this);
-		forwardB.setActionCommand("forward");
+		fwB = new JButton();
+		fwB.setIcon(fwI);
+		fwB.addActionListener(this);
+		fwB.setActionCommand("forward");
 		
-		backwardB = new JButton("<<");
-		backwardB.addActionListener(this);
-		backwardB.setActionCommand("backward");
+		bwB = new JButton();
+		bwB.setIcon(bwI);
+		bwB.addActionListener(this);
+		bwB.setActionCommand("backward");
 		
-		add(playB);
-		add(stopB);
-		add(forwardB);
-		add(backwardB);
+		playB.setPreferredSize(getIconDimension(playB.getIcon()));
+		stopB.setPreferredSize(getIconDimension(stopB.getIcon()));
+		fwB.setPreferredSize(getIconDimension(fwB.getIcon()));
+		bwB.setPreferredSize(getIconDimension(fwB.getIcon()));
 		
-		logArea = new JTextArea(5, 30);
-		logPane = new JScrollPane(logArea);
-		logArea.append("linha 1\n");
-		logArea.append("linha 2\n");
-		logArea.append("linha 3\n");
-		logArea.append("linha 4\n");
-		logArea.append("linha 5\n");
-		logArea.append("linha 6\n");
+		//CRIA JANELA DE LOG
+		log = new LogWindow(30,  5);
+		
+		//CRIA E AJUSTA SLIDER DE TEMPO
+		currentPositionSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
+		currentPositionSlider.addChangeListener(this);
+		
+		//CRIA E DEFINE LABELS
+		timeLabel = new JLabel();
+		resolLabel = new JLabel();
+		resolLabel.setToolTipText("número de divisões da semínima");
+		durationLabel = new JLabel();
+		numTiqLabel = new JLabel();
+		durTiqLabel = new JLabel();
+		durSemLabel = new JLabel();
+		numSemLabel = new JLabel();
+		andaLabel = new JLabel();
+		fileName = new JLabel();
+		
+		setTimeLabel(0);
+		setDurationLabel(31);
+		setResolLabel(256);
+		setNumTiqLabel(16380);
+		setDurTiqLabel((float) 0.00189);
+		setDurSemLabel((float) 0.48);
+		setNumSemLabel(63);
+		setAndaLabel(124);
+		setFileName("ode_to_joy.mid");
+		
+		//ADICIONA BUTÕES
+		baixo.add(playB);
+		baixo.add(stopB);
+		baixo.add(fwB);
+		baixo.add(bwB);		
+		baixo.add(log);
+		baixo.add(currentPositionSlider);
 		
 		
-		add(logPane);
+		//ADICIONA LABELS
+		centro.add(timeLabel);
+		centro.add(resolLabel);
+		centro.add(durationLabel);
+		centro.add(numTiqLabel);
+		centro.add(durTiqLabel);
+		centro.add(resolLabel); 
+		centro.add(durSemLabel);
+		centro.add(numSemLabel);
+		centro.add(andaLabel); 
+		centro.add(fileName);
+	
+		
+		painel.add(centro, BorderLayout.CENTER);
+		painel.add(baixo, BorderLayout.PAGE_END);
+		add(painel);
+
 	}
 	
 
+	public void setTimeLabel(int sec) {
+		this.timeLabel.setText(sec + " s") ;
+	}
+	
+	public void setDurationLabel(int sec) {
+		this.durationLabel.setText("Tempo Total: " + sec + " s") ;
+	}
+
+	public void setResolLabel(int tiques) {
+		this.resolLabel.setText("Resolução: " + tiques + " tiques");
+	}
+
+	public void setDurationLabel(String minSec) {
+		this.durationLabel.setText("Duração: " + minSec);
+	}
+
+	public void setNumTiqLabel(int value) {
+		this.numTiqLabel.setText("Número de Tiques: " + value);
+	}
+
+	public void setDurTiqLabel(float value) {
+		this.durTiqLabel.setText("Duração do Tique: " + value + " s");
+	}
+
+	public void setDurSemLabel(float value) {
+		this.durSemLabel.setText("Duração da Semínima: " + value + " s");
+	}
+
+	public void setNumSemLabel(int value) {
+		this.numSemLabel.setText("Número de Semínimas: " + value);
+	}
+
+	public void setAndaLabel(int value) {
+		this.andaLabel.setText("Andamento: " + value + " bpm");
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName.setText("Arquivo: " + fileName);
+	}
 
 	public void actionPerformed(ActionEvent E) {
 		if("play/pause".equals(E.getActionCommand())){
 		
 			if(running == false){	
 				running = true;
-				playB.setText("Pause");
+				playB.setIcon(pauseI);
 			}
 			else{
 				running = false;
-				playB.setText("Play");
+				playB.setIcon(playI);
 			}
 			}//end "play/pause"
 			
 		else if("stop".equals(E.getActionCommand())){
 			running = false;
+			playB.setIcon(playI);
 		}//end "stop"
 		
 		else if("forward".equals(E.getActionCommand())){
@@ -92,6 +225,31 @@ implements ActionListener{
 		}//end "stop"
 		
 	}
+	protected ImageIcon createImageIcon(String path) {
+	    java.net.URL imgURL = GUI.class.getResource(path);
+	    ImageIcon icon = new ImageIcon(imgURL);
+	    Image img = icon.getImage();
+	    Image newImg = img.getScaledInstance(iconSize[0],iconSize[1], java.awt.Image.SCALE_SMOOTH);
+	    return new ImageIcon(newImg);
+	}
+
+	public void stateChanged(ChangeEvent E) {
+		JSlider src = (JSlider)E.getSource();
+		int desiredPosition;
+		desiredPosition = (int)src.getValue();
+		if(!src.getValueIsAdjusting()){
+			log.report("Value set to: "+ desiredPosition);
+		}
+		else{
+			setTimeLabel(desiredPosition);
+		}
+	}
+	private Dimension getIconDimension(Icon I){
+		Dimension D= new Dimension(I.getIconWidth(), I.getIconHeight());
+		return D;
+	}
+	
+
 		
 		
 }
