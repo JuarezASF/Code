@@ -7,6 +7,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.JTable;
+import javax.swing.JFileChooser;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -16,6 +18,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Image;
+import java.io.File;
 
 public class GUI extends JFrame
 implements ActionListener, ChangeListener{
@@ -26,11 +29,17 @@ implements ActionListener, ChangeListener{
 	private JButton playB;
 	private JButton stopB;
 	private JButton fwB, bwB;
+	private JButton loadB;
+	
+	private JFileChooser fileChooser;
+	
 	private boolean running;
 	
 	private JSlider currentPositionSlider;
 	
 	private LogWindow log;
+	
+	private JTable infoTable;
 	
 	private JLabel timeLabel;
 	private JLabel resolLabel;
@@ -42,13 +51,13 @@ implements ActionListener, ChangeListener{
 	private JLabel andaLabel;
 	private JLabel fileName;
 	
+	private MidiPlayer player;
+	
 	public GUI(){
 		//DEFINE TÍTULO DA JANELA
 		super("Introdução a Computação Sônica - Trabalho 1");		
-		//DEFINE LAYOUT do JFRAME
-		//setLayout(new FlowLayout());
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(500, 400);
+		
 		
 		JPanel painel, centro, baixo, direita;
 		
@@ -62,6 +71,10 @@ implements ActionListener, ChangeListener{
 		centro = new JPanel();
 		GridLayout GL2 = new GridLayout(10, 1);
 		centro.setLayout(GL2);
+		
+		direita = new JPanel();
+		direita.setLayout(new GridLayout(5, 2));
+		
 		
 		running = false;
 		
@@ -95,6 +108,10 @@ implements ActionListener, ChangeListener{
 		bwB.setIcon(bwI);
 		bwB.addActionListener(this);
 		bwB.setActionCommand("backward");
+
+		loadB = new JButton("load .midi");
+		loadB.addActionListener(this);
+		loadB.setActionCommand("loadFile");
 		
 		playB.setPreferredSize(getIconDimension(playB.getIcon()));
 		stopB.setPreferredSize(getIconDimension(stopB.getIcon()));
@@ -120,6 +137,10 @@ implements ActionListener, ChangeListener{
 		andaLabel = new JLabel();
 		fileName = new JLabel();
 		
+		//inicializar escolhedor de arquivos na pasta atual
+		
+		fileChooser = new JFileChooser(".");
+		
 		setTimeLabel(0);
 		setDurationLabel(31);
 		setResolLabel(256);
@@ -134,9 +155,11 @@ implements ActionListener, ChangeListener{
 		baixo.add(playB);
 		baixo.add(stopB);
 		baixo.add(fwB);
-		baixo.add(bwB);		
-		baixo.add(log);
-		baixo.add(currentPositionSlider);
+		baixo.add(bwB);
+		
+		direita.add(loadB);
+		direita.add(log);
+		direita.add(currentPositionSlider);
 		
 		
 		//ADICIONA LABELS
@@ -154,6 +177,7 @@ implements ActionListener, ChangeListener{
 		
 		painel.add(centro, BorderLayout.CENTER);
 		painel.add(baixo, BorderLayout.PAGE_END);
+		painel.add(direita, BorderLayout.EAST);
 		add(painel);
 
 	}
@@ -221,8 +245,18 @@ implements ActionListener, ChangeListener{
 			
 		}//end "stop"
 		else if("backward".equals(E.getActionCommand())){
-			
 		}//end "stop"
+		else if("loadFile".equals(E.getActionCommand())){
+			int returnVal = fileChooser.showOpenDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+	            File file = fileChooser.getSelectedFile();
+	            //This is where a real application would open the file.
+	            log.report("abrindo: " + file.getName() + ".");
+	        } else {
+	            log.report("Comando de abrir cancelado pelo usuário");
+	        }
+			
+		}
 		
 	}
 	protected ImageIcon createImageIcon(String path) {
