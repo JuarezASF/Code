@@ -4,16 +4,22 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JTable;
 import javax.swing.JFileChooser;
+import javax.swing.Timer;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JMenu;
+
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -36,20 +42,21 @@ implements ActionListener, ChangeListener{
 	private boolean running;
 	
 	private JSlider currentPositionSlider;
+	private JLabel currentPosition;
 	
 	private LogWindow log;
 	
+	DefaultTableModel tableModel;
+	private JScrollPane infoTablePane;
 	private JTable infoTable;
 	
-	private JLabel timeLabel;
-	private JLabel resolLabel;
-	private JLabel durationLabel;
-	private JLabel numTiqLabel;
-	private JLabel durTiqLabel;
-	private JLabel durSemLabel;
-	private JLabel numSemLabel;
-	private JLabel andaLabel;
-	private JLabel fileName;
+	private Timer clock;
+	private boolean mudancaInterna, mudancaExterna;
+	
+	private JMenuBar menuBar;
+	private JMenu fileMenu;
+	private JMenuItem loadMenuItem;
+		
 	
 	private MidiPlayer player;
 	
@@ -62,15 +69,13 @@ implements ActionListener, ChangeListener{
 		JPanel painel, centro, baixo, direita;
 		
 		painel = new JPanel();
-		BorderLayout BL = new BorderLayout();
-		painel.setLayout(BL);
+		painel.setLayout(new BorderLayout());
 		
 		baixo = new JPanel();
 		baixo.setLayout(new GridLayout(1, 6));
 		
 		centro = new JPanel();
-		GridLayout GL2 = new GridLayout(10, 1);
-		centro.setLayout(GL2);
+		centro.setLayout(new FlowLayout());
 		
 		direita = new JPanel();
 		direita.setLayout(new GridLayout(5, 2));
@@ -82,11 +87,15 @@ implements ActionListener, ChangeListener{
 		iconSize = new int[2];
 		iconSize[0] = 30;
 		iconSize[1] = 30;
-		playI = createImageIcon("images/play/style1.png");
-		pauseI = createImageIcon("images/pause/style1.png");
-		stopI = createImageIcon("images/stop/style1.png");
-		fwI = createImageIcon("images/forward/style1.png");
-		bwI = createImageIcon("images/backward/style1.png");
+		
+		String projectFolder = System.getProperty("user.dir");
+		
+		playI = createImageIcon(projectFolder + "/images/play/style1.png");
+		pauseI = createImageIcon(projectFolder + "/images/pause/style1.png");
+		stopI = createImageIcon(projectFolder + "/images/stop/style1.png");
+		fwI = createImageIcon(projectFolder + "/images/forward/style1.png");
+		bwI = createImageIcon(projectFolder + "/images/backward/style1.png");
+		
 		
 		//CRIA E DEFINE BUTÕES
 		playB = new JButton();
@@ -122,34 +131,51 @@ implements ActionListener, ChangeListener{
 		log = new LogWindow(30,  5);
 		
 		//CRIA E AJUSTA SLIDER DE TEMPO
+		currentPosition = new JLabel("0");
 		currentPositionSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 		currentPositionSlider.addChangeListener(this);
 		
-		//CRIA E DEFINE LABELS
-		timeLabel = new JLabel();
-		resolLabel = new JLabel();
-		resolLabel.setToolTipText("número de divisões da semínima");
-		durationLabel = new JLabel();
-		numTiqLabel = new JLabel();
-		durTiqLabel = new JLabel();
-		durSemLabel = new JLabel();
-		numSemLabel = new JLabel();
-		andaLabel = new JLabel();
-		fileName = new JLabel();
 		
 		//inicializar escolhedor de arquivos na pasta atual
 		
-		fileChooser = new JFileChooser(".");
+		fileChooser = new JFileChooser("./midi/" );
+	
 		
-		setTimeLabel(0);
-		setDurationLabel(31);
-		setResolLabel(256);
-		setNumTiqLabel(16380);
-		setDurTiqLabel((float) 0.00189);
-		setDurSemLabel((float) 0.48);
-		setNumSemLabel(63);
-		setAndaLabel(124);
-		setFileName("ode_to_joy.mid");
+		String[] columnNames = {"Propriedade",
+                "Valor", "unidade"};
+		
+		Object[][] data = {
+			    {"Arquivo", "", ""},
+			    {"Duração", "", "s"},
+			    {"Resolução", "", "tiques"},
+			    {"Número de tiques", "", ""},
+			    {"Duração do Tique", "", "s"},
+			    {"Duração da Semínima", "", "s"},
+			    {"Total de Semínimas", "", ""},
+			    {"Andamento", "", "bpm"},
+			};
+		
+		tableModel = new DefaultTableModel(data, columnNames);
+		JTable infoTable = new JTable(tableModel);
+		infoTablePane = new JScrollPane(infoTable);
+		infoTable.setFillsViewportHeight(true);
+		infoTablePane.setPreferredSize(new Dimension(300, 500));
+				
+		clock = new Timer(1000, this);
+		mudancaInterna = false;
+		mudancaExterna = false;
+		
+		player = null;
+		
+		//DENIE MENU
+		menuBar = new JMenuBar();
+		fileMenu = new JMenu("File");
+		loadMenuItem = new JMenuItem("Load Midi");
+		loadMenuItem.setActionCommand("loadFile");
+		loadMenuItem.addActionListener(this);
+		
+		menuBar.add(fileMenu);
+		fileMenu.add(loadMenuItem);
 		
 		//ADICIONA BUTÕES
 		baixo.add(playB);
@@ -157,111 +183,80 @@ implements ActionListener, ChangeListener{
 		baixo.add(fwB);
 		baixo.add(bwB);
 		
-		direita.add(loadB);
 		direita.add(log);
 		direita.add(currentPositionSlider);
+		direita.add(currentPosition);
 		
 		
 		//ADICIONA LABELS
-		centro.add(timeLabel);
-		centro.add(resolLabel);
-		centro.add(durationLabel);
-		centro.add(numTiqLabel);
-		centro.add(durTiqLabel);
-		centro.add(resolLabel); 
-		centro.add(durSemLabel);
-		centro.add(numSemLabel);
-		centro.add(andaLabel); 
-		centro.add(fileName);
+		centro.add(infoTablePane);
 	
 		
 		painel.add(centro, BorderLayout.CENTER);
 		painel.add(baixo, BorderLayout.PAGE_END);
 		painel.add(direita, BorderLayout.EAST);
+		
+		painel.add(menuBar, BorderLayout.NORTH);
+		
 		add(painel);
 
+		log.reportGood("Inicializando interface");
+		
+
 	}
 	
-
-	public void setTimeLabel(int sec) {
-		this.timeLabel.setText(sec + " s") ;
-	}
-	
-	public void setDurationLabel(int sec) {
-		this.durationLabel.setText("Tempo Total: " + sec + " s") ;
-	}
-
-	public void setResolLabel(int tiques) {
-		this.resolLabel.setText("Resolução: " + tiques + " tiques");
-	}
-
-	public void setDurationLabel(String minSec) {
-		this.durationLabel.setText("Duração: " + minSec);
-	}
-
-	public void setNumTiqLabel(int value) {
-		this.numTiqLabel.setText("Número de Tiques: " + value);
-	}
-
-	public void setDurTiqLabel(float value) {
-		this.durTiqLabel.setText("Duração do Tique: " + value + " s");
-	}
-
-	public void setDurSemLabel(float value) {
-		this.durSemLabel.setText("Duração da Semínima: " + value + " s");
-	}
-
-	public void setNumSemLabel(int value) {
-		this.numSemLabel.setText("Número de Semínimas: " + value);
-	}
-
-	public void setAndaLabel(int value) {
-		this.andaLabel.setText("Andamento: " + value + " bpm");
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName.setText("Arquivo: " + fileName);
-	}
 
 	public void actionPerformed(ActionEvent E) {
-		if("play/pause".equals(E.getActionCommand())){
 		
-			if(running == false){	
-				running = true;
-				playB.setIcon(pauseI);
-			}
-			else{
-				running = false;
-				playB.setIcon(playI);
-			}
-			}//end "play/pause"
+		String action = E.getActionCommand();
+		if("play/pause".equals(action)){
+		
+			if(running == false)	
+				play();
+			else
+				pause();
+		}//end "play/pause"
 			
-		else if("stop".equals(E.getActionCommand())){
-			running = false;
-			playB.setIcon(playI);
+		else if("stop".equals(action)){
+				stop();
 		}//end "stop"
 		
-		else if("forward".equals(E.getActionCommand())){
+		else if("forward".equals(action)){
 			
 		}//end "stop"
-		else if("backward".equals(E.getActionCommand())){
+		else if("backward".equals(action)){
 		}//end "stop"
-		else if("loadFile".equals(E.getActionCommand())){
+		else if("loadFile".equals(action)){
 			int returnVal = fileChooser.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-	            File file = fileChooser.getSelectedFile();
-	            //This is where a real application would open the file.
-	            log.report("abrindo: " + file.getName() + ".");
+				if(player != null){
+					player.stop();
+				}
+				
+				File file = fileChooser.getSelectedFile();
+	            //mostra mensagem no log
+				log.report("abrindo: " + file.getName() + ".");
+	            player = new MidiPlayer(file.getAbsolutePath());
+				stop();
+	      
+	            //mostra dados na tabela de dados
+	            currentPositionSlider.setMaximum((int)player.getDuracao());
+	            getData();
+	            
+	            play();
 	        } else {
-	            log.report("Comando de abrir cancelado pelo usuário");
+	            log.reportWarning("Comando de abrir cancelado pelo usuário");
 	        }
 			
+		}
+		else if(E.getSource() == clock){
+			mudancaInterna = true;
+			currentPositionSlider.setValue((int)player.getTime());
 		}
 		
 	}
 	protected ImageIcon createImageIcon(String path) {
-	    java.net.URL imgURL = GUI.class.getResource(path);
-	    ImageIcon icon = new ImageIcon(imgURL);
+	    ImageIcon icon = new ImageIcon(path);
 	    Image img = icon.getImage();
 	    Image newImg = img.getScaledInstance(iconSize[0],iconSize[1], java.awt.Image.SCALE_SMOOTH);
 	    return new ImageIcon(newImg);
@@ -272,10 +267,17 @@ implements ActionListener, ChangeListener{
 		int desiredPosition;
 		desiredPosition = (int)src.getValue();
 		if(!src.getValueIsAdjusting()){
-			log.report("Value set to: "+ desiredPosition);
+			if(mudancaInterna == true && mudancaExterna == false){
+				currentPosition.setText("" + desiredPosition + "s");
+				mudancaInterna = false;
+			}
+			else{
+				goTo(desiredPosition);
+			}
 		}
 		else{
-			setTimeLabel(desiredPosition);
+			mudancaExterna = true;
+			currentPosition.setText("" + desiredPosition + "s");
 		}
 	}
 	private Dimension getIconDimension(Icon I){
@@ -283,7 +285,53 @@ implements ActionListener, ChangeListener{
 		return D;
 	}
 	
+	private void getData(){
+		tableModel.setValueAt(player.getFileName(), 0, 1);
+		tableModel.setValueAt(player.getDuracao(), 1, 1);
+		tableModel.setValueAt(player.getResolucao(), 2, 1);
+		tableModel.setValueAt(player.getTotaltiques(), 3, 1);
+		tableModel.setValueAt(player.getDuracaoTique(), 4, 1);
+		tableModel.setValueAt(player.getDurSeminima(), 5, 1);
+		tableModel.setValueAt(player.getTotalSeminimas(), 6, 1);
+		tableModel.setValueAt(Math.round(player.getBpm()), 7, 1);
+	}
+	
+	private void play(){
+        //muda para estado de 'playing'
+		if(player == null){ return;}
+        running = true;
+		playB.setIcon(pauseI);
+        player.play();
+		clock.start();
+	
+	}
 
+	private void pause(){
+		if(player == null){ return;}
+		running = false;
+		playB.setIcon(playI);
+		player.pause();
+		clock.stop();
+
+	}
+	
+	private void stop(){
+		if(player == null){ return;}
+		running = false;
+		playB.setIcon(playI);
 		
+		player.stop();
+		clock.stop();
 		
+		mudancaInterna = true;
+		currentPositionSlider.setValue(0);
+
+	}
+	
+	private void goTo(int desiredPosition){
+		if(player == null){ return;}
+		player.goTo(desiredPosition);
+		mudancaExterna = false;
+		log.report("Time set to: "+ desiredPosition + " s");
+	}
 }

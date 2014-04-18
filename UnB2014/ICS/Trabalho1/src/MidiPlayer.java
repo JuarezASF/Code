@@ -13,6 +13,7 @@ public class MidiPlayer {
 	private File      arqMidi;
 	private Sequencer sequenciador;
 	private Sequence  sequencia;
+	long tickPosition;
 	
 	public MidiPlayer(String nomeDoArquivo){
 		try{
@@ -25,7 +26,8 @@ public class MidiPlayer {
 		sequenciador.setSequence(sequencia);
 		sequenciador.open();             
 		espera(500);
-		sequenciador.start();  //--aqui começa a tocar.
+		
+		tickPosition = 0;
 		}
 		catch(MidiUnavailableException e1) {
 			System.out.println(e1+" : Dispositivo midi não disponível.");
@@ -91,23 +93,46 @@ public class MidiPlayer {
 	
 		return totalseminimas;
 	}
-/*	
-	static void exibirDados(Sequence sequencia, String nome)
-	{  
-		System.out.println("");
-		System.out.println("------------------------------------------");
-		System.out.println("--------Arquivo Midi: " + nome + " ----");
-		System.out.println("------------------------------------------");
-		System.out.println("resolução            = "+resolucao+" tiques   (número de divisões da semínima)");
-		System.out.println("duração              = "+duracao+" s");
-		System.out.println("número de tiques     = "+totaltiques+" ");
-		System.out.println("duração do tique     = "+durtique+" s");
-		System.out.println("duração da semínima  = "+durseminima+" s");
-		System.out.println("total de seminimas   = "+totalseminimas);
-		System.out.println("andamento            = "+Math.round(bpm)+ " bpm");
-		System.out.println("---");
+
+	public String getFileName(){
+		String file = arqMidi.getName();
+	
+		return file;
+	}
+	
+	public void pause(){
+		tickPosition = sequenciador.getTickPosition();
+		sequenciador.stop();
+	}
+	
+	public void stop(){
+		tickPosition = 0;
+		sequenciador.stop();
+	}
+
+	public void play(){
+		sequenciador.setTickPosition(tickPosition);
+		sequenciador.start();
+	}
+	
+	public void goTo(int segundos){
+		long goTo = segundos*(getTotaltiques()/getDuracao());
 		
-		System.out.println("");
-	}*/
+		tickPosition = goTo;
+		sequenciador.setTickPosition(tickPosition);
+	}
+	
+	public long getTime(){
+		/**
+		 * RETORNA O TEMPO DE EXECUÇÃO EM SEGUNDOS
+		 * */
+		  //long  posicao = sequenciador.getMicrosecondPosition();
+			long  posicao = sequenciador.getTickPosition();
+		  
+		  long   seg     = Math.round(posicao*getDuracaoTique());
+	
+		  return seg;
+	}
+	
 	
 }
