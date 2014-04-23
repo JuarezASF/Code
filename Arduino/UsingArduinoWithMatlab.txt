@@ -1,0 +1,31 @@
+Para usar o arduino com  matlab
+---------------------------
+---------------------------
+
+seguirei o tutorial desse site:
+	http://www.instructables.com/id/Tutorial-6-MATLAB-and-Arduino-part-1-up-and-run/?lang=pt
+
+
+baixe os arquivos necessários em:
+	http://www.mathworks.com/matlabcentral/fileexchange/32374-matlab-support-package-for-arduino-aka-arduinoio-package
+
+-no zip baixado existe uma pasta 'pde'
+-essa pasta pde deve ser colocada na pasta 'libraries' do ariduino
+-para achar essa pasta digite 'whereis arduino'
+-vc deve ter como resposta uns dois ou três itens.
+-aqui a saída foi /usr/bin/arduino /usr/bin/X11/arduino /usr/share/arduino /usr/share/man/man1/arduino.1.gz
+-a pasta correta é /usr/share/arduino
+
+-conecto o arduino no pc e configure corretamente a IDE do arduino
+
+-na ide aperte open e selecione o arquivo 'adioes' e faça upload
+-pronto, agora o programa para interfacear com o matlab está no arduino
+
+-agora abra o matlab e mude para a pasta ArduinoIO (aquela baixada)
+-ela deve possuir o script 'arduino.m'
+-rode no matlab:
+	A = arduino('/dev/ttyUSB0')
+	você deve passar como argumento a porta usb em que o arduino está conectado
+	*entre com ' ', o matlab deve te dar as sugestões disponíveis
+
+-se conectar deu tudo certo.

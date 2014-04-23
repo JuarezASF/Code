@@ -11,6 +11,10 @@ import javax.swing.text.StyleConstants;
 
 public class LogWindow extends JScrollPane{
 	private JTextPane logArea;
+	final Color warningC = new Color(205, 155, 29);
+	final Color badC = new Color(139,0,0);
+	final Color goodC = new Color(0, 139,0);
+	final Color normalC = new Color(0, 0, 0);
 	
 	
 	public LogWindow(int width, int height){
@@ -21,17 +25,17 @@ public class LogWindow extends JScrollPane{
 	}
 	
 	public void report(String msg){
-		append(msg + "\n", Color.BLACK);
+		append(msg + "\n", normalC);
 	}
 
 	public void reportGood(String msg){
-		append(msg + "\n", Color.GREEN);	}
+		append(msg + "\n", goodC);	}
 	
 	public void reportBad(String msg){
-		append(msg + "\n", Color.RED);	}
+		append(msg + "\n", badC);	}
 	
 	public void reportWarning(String msg){
-		append(msg + "\n", Color.YELLOW);
+		append(msg + "\n", warningC);
 	}
 	
     private void append(String msg, Color c)

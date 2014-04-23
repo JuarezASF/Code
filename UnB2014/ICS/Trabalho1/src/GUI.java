@@ -1,3 +1,4 @@
+import javax.sound.midi.InvalidMidiDataException;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,7 +17,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -25,17 +25,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Image;
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class GUI extends JFrame
 implements ActionListener, ChangeListener{
 	
-	private ImageIcon playI, pauseI, stopI, fwI, bwI;
+	private ImageIcon playI, pauseI, stopI, fastI, slowI;
 	private int iconSize[];
 	
-	private JButton playB;
+	private JButton playB, fastB, slowB;
 	private JButton stopB;
-	private JButton fwB, bwB;
-	private JButton loadB;
 	
 	private JFileChooser fileChooser;
 	
@@ -43,6 +45,9 @@ implements ActionListener, ChangeListener{
 	
 	private JSlider currentPositionSlider;
 	private JLabel currentPosition;
+
+	private JSlider volumeAtualSlider;
+	private JLabel volumeAtualLabel;
 	
 	private LogWindow log;
 	
@@ -89,12 +94,12 @@ implements ActionListener, ChangeListener{
 		iconSize[1] = 30;
 		
 		String projectFolder = System.getProperty("user.dir");
+		playI = createImageIcon(projectFolder + "/Icons/play.png");
+		pauseI = createImageIcon(projectFolder + "/Icons/pause.png");
+		stopI = createImageIcon(projectFolder + "/Icons/stop.png");
+		fastI = createImageIcon(projectFolder + "/Icons/fast.png");
+		slowI = createImageIcon(projectFolder + "/Icons/slow.png");
 		
-		playI = createImageIcon(projectFolder + "/images/play/style1.png");
-		pauseI = createImageIcon(projectFolder + "/images/pause/style1.png");
-		stopI = createImageIcon(projectFolder + "/images/stop/style1.png");
-		fwI = createImageIcon(projectFolder + "/images/forward/style1.png");
-		bwI = createImageIcon(projectFolder + "/images/backward/style1.png");
 		
 		
 		//CRIA E DEFINE BUTÕES
@@ -107,34 +112,37 @@ implements ActionListener, ChangeListener{
 		stopB.setIcon(stopI);
 		stopB.addActionListener(this);
 		stopB.setActionCommand("stop");
-		
-		fwB = new JButton();
-		fwB.setIcon(fwI);
-		fwB.addActionListener(this);
-		fwB.setActionCommand("forward");
-		
-		bwB = new JButton();
-		bwB.setIcon(bwI);
-		bwB.addActionListener(this);
-		bwB.setActionCommand("backward");
 
-		loadB = new JButton("load .midi");
-		loadB.addActionListener(this);
-		loadB.setActionCommand("loadFile");
+		fastB = new JButton();
+		fastB.setIcon(fastI);
+		fastB.addActionListener(this);
+		fastB.setActionCommand("fast");
+		fastB.setToolTipText("Multiplica andamento por 3/2");
+
+		slowB = new JButton();
+		slowB.setIcon(slowI);
+		slowB.addActionListener(this);
+		slowB.setActionCommand("slow");
+		slowB.setToolTipText("Multiplica andamento por 2/3");
+		
 		
 		playB.setPreferredSize(getIconDimension(playB.getIcon()));
 		stopB.setPreferredSize(getIconDimension(stopB.getIcon()));
-		fwB.setPreferredSize(getIconDimension(fwB.getIcon()));
-		bwB.setPreferredSize(getIconDimension(fwB.getIcon()));
 		
 		//CRIA JANELA DE LOG
 		log = new LogWindow(30,  5);
 		
-		//CRIA E AJUSTA SLIDER DE TEMPO
+		//CRIA E AJUSTA SLIDER DE TEMPO e de volume
 		currentPosition = new JLabel("0");
 		currentPositionSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
 		currentPositionSlider.addChangeListener(this);
 		
+
+		volumeAtualLabel = new JLabel("75");
+		volumeAtualSlider = new JSlider(JSlider.HORIZONTAL, 0, 127, 75);
+		//usamos 7 bits para o volume, então o máximo é 127
+		volumeAtualSlider.addChangeListener(this);
+
 		
 		//inicializar escolhedor de arquivos na pasta atual
 		
@@ -153,6 +161,8 @@ implements ActionListener, ChangeListener{
 			    {"Duração da Semínima", "", "s"},
 			    {"Total de Semínimas", "", ""},
 			    {"Andamento", "", "bpm"},
+			    {"Tonalidade", "", ""},
+			    {"Fórmula de Compasso", "", ""}
 			};
 		
 		tableModel = new DefaultTableModel(data, columnNames);
@@ -180,12 +190,15 @@ implements ActionListener, ChangeListener{
 		//ADICIONA BUTÕES
 		baixo.add(playB);
 		baixo.add(stopB);
-		baixo.add(fwB);
-		baixo.add(bwB);
+		baixo.add(fastB);
+		baixo.add(slowB);
 		
 		direita.add(log);
 		direita.add(currentPositionSlider);
 		direita.add(currentPosition);
+		direita.add(volumeAtualSlider);
+		direita.add(volumeAtualLabel);
+		
 		
 		
 		//ADICIONA LABELS
@@ -209,6 +222,9 @@ implements ActionListener, ChangeListener{
 	public void actionPerformed(ActionEvent E) {
 		
 		String action = E.getActionCommand();
+		
+		try{
+		
 		if("play/pause".equals(action)){
 		
 			if(running == false)	
@@ -221,10 +237,17 @@ implements ActionListener, ChangeListener{
 				stop();
 		}//end "stop"
 		
-		else if("forward".equals(action)){
-			
-		}//end "stop"
-		else if("backward".equals(action)){
+		else if("fast".equals(action)){
+			float andamento_atual = player.getBpm();
+			float novo_andamento = andamento_atual*1.5f;
+			player.setAndamento((int) novo_andamento);
+			getData();
+			}//end "fast"
+		else if("slow".equals(action)){
+			float andamento_atual = player.getBpm();
+			float novo_andamento = andamento_atual*0.66666f;
+			player.setAndamento((int) novo_andamento);
+			getData();
 		}//end "stop"
 		else if("loadFile".equals(action)){
 			int returnVal = fileChooser.showOpenDialog(this);
@@ -239,8 +262,6 @@ implements ActionListener, ChangeListener{
 	            player = new MidiPlayer(file.getAbsolutePath());
 				stop();
 	      
-	            //mostra dados na tabela de dados
-	            currentPositionSlider.setMaximum((int)player.getDuracao());
 	            getData();
 	            
 	            play();
@@ -253,6 +274,10 @@ implements ActionListener, ChangeListener{
 			mudancaInterna = true;
 			currentPositionSlider.setValue((int)player.getTime());
 		}
+		}
+		catch(InvalidMidiDataException exce){
+			//todo 
+		}
 		
 	}
 	protected ImageIcon createImageIcon(String path) {
@@ -263,37 +288,65 @@ implements ActionListener, ChangeListener{
 	}
 
 	public void stateChanged(ChangeEvent E) {
-		JSlider src = (JSlider)E.getSource();
-		int desiredPosition;
-		desiredPosition = (int)src.getValue();
-		if(!src.getValueIsAdjusting()){
-			if(mudancaInterna == true && mudancaExterna == false){
-				currentPosition.setText("" + desiredPosition + "s");
-				mudancaInterna = false;
+		if(player == null)
+			return;
+		if(E.getSource() == currentPositionSlider){
+			JSlider src = (JSlider)E.getSource();
+			int desiredPosition;
+			desiredPosition = (int)src.getValue();
+			if(!src.getValueIsAdjusting()){
+				if(mudancaInterna == true && mudancaExterna == false){
+					currentPosition.setText(seg2HHmmss(desiredPosition));
+					mudancaInterna = false;
+				}
+				else{
+					goTo(desiredPosition);
+				}
 			}
 			else{
-				goTo(desiredPosition);
+				mudancaExterna = true;
+				currentPosition.setText(seg2HHmmss(desiredPosition));
 			}
 		}
-		else{
-			mudancaExterna = true;
-			currentPosition.setText("" + desiredPosition + "s");
+		else if(E.getSource() == volumeAtualSlider){
+			JSlider src = (JSlider)E.getSource();
+			int desiredPosition;
+			desiredPosition = (int)src.getValue();
+			if(!src.getValueIsAdjusting()){
+				setVolume(desiredPosition);
+			}
+			else{}
+		}//fim if VolumeAtualSlider
 		}
-	}
 	private Dimension getIconDimension(Icon I){
 		Dimension D= new Dimension(I.getIconWidth(), I.getIconHeight());
 		return D;
 	}
 	
 	private void getData(){
+		
 		tableModel.setValueAt(player.getFileName(), 0, 1);
-		tableModel.setValueAt(player.getDuracao(), 1, 1);
+		tableModel.setValueAt(seg2HHmmss(player.getDuracao()), 1, 1);
 		tableModel.setValueAt(player.getResolucao(), 2, 1);
 		tableModel.setValueAt(player.getTotaltiques(), 3, 1);
 		tableModel.setValueAt(player.getDuracaoTique(), 4, 1);
 		tableModel.setValueAt(player.getDurSeminima(), 5, 1);
 		tableModel.setValueAt(player.getTotalSeminimas(), 6, 1);
 		tableModel.setValueAt(Math.round(player.getBpm()), 7, 1);
+		tableModel.setValueAt(player.getTonalidade(), 8, 1);
+		tableModel.setValueAt(player.getFormulaDeCompasso(), 9, 1);
+		
+        //altera posição máxima do cursor de tempo
+        currentPositionSlider.setMaximum((int)player.getDuracao());
+        
+        setVolume(75);
+			
+		}
+	
+	private void setVolume(int value){
+		player.setVolume(value);
+		DecimalFormat df = new DecimalFormat("#.00"); 
+		volumeAtualLabel.setText("" + df.format(100.0*value/127.0) + "%");
 	}
 	
 	private void play(){
@@ -331,7 +384,19 @@ implements ActionListener, ChangeListener{
 	private void goTo(int desiredPosition){
 		if(player == null){ return;}
 		player.goTo(desiredPosition);
+		currentPosition.setText(seg2HHmmss(desiredPosition));
 		mudancaExterna = false;
-		log.report("Time set to: "+ desiredPosition + " s");
+		log.report("Time set to: "+ seg2HHmmss(desiredPosition));
+	}
+	
+	public String seg2HHmmss(long seg){
+		long dur_mili = seg*1000;
+		 TimeZone tz = TimeZone.getTimeZone("UTC");
+		 SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+		 df.setTimeZone(tz);
+		 
+		 //converte a data recebendo parâmetros em segundos
+		 String time = df.format(new Date(dur_mili));
+		 return time;
 	}
 }
