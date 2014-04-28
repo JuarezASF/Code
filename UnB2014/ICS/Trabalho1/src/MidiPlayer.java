@@ -3,9 +3,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
@@ -17,7 +22,15 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.SourceDataLine;
+import javax.swing.SwingUtilities;
 
+import com.sun.media.sound.AudioSynthesizer;
 import com.sun.media.sound.SF2Soundbank;
 
 
@@ -32,13 +45,17 @@ public class MidiPlayer {
 	
 	private int volumeATUAL;
 	private Receiver receptor;
+	Synthesizer softsynth;
 	
 
 	final int MESSAGEM_ANDAMENTO = 0x51;  
 	final int FORMULA_DE_COMPASSO = 0x58;
 	final int MENSAGEM_TONALIDADE = 0x59;  
 
-	
+	AudioFormat format;
+	Mixer synthmixer = null;
+	SourceDataLine line = null;
+	boolean synth_loaded = false;
 	public MidiPlayer(String nomeDoArquivo){
 		try{
 		arqMidi = new File(nomeDoArquivo);
@@ -62,18 +79,111 @@ public class MidiPlayer {
 		 inicializaVolume(volumeATUAL);
 		 
 		 banco = MidiSystem.getSynthesizer().getDefaultSoundbank();
-		}
-		catch(MidiUnavailableException e1) {
-			System.out.println(e1+" : Dispositivo midi não disponível.");
-		}
-		catch(InvalidMidiDataException e2) {
-				System.out.println(e2+" : Erro nos dados midi."); 
+		 softsynth = findAudioSynthesizer();
+		 final AudioSynthesizer synth = findAudioSynthesizer();
+
+			Properties p = getConfig();
+			Map<String, Object> ainfo = new HashMap<String, Object>();
+
+			try {
+
+				format = new AudioFormat(Float.parseFloat(p
+						.getProperty("samplerate", "44100")), Integer
+						.parseInt(p.getProperty("bits", "16")), Integer
+						.parseInt(p.getProperty("channels", "2")), true, false);
+				
+				int latency = Integer.parseInt(p.getProperty("latency", "200")) * 1000;
+				
+				String devname = p.getProperty("devicename");
+				if (devname != null) {
+					Mixer.Info selinfo = null;
+					for (Mixer.Info info : AudioSystem.getMixerInfo()) {
+						Mixer mixer = AudioSystem.getMixer(info);
+						boolean hassrcline = false;
+						for (Line.Info linfo : mixer.getSourceLineInfo())
+							if (linfo instanceof javax.sound.sampled.DataLine.Info)
+								hassrcline = true;
+						if (hassrcline) {
+							if (info.getName().equals(devname)) {
+								selinfo = info;
+								break;
+							}
+						}
+					}
+					if (selinfo != null) {
+						synthmixer = AudioSystem.getMixer(selinfo);
+						try {
+							synthmixer.open();
+							
+							int bufferSize = (int)							
+								(format.getFrameSize() * format.getFrameRate() 
+								* latency / 1000000f);
+							if(bufferSize < 500) bufferSize = 500;
+								
+							DataLine.Info dataLineInfo = new DataLine.Info(
+									SourceDataLine.class, format, bufferSize);
+							if (synthmixer.isLineSupported(dataLineInfo))
+								line = (SourceDataLine) synthmixer
+										.getLine(dataLineInfo);
+														
+							line.open(format, bufferSize);
+							line.start();
+																					
+						} catch (Throwable t) {
+							t.printStackTrace();
+							synthmixer = null;
+						}
+					}//end if selinf0 == null
 				}
-		catch(IOException e3) { 
-			System.out.println(e3+" : O arquivo midi não foi encontrado."); 
-                                                     System.out.println("Sintaxe: "+"java TocaMidi arquivo.mid"); 		                                   
-		                                   }
+				
+				//ainfo.put("multi threading", true);
+				ainfo.put("format", format);
+				ainfo.put("max polyphony", Integer.parseInt(p.getProperty(
+						"polyphony", "64")));				
+				ainfo.put("latency", Long.parseLong(p.getProperty("latency",
+						"200")) * 1000L);
+
+				ainfo.put("interpolation", p.getProperty("interpolation"));                
+             String largemode = p.getProperty("largemode");
+             if(largemode == null) largemode = "false";
+             ainfo.put("large mode", largemode.equalsIgnoreCase("true"));
+
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+         
+			synth.open(line, ainfo);
+			softsynth = synth;
+			sequenciador.getTransmitter().setReceiver(
+					softsynth.getReceiver());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
+	}
+
+
+	
+	public AudioSynthesizer findAudioSynthesizer()
+			throws MidiUnavailableException {
+		// First check if default synthesizer is AudioSynthesizer.
+		Synthesizer synth = MidiSystem.getSynthesizer();
+		if (synth instanceof AudioSynthesizer)
+			return (AudioSynthesizer) synth;
+
+		// If default synhtesizer is not AudioSynthesizer, check others.
+		Info[] infos = MidiSystem.getMidiDeviceInfo();
+		for (int i = 0; i < infos.length; i++) {
+			MidiDevice dev = MidiSystem.getMidiDevice(infos[i]);
+			if (dev instanceof AudioSynthesizer)
+				return (AudioSynthesizer) dev;
+		}
+
+		// No AudioSynthesizer was found, return null.
+		return null;
+	}	
+
 
 	static void espera(int miliseg)
 	{  
@@ -357,22 +467,49 @@ public class MidiPlayer {
 		  return volumeATUAL;
 	  }
 	  
-	  public void loadSF(String sf_adress){
-		  try {
-			Synthesizer sintetizador = MidiSystem.getSynthesizer();
-			Soundbank novo_banco = MidiSystem.getSoundbank(new File(sf_adress));
-			sintetizador.unloadAllInstruments(banco);
-			sintetizador.loadAllInstruments(novo_banco);
-			banco = novo_banco;
-			
-		} catch (MidiUnavailableException e) {
-			e.printStackTrace();
-		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+	  public void loadSoundbank(File newsbkfile) {
+			try {
+
+				Soundbank newsbk = MidiSystem.getSoundbank(newsbkfile);
+				
+				softsynth.unloadAllInstruments(banco);
+				banco = newsbk;
+				softsynth.loadAllInstruments(banco);
+			} catch (Throwable e1) {
+				System.out.println(e1.getMessage());
+			}
+
 		}
-	  
-	  }
-	  
+
+	  private static File userDir = new File(".");
+	  private static String CONFIG_FILE_NAME = "SimpleMidiPlayer.xml";
+	  private static File configFile = new File(userDir, CONFIG_FILE_NAME);
+	  private static Properties configp = null;
+
+	  public static Properties getConfig() {
+			synchronized (configFile) {
+
+				if (configp != null) {
+					Properties p = new Properties();
+					p.putAll(configp);
+					return p;
+				}
+				Properties p = new Properties();
+				if (configFile.exists()) {
+					FileInputStream fis;
+					try {
+						fis = new FileInputStream(configFile);
+						try {
+							p.loadFromXML(fis);
+						} finally {
+							fis.close();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				return p;
+
+			}
+		}
 }//fim da classe

@@ -19,7 +19,6 @@ import javax.swing.JMenu;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -306,7 +305,7 @@ implements ActionListener, ChangeListener{
 				File file = sfChooser.getSelectedFile();
 	            //mostra mensagem no log
 				log.report("abrindo SF em: " + file.getName() + ".");
-	            player.loadSF(file.getAbsolutePath());
+	            player.loadSoundbank(file);
 				play();
 	        } else {
 	            log.reportWarning("Comando de carregar SF cancelado pelo usuário");
