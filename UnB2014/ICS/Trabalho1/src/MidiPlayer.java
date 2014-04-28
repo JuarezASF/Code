@@ -2,6 +2,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -13,6 +14,8 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Soundbank;
+import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 
 import com.sun.media.sound.SF2Soundbank;
@@ -24,6 +27,8 @@ public class MidiPlayer {
 	private Sequencer sequenciador;
 	private Sequence  sequencia;
 	private long tickPosition;
+	
+	private Soundbank banco;
 	
 	private int volumeATUAL;
 	private Receiver receptor;
@@ -55,6 +60,8 @@ public class MidiPlayer {
 		
 		 //INICIALIZA VOLUME
 		 inicializaVolume(volumeATUAL);
+		 
+		 banco = MidiSystem.getSynthesizer().getDefaultSoundbank();
 		}
 		catch(MidiUnavailableException e1) {
 			System.out.println(e1+" : Dispositivo midi não disponível.");
@@ -348,6 +355,21 @@ public class MidiPlayer {
 	  
 	  public int getVolume(){
 		  return volumeATUAL;
+	  }
+	  
+	  public void loadSF(String sf_adress){
+		  try {
+			Synthesizer sintetizador = MidiSystem.getSynthesizer();
+			Soundbank novo_banco = MidiSystem.getSoundbank(new File(sf_adress));
+			sintetizador.unloadAllInstruments(banco);
+			sintetizador.loadAllInstruments(novo_banco);
+			banco = novo_banco;
+			
+		} catch (MidiUnavailableException e) {
+		} catch (InvalidMidiDataException e) {
+		} catch (IOException e) {
+		}
+	  
 	  }
 	  
 }//fim da classe

@@ -39,7 +39,7 @@ implements ActionListener, ChangeListener{
 	private JButton playB, fastB, slowB;
 	private JButton stopB;
 	
-	private JFileChooser fileChooser;
+	private JFileChooser fileChooser, sfChooser;
 	
 	private boolean running;
 	
@@ -60,7 +60,8 @@ implements ActionListener, ChangeListener{
 	
 	private JMenuBar menuBar;
 	private JMenu fileMenu;
-	private JMenuItem loadMenuItem;
+	private JMenuItem loadMenuItem, loadSBItem;
+	
 		
 	
 	private MidiPlayer player;
@@ -147,7 +148,7 @@ implements ActionListener, ChangeListener{
 		//inicializar escolhedor de arquivos na pasta atual
 		
 		fileChooser = new JFileChooser("./midi/" );
-	
+		sfChooser = new JFileChooser("." );
 		
 		String[] columnNames = {"Propriedade",
                 "Valor", "unidade"};
@@ -177,15 +178,25 @@ implements ActionListener, ChangeListener{
 		
 		player = null;
 		
-		//DENIE MENU
+		//FILE MENU
 		menuBar = new JMenuBar();
 		fileMenu = new JMenu("File");
-		loadMenuItem = new JMenuItem("Load Midi");
+		loadMenuItem = new JMenuItem("Load MIDI");
 		loadMenuItem.setActionCommand("loadFile");
 		loadMenuItem.addActionListener(this);
+		loadSBItem = new JMenuItem("Load SF");
+		loadSBItem.setActionCommand("loadSF");
+		loadSBItem.addActionListener(this);
+		
+		JMenuItem infoButton = new JMenuItem("Info");
+		infoButton.setActionCommand("infoButton");
+		infoButton.addActionListener(this);
 		
 		menuBar.add(fileMenu);
+		menuBar.add(infoButton);
 		fileMenu.add(loadMenuItem);
+		fileMenu.add(loadSBItem);
+		
 		
 		//ADICIONA BUTÕES
 		baixo.add(playB);
@@ -273,6 +284,23 @@ implements ActionListener, ChangeListener{
 		else if(E.getSource() == clock){
 			mudancaInterna = true;
 			currentPositionSlider.setValue((int)player.getTime());
+		}
+		else if("loadSF".equals(action)){
+			int returnVal = sfChooser.showOpenDialog(this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				if(player != null){
+					player.pause();
+				}
+				
+				File file = sfChooser.getSelectedFile();
+	            //mostra mensagem no log
+				log.report("abrindo SF em: " + file.getName() + ".");
+	            player.loadSF(file.getAbsolutePath());
+				play();
+	        } else {
+	            log.reportWarning("Comando de carregar SF cancelado pelo usuário");
+	        }
+			
 		}
 		}
 		catch(InvalidMidiDataException exce){
