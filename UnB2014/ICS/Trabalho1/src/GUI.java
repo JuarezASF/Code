@@ -70,21 +70,26 @@ implements ActionListener, ChangeListener{
 		//DEFINE TÍTULO DA JANELA
 		super("Introdução a Computação Sônica - Trabalho 1");		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		myBGPanel painel;
+		JPanel  centro, baixo, direita;
 		
+		ImageIcon icon = new ImageIcon("/home/juarez408/Documents/images/Ubunto7.png");
 		
-		JPanel painel, centro, baixo, direita;
-		
-		painel = new JPanel();
+		painel = new myBGPanel(icon.getImage());
 		painel.setLayout(new BorderLayout());
 		
 		baixo = new JPanel();
 		baixo.setLayout(new GridLayout(1, 6));
+		baixo.setOpaque(false);
 		
 		centro = new JPanel();
-		centro.setLayout(new FlowLayout());
+		centro.setLayout(new GridLayout(2, 1));
+		centro.setOpaque(false);
 		
 		direita = new JPanel();
-		direita.setLayout(new GridLayout(5, 2));
+		direita.setLayout(new GridLayout(10, 3));
+		direita.setOpaque(false);
 		
 		
 		running = false;
@@ -204,9 +209,13 @@ implements ActionListener, ChangeListener{
 		baixo.add(fastB);
 		baixo.add(slowB);
 		
-		direita.add(log);
+		JLabel timerLabel = new JLabel("Tempo");
+		JLabel volumeLabel = new JLabel("Volume");
+
+		direita.add(timerLabel);
 		direita.add(currentPositionSlider);
 		direita.add(currentPosition);
+		direita.add(volumeLabel);
 		direita.add(volumeAtualSlider);
 		direita.add(volumeAtualLabel);
 		
@@ -214,7 +223,7 @@ implements ActionListener, ChangeListener{
 		
 		//ADICIONA LABELS
 		centro.add(infoTablePane);
-	
+		centro.add(log);	
 		
 		painel.add(centro, BorderLayout.CENTER);
 		painel.add(baixo, BorderLayout.PAGE_END);
@@ -252,12 +261,14 @@ implements ActionListener, ChangeListener{
 			float andamento_atual = player.getBpm();
 			float novo_andamento = andamento_atual*1.5f;
 			player.setAndamento((int) novo_andamento);
+			log.report("Multiplicando andamento por 1.5");
 			getData();
 			}//end "fast"
 		else if("slow".equals(action)){
 			float andamento_atual = player.getBpm();
 			float novo_andamento = andamento_atual*0.66666f;
 			player.setAndamento((int) novo_andamento);
+			log.report("Multiplicando andamento por 0.666");
 			getData();
 		}//end "stop"
 		else if("loadFile".equals(action)){

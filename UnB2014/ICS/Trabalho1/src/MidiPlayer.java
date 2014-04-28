@@ -366,8 +366,11 @@ public class MidiPlayer {
 			banco = novo_banco;
 			
 		} catch (MidiUnavailableException e) {
+			e.printStackTrace();
 		} catch (InvalidMidiDataException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	  
 	  }
