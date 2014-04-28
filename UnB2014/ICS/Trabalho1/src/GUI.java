@@ -67,8 +67,8 @@ implements ActionListener, ChangeListener{
 	private MidiPlayer player;
 	
 	public GUI(){
-		//DEFINE TÍTULO DA JANELA
-		super("Introdução a Computação Sônica - Trabalho 1");		
+		//DEFINE TÃ�TULO DA JANELA
+		super("Introduçãoo a Computaçãoo Sônica - Trabalho 1");		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		myBGPanel painel;
@@ -94,7 +94,7 @@ implements ActionListener, ChangeListener{
 		
 		running = false;
 		
-		//DEFINIÇÃO DE ÍCONES
+		//DEFINIÃ‡ÃƒO DE Ã�CONES
 		iconSize = new int[2];
 		iconSize[0] = 30;
 		iconSize[1] = 30;
@@ -108,7 +108,7 @@ implements ActionListener, ChangeListener{
 		
 		
 		
-		//CRIA E DEFINE BUTÕES
+		//CRIA E DEFINE BUTÃ•ES
 		playB = new JButton();
 		playB.setIcon(playI);
 		playB.addActionListener(this);
@@ -146,7 +146,7 @@ implements ActionListener, ChangeListener{
 
 		volumeAtualLabel = new JLabel("75");
 		volumeAtualSlider = new JSlider(JSlider.HORIZONTAL, 0, 127, 75);
-		//usamos 7 bits para o volume, então o máximo é 127
+		//usamos 7 bits para o volume, entÃ£o o mÃ¡ximo Ã© 127
 		volumeAtualSlider.addChangeListener(this);
 
 		
@@ -161,10 +161,10 @@ implements ActionListener, ChangeListener{
 		Object[][] data = {
 			    {"Arquivo", "", ""},
 			    {"Duração", "", "s"},
-			    {"Resolução", "", "tiques"},
+			    {"Resoluçãoo", "", "tiques"},
 			    {"Número de tiques", "", ""},
-			    {"Duração do Tique", "", "s"},
-			    {"Duração da Semínima", "", "s"},
+			    {"Duraçãoo do Tique", "", "s"},
+			    {"Duraçãoo da Semínima", "", "s"},
 			    {"Total de Semínimas", "", ""},
 			    {"Andamento", "", "bpm"},
 			    {"Tonalidade", "", ""},
@@ -203,7 +203,7 @@ implements ActionListener, ChangeListener{
 		fileMenu.add(loadSBItem);
 		
 		
-		//ADICIONA BUTÕES
+		//ADICIONA BUTÃ•ES
 		baixo.add(playB);
 		baixo.add(stopB);
 		baixo.add(fastB);
@@ -288,7 +288,7 @@ implements ActionListener, ChangeListener{
 	            
 	            play();
 	        } else {
-	            log.reportWarning("Comando de abrir cancelado pelo usuário");
+	            log.reportWarning("Comando de abrir cancelado pelo usuÃ¡rio");
 	        }
 			
 		}
@@ -375,7 +375,7 @@ implements ActionListener, ChangeListener{
 		tableModel.setValueAt(player.getTonalidade(), 8, 1);
 		tableModel.setValueAt(player.getFormulaDeCompasso(), 9, 1);
 		
-        //altera posição máxima do cursor de tempo
+        //altera posiÃ§Ã£o mÃ¡xima do cursor de tempo
         currentPositionSlider.setMaximum((int)player.getDuracao());
         
         setVolume(75);
@@ -434,7 +434,7 @@ implements ActionListener, ChangeListener{
 		 SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 		 df.setTimeZone(tz);
 		 
-		 //converte a data recebendo parâmetros em segundos
+		 //converte a data recebendo parÃ¢metros em segundos
 		 String time = df.format(new Date(dur_mili));
 		 return time;
 	}
