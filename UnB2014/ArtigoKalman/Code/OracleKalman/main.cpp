@@ -5,6 +5,7 @@ bool CONTROL_FILTER_GAUSSIAN = false;
 bool CONTROL_SEE_FUTURE = false;
 bool CONTROL_SEE_PAST = false;
 bool CONTROL_GNUPLOT = false;
+bool CONTROL_RECORDING = false;
 
 int main(int argc, char *argv[])
 {

@@ -59,6 +59,7 @@ void Widget::process()
         if(CONTROL_SEE_FUTURE){
             vector<vector<Point> > future = this->predictFuture(30);
             drawFuturePrediction(outputFrame, future);
+            predictFutureColisions(outputFrame,future);
             }
         if(CONTROL_SEE_PAST){
             addToPastHistory(kalmanCenters);
@@ -68,5 +69,14 @@ void Widget::process()
    }//end if(!targents.empty())
 
     Cv2QtImage::setLabelImage(ui->OutputImg, outputFrame);
+    if(CONTROL_RECORDING == true){
+        if(frame_control%5 == 0){
+            recordStep();
+            frames_imprimidos ++;
+        }
+        if(frames_imprimidos == 100)
+            recordEnd();
+
+    }
 }
 

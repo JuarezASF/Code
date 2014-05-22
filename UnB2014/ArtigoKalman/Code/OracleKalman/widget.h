@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 //QT LIBS
 #include <QWidget>
@@ -17,6 +18,7 @@
 #include <QLabel>
 #include <QRubberBand>
 #include <QMessageBox>
+#include <QElapsedTimer>
 
 //OPENCV LIBS
 #include <opencv2/core/core.hpp>
@@ -41,6 +43,7 @@ extern bool CONTROL_FILTER_GAUSSIAN;
 extern bool CONTROL_SEE_FUTURE;
 extern bool CONTROL_SEE_PAST;
 extern bool CONTROL_GNUPLOT;
+extern bool CONTROL_RECORDING;
 
 namespace Ui {
 class Widget;
@@ -66,6 +69,8 @@ private://membros
 
     //controla o tempo de leitura da camera
     QTimer *clock;
+    unsigned int frames_imprimidos;
+    unsigned int frame_control;
 
     //controla raio com que objetos sao desenhados
     float Raio;
@@ -74,6 +79,7 @@ private://membros
     vector<vector<Point> > pastHistory;
     unsigned int pastHistoryMaxSize;
 
+    unsigned int imageCounter;
 
 private:
     //inicializacao de video
@@ -100,6 +106,7 @@ private:
     vector<Point> findKalmanCenters(vector<Point> dataInput);
     vector<vector<Point> > predictFuture(int futureSize);
     void addToPastHistory(vector<Point> &kalmanCenters);
+    void predictFutureColisions(Mat &outputFrame,vector<vector<Point> > &future);
 
     //desenhando resultados
     void drawDetectionResult(Mat &outputFrame, vector<Point> &centers);
@@ -110,6 +117,8 @@ private:
     //gnuplot
     void showGnuplot();
 
+    void recordStep();
+    void recordEnd();
 
     //borrar imagem
     int SizeGaussFilter;
@@ -121,6 +130,7 @@ signals:
 protected slots:
     //esse e o loop principal do programa
     void process();
+
 
     //proura a imagem de threshold toda vez que altera-se a cor definida
     void findThresholdImg();
@@ -143,6 +153,9 @@ private slots:
     void on_raioSlider_valueChanged(int value);
     void on_ClearPastButtom_clicked();
     void on_gnuplotButton_clicked();
+    void on_selectVideoComboBox_currentIndexChanged(int index);
+    void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
 };
 
 #endif // WIDGET_H

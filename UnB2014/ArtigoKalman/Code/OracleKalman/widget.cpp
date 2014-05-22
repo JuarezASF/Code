@@ -8,8 +8,11 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
 
     //SET CLOCK
-    this->clock = new QTimer(this);
+    this->clock = new QTimer(0);
     connect(this->clock, SIGNAL(timeout()), this, SLOT(process()));
+
+    frames_imprimidos = 0;
+    frame_control = 0;
 
     //INITIATE CAMERA
     videoInput = NULL;
@@ -18,6 +21,9 @@ Widget::Widget(QWidget *parent) :
     //START CLOCK (PÓS CÂMERA SER INICIALIZADA)
     this->clock->start(50);
     //lança evento timeout() a cada 500 milisegundos
+
+
+
 
     //COLOTS TRACKBARS
 
@@ -83,7 +89,8 @@ Widget::Widget(QWidget *parent) :
     ui->raioValueLabel->setText(QString::number(RaioInicial));
     ui->raioSlider->setValue(RaioInicial);
 
-
+    imageCounter = 0;
+    ui->baseNameLineEdit->setText("./images/");
 
 }
 
@@ -116,6 +123,12 @@ bool Widget::openVideo(int n){
 
 void Widget::initVideo(){
     bool sucesso;
+    for(int i = 0; i < 10; i++)
+    {
+        sucesso = openVideo(i);
+        if(sucesso)
+            ui->selectVideoComboBox->addItem(QString("Câmera") + QString::number(i));
+    }
     for(int i = 0; i < 10; i++)
     {
         sucesso = openVideo(i);
@@ -696,6 +709,45 @@ void Widget::drawFuturePrediction(Mat &outputFrame,vector<vector<Point> > &futur
     }
 }
 
+void Widget::predictFutureColisions(Mat &outputFrame,vector<vector<Point> > &future){
+    /*para todas as posições futuras dos pontos, procura por colisões
+      medimos a distância entre todas as partículas procurando por colisões */
+             for(unsigned int i = 0; i < future.size(); i++)
+             {//para todos os objetos
+                for(unsigned int j = i+1; j < future.size(); j++)
+                    //para todos os outros objetos
+                    {
+                    for(unsigned int n = 0; n < future[i].size(); n++){
+                       //para todos os pontos de futuro
+                        float distance =
+                                pow(future[i][n].x - future[j][n].x, 2) +
+                                pow(future[i][n].y - future[j][n].y, 2);
+                        distance = sqrt(distance);
+
+                        float sumRadius = 2*Raio;
+
+                        if(distance < sumRadius)
+                            {
+                                float xColision =
+                                        (future[i][n].x + future[j][n].x)*0.5;
+                                float yColision =
+                                        (future[i][n].y + future[j][n].y)*0.5;
+
+                                Point colisionPoint(xColision, yColision);
+
+                                Scalar xColor(0, 0, 0);
+
+                                int xSize = 10;
+                                Draw::Cross(outputFrame, colisionPoint, xColor, xSize);
+                                break;
+                                //se já achou uma colisão, passa para o próximo possível alvo
+                            }
+                    }
+                    }
+             }
+
+        }
+
 
 void Widget::addToPastHistory(vector<Point> &kalmanCenters){
 
@@ -754,4 +806,46 @@ void Widget::showGnuplot(){
         theta += 0.2;
         myMath::mysleep(100);
     }
+}
+
+void Widget::on_selectVideoComboBox_currentIndexChanged(int index)
+{
+    openVideo(index);
+}
+
+void Widget::on_pushButton_clicked()
+{
+    ui->logText->clear();
+}
+
+void Widget::on_pushButton_2_clicked()
+{
+    CONTROL_RECORDING = true;
+
+    reportGood("Vamos começar a gravar!");
+}
+
+void Widget::recordStep(){
+    QString file = ui->baseNameLineEdit->text();
+    file = file + QString::number(imageCounter++);
+
+    const QPixmap *img = ui->OutputImg->pixmap();
+
+    bool sucesso = img->save(file, "PNG");
+
+    if(sucesso == true)
+        {
+        ui->recorTimeLabel->setText("Tomadas " + QString::number(imageCounter));
+        }
+    else
+        reportBad("Imagem não pode ser salva!");
+}
+
+void Widget::recordEnd(){
+    CONTROL_RECORDING = false;
+    frames_imprimidos = 0;
+    frame_control = 0;
+    imageCounter = 0;
+
+    reportGood("Terminamos de Gravar");
 }

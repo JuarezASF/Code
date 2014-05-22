@@ -52,7 +52,7 @@ void ObjectToDetect::initKalmanFilter(Point &initialPosition){
         setIdentity(KF->processNoiseCov, Scalar::all(1e-4));
 
         //erro nas pedidas?
-        setIdentity(KF->measurementNoiseCov, Scalar::all(1e-1));
+        setIdentity(KF->measurementNoiseCov, Scalar::all(1e-2));
 
         //erro a posteriori?
         setIdentity(KF->errorCovPost, Scalar::all(.1));
