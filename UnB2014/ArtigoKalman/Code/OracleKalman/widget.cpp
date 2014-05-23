@@ -95,6 +95,8 @@ Widget::Widget(QWidget *parent) :
 
     number_of_objects = 0;
 
+    number_of_shots_to_take = 30;
+
 
 }
 
@@ -745,6 +747,13 @@ void Widget::predictFutureColisions(Mat &outputFrame,vector<vector<Point> > &fut
 
                                 int xSize = 10;
                                 Draw::Cross(outputFrame, colisionPoint, xColor, xSize);
+                                if(CONTROL_RECORDING){
+                                    float x = iteration_recording;
+                                    float y = colisionPoint.x;
+                                    float z = colisionPoint.y;
+                                    QVector3D tripla(x,y,z);
+                                    toRecord_colisionsPoints.push_back(tripla);
+                                    }
                                 break;
                                 //se já achou uma colisão, passa para o próximo possível alvo
                             }
@@ -937,10 +946,29 @@ void Widget::recordEnd(){
         file.close();
     }
 
+    //salva centro de colisões
+    {
+        //para cada objeto
+        QString file_name = QString(file_colisions.c_str());
+        QFile file(file_name);
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        QTextStream out(&file);
+        out << "# Dados do instante tomado e pontos de colisões " <<"\n";
+        out << "#Gerado por OracleKalman by JuarezASF UnB110032829 \n";
+        out << "#data: " << QDate::currentDate().toString() << "\n";
+        for(unsigned int i = 0; i < toRecord_colisionsPoints.size(); i++){
+            out << toRecord_colisionsPoints[i].x() << "\t";
+            out << toRecord_colisionsPoints[i].y() << "\t";
+            out << toRecord_colisionsPoints[i].z() << "\n";
+
+         }
+        file.close();
+    }
 
 
     //reseta para a próxima gravação
     instantFutureToRecord.clear();
+    toRecord_colisionsPoints.clear();
 
     reportGood("Terminamos de Gravar");
 }
@@ -961,4 +989,9 @@ void Widget::getInstantFutureToRecord(vector< vector< Point> > &future){
         instantFuture.push_back(n_esimo_objeto_instante_future);
     }
     instantFutureToRecord.push_back(instantFuture);
+}
+
+void Widget::on_horizontalSlider_sliderMoved(int position)
+{
+    number_of_shots_to_take = position;
 }

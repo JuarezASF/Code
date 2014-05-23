@@ -70,16 +70,18 @@ void Widget::process()
                 if(control_storeInstantFuture)
                     getInstantFutureToRecord(future);
                     control_storeInstantFuture = false;
-                }
-                for(unsigned int n = 0; n < centers.size(); n++){
-                    float x = iteration_recording;
-                    float y = centers[n].x;
-                    float z = centers[n].y;
-                    toRecord_instantDetectionToRecord[n].push_back(QVector3D(x,y,z));
-                     y = kalmanCenters[n].x;
-                     z = kalmanCenters[n].y;
-                    toRecord_instantKalmandEstimation[n].push_back(QVector3D(x,y,z));
-                }
+
+                    for(unsigned int n = 0; n < centers.size(); n++){
+                        float x = iteration_recording;
+                        float y = centers[n].x;
+                        float z = centers[n].y;
+                        toRecord_instantDetectionToRecord[n].push_back(QVector3D(x,y,z));
+                         y = kalmanCenters[n].x;
+                         z = kalmanCenters[n].y;
+                        toRecord_instantKalmandEstimation[n].push_back(QVector3D(x,y,z));
+                    }
+
+            }
 
             }
         if(CONTROL_SEE_PAST){
@@ -94,10 +96,10 @@ void Widget::process()
         if(frame_control%5 == 0){
             recordStep();
             frames_imprimidos ++;
-            if(frames_imprimidos%5 == 0) //divide por 5 a quantidade de pontos gerados
+            if(frames_imprimidos%1 == 0) //divide por 5 a quantidade de pontos gerados
                 control_storeInstantFuture = true;
         }
-        if(frames_imprimidos == 100)
+        if(frames_imprimidos == number_of_shots_to_take)
             recordEnd();
 
         }

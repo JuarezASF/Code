@@ -85,14 +85,17 @@ private://membros
     vector< vector<vector<QVector3D> > > instantFutureToRecord;
     vector<vector<QVector3D> > toRecord_instantKalmandEstimation;
     vector<vector<QVector3D> > toRecord_instantDetectionToRecord;
+    vector<QVector3D> toRecord_colisionsPoints;
 
     bool    control_storeInstantFuture;
     const String file_instanteFutureRecorded = String("./data/futurePoints");
     const String file_centers = String("./data/centers_of_object_");
+    const String file_colisions = String("./data/colisions.data");
     unsigned int imageCounter;
     unsigned long int iteration_recording;
 
     unsigned int number_of_objects;
+    unsigned int number_of_shots_to_take;
 
 private:
     //inicializacao de video
@@ -170,6 +173,7 @@ private slots:
     void on_selectVideoComboBox_currentIndexChanged(int index);
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
+    void on_horizontalSlider_sliderMoved(int position);
 };
 
 #endif // WIDGET_H

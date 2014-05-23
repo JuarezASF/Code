@@ -50,6 +50,9 @@ Dividing moment10 by area gives the X coordinate of the yellow ball,
 
         sucesso = (myMoment.m00 > threshold)? true : false;
 
+        if(abs(iPosX) > 1000 || abs(iPosY) > 1000)
+            sucesso = false;
+
         return result;
     }
 
