@@ -60,23 +60,34 @@ void Widget::process()
             vector<vector<Point> > future = this->predictFuture(30);
             drawFuturePrediction(outputFrame, future);
             predictFutureColisions(outputFrame,future);
+            if(CONTROL_RECORDING){
+                iteration_recording++;
+                if(control_storeInstantFuture)
+                    getInstantFutureToRecord(future);
+                    control_storeInstantFuture = false;
+                }
             }
         if(CONTROL_SEE_PAST){
             addToPastHistory(kalmanCenters);
             drawPastHistory(outputFrame);
         }
 
-   }//end if(!targents.empty())
+        }//end if(!targents.empty())
 
-    Cv2QtImage::setLabelImage(ui->OutputImg, outputFrame);
+
     if(CONTROL_RECORDING == true){
         if(frame_control%5 == 0){
             recordStep();
             frames_imprimidos ++;
+            if(frames_imprimidos%5 == 0) //divide por 5 a quantidade de pontos gerados
+                control_storeInstantFuture = true;
         }
         if(frames_imprimidos == 100)
             recordEnd();
 
-    }
+        }
+
+    //mostra saída do processamento
+    Cv2QtImage::setLabelImage(ui->OutputImg, outputFrame);
 }
 

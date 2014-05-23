@@ -19,6 +19,8 @@
 #include <QRubberBand>
 #include <QMessageBox>
 #include <QElapsedTimer>
+#include <QVector3D>
+#include <QDate>
 
 //OPENCV LIBS
 #include <opencv2/core/core.hpp>
@@ -79,7 +81,12 @@ private://membros
     vector<vector<Point> > pastHistory;
     unsigned int pastHistoryMaxSize;
 
+    //pontos do futuro a serem salvos
+    vector< vector<vector<QVector3D> > > instantFutureToRecord;
+    bool    control_storeInstantFuture;
+    const String file_instanteFutureRecorded = String("./data/futurePoints");
     unsigned int imageCounter;
+    unsigned long int iteration_recording;
 
 private:
     //inicializacao de video
@@ -107,6 +114,7 @@ private:
     vector<vector<Point> > predictFuture(int futureSize);
     void addToPastHistory(vector<Point> &kalmanCenters);
     void predictFutureColisions(Mat &outputFrame,vector<vector<Point> > &future);
+    void getInstantFutureToRecord(vector< vector< Point> > &future);
 
     //desenhando resultados
     void drawDetectionResult(Mat &outputFrame, vector<Point> &centers);

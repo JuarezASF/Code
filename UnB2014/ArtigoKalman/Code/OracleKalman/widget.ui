@@ -454,7 +454,7 @@
     <item>
      <widget class="QLabel" name="label_2">
       <property name="text">
-       <string>Nome Base</string>
+       <string>Nome Base:</string>
       </property>
      </widget>
     </item>
@@ -477,7 +477,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>record time</string>
+    <string>record step</string>
    </property>
   </widget>
  </widget>

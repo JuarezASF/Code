@@ -11,9 +11,6 @@ Widget::Widget(QWidget *parent) :
     this->clock = new QTimer(0);
     connect(this->clock, SIGNAL(timeout()), this, SLOT(process()));
 
-    frames_imprimidos = 0;
-    frame_control = 0;
-
     //INITIATE CAMERA
     videoInput = NULL;
     initVideo();
@@ -21,8 +18,6 @@ Widget::Widget(QWidget *parent) :
     //START CLOCK (PÓS CÂMERA SER INICIALIZADA)
     this->clock->start(50);
     //lança evento timeout() a cada 500 milisegundos
-
-
 
 
     //COLOTS TRACKBARS
@@ -89,8 +84,15 @@ Widget::Widget(QWidget *parent) :
     ui->raioValueLabel->setText(QString::number(RaioInicial));
     ui->raioSlider->setValue(RaioInicial);
 
+    //variáveis para modo de rocord
     imageCounter = 0;
     ui->baseNameLineEdit->setText("./images/");
+    frames_imprimidos = 0;
+    frame_control = 0;
+
+    control_storeInstantFuture = false;
+    iteration_recording = 0;
+
 
 }
 
@@ -827,7 +829,7 @@ void Widget::on_pushButton_2_clicked()
 
 void Widget::recordStep(){
     QString file = ui->baseNameLineEdit->text();
-    file = file + QString::number(imageCounter++);
+    file = file + QString::number(imageCounter++) + ",png";
 
     const QPixmap *img = ui->OutputImg->pixmap();
 
@@ -846,6 +848,64 @@ void Widget::recordEnd(){
     frames_imprimidos = 0;
     frame_control = 0;
     imageCounter = 0;
+    iteration_recording = 0; //reseta para a próxima gravação
+
+    //salva dados dos futuros instantêneos
+
+    //arruma os dados: temos para cada instante i, os pontos do futuro para as n partículas
+    //queremos ter para cada uma das n partículas, todos os futuros
+
+    vector<vector<QVector3D> > instantFuturePorObjeto;
+    unsigned int n_de_objetos = instantFutureToRecord[0].size();
+
+    //instantFutureToRecord[0].size() = n de objetos no instante 0 = n de objetos em qualquer instante
+    for(unsigned int n = 0; n < n_de_objetos; n++)
+        {//para todas as partículas, ler todos os instantes
+        vector<QVector3D> objeto;
+        for(unsigned int i = 0; i < instantFutureToRecord.size(); i++)//para cada instante
+            for(unsigned int j = 0; j < instantFutureToRecord[i][n].size(); j++)//para cada instante previsto do futuro de um instante
+                objeto.push_back(instantFutureToRecord[i][n][j]);
+        instantFuturePorObjeto.push_back(objeto);
+        }
+
+    for(unsigned int n = 0; n < instantFuturePorObjeto.size(); n++){
+        //para cada objeto
+        QString file_name = QString(file_instanteFutureRecorded.c_str()) + "_" + QString::number(n) + ".data";
+        QFile file(file_name);
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        QTextStream out(&file);
+        out << "# Dados do futuro instantaneo para o objeto " << n << "\n";
+        out << "#Gerado por OracleKalman by JuarezASF UnB110032829 \n";
+        out << "#data: " << QDate::currentDate().toString() << "\n";
+        for(unsigned int i = 0; i < instantFuturePorObjeto[n].size(); i++){
+            out << instantFuturePorObjeto[n][i].x() << "\t";
+            out << instantFuturePorObjeto[n][i].y() << "\t";
+            out << instantFuturePorObjeto[n][i].z() << "\n";
+        }
+
+        file.close();
+    }
+
+    //reseta para a próxima gravação
+    instantFutureToRecord.clear();
 
     reportGood("Terminamos de Gravar");
+}
+
+
+void Widget::getInstantFutureToRecord(vector< vector< Point> > &future){
+    vector<vector<QVector3D> > instantFuture;
+    for(unsigned int n = 0; n < future.size(); n++){//n-esima objeto
+        vector<QVector3D> n_esimo_objeto_instante_future;
+        for(unsigned int i = 0; i < future[n].size(); i++)//i-esimo futuro do n-esimo objeto
+            {
+            float x = iteration_recording + i;
+            float y = future[n][i].x;
+            float z = future[n][i].y;
+            QVector3D tripla(x,y,z);
+            n_esimo_objeto_instante_future.push_back(tripla);
+            }
+        instantFuture.push_back(n_esimo_objeto_instante_future);
+    }
+    instantFutureToRecord.push_back(instantFuture);
 }
