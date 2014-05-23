@@ -47,18 +47,23 @@ void Widget::process()
     //------------------------------------------------
     if(!targets.empty())
         {
-        //acha centro dos objetos
+        //acha centro dos objetos por detecção
         vector<Point> centers =
             this->findTargets(frame);
-       //atualiza os filtros de kalman
+       //atualiza os filtros de kalman: acha centro dos objetos estabilizado por kalman
         vector<Point> kalmanCenters = this->findKalmanCenters(centers);
 
+        //desenha resultados da detecção
         drawDetectionResult(outputFrame, centers);
+        //desenha resultados da filtragem de kalman
         drawKalmanResult(outputFrame, kalmanCenters);
 
         if(CONTROL_SEE_FUTURE){
+            //preve n pontos no futuro
             vector<vector<Point> > future = this->predictFuture(30);
+            //desenha previsão
             drawFuturePrediction(outputFrame, future);
+            //procura por colisões e já as marca na tela
             predictFutureColisions(outputFrame,future);
             if(CONTROL_RECORDING){
                 iteration_recording++;
@@ -66,6 +71,16 @@ void Widget::process()
                     getInstantFutureToRecord(future);
                     control_storeInstantFuture = false;
                 }
+                for(unsigned int n = 0; n < centers.size(); n++){
+                    float x = iteration_recording;
+                    float y = centers[n].x;
+                    float z = centers[n].y;
+                    toRecord_instantDetectionToRecord[n].push_back(QVector3D(x,y,z));
+                     y = kalmanCenters[n].x;
+                     z = kalmanCenters[n].y;
+                    toRecord_instantKalmandEstimation[n].push_back(QVector3D(x,y,z));
+                }
+
             }
         if(CONTROL_SEE_PAST){
             addToPastHistory(kalmanCenters);

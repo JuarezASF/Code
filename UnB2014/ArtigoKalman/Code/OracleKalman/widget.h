@@ -83,10 +83,16 @@ private://membros
 
     //pontos do futuro a serem salvos
     vector< vector<vector<QVector3D> > > instantFutureToRecord;
+    vector<vector<QVector3D> > toRecord_instantKalmandEstimation;
+    vector<vector<QVector3D> > toRecord_instantDetectionToRecord;
+
     bool    control_storeInstantFuture;
     const String file_instanteFutureRecorded = String("./data/futurePoints");
+    const String file_centers = String("./data/centers_of_object_");
     unsigned int imageCounter;
     unsigned long int iteration_recording;
+
+    unsigned int number_of_objects;
 
 private:
     //inicializacao de video

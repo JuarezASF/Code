@@ -93,6 +93,8 @@ Widget::Widget(QWidget *parent) :
     control_storeInstantFuture = false;
     iteration_recording = 0;
 
+    number_of_objects = 0;
+
 
 }
 
@@ -472,6 +474,7 @@ void Widget::on_addTotrackingButtom_clicked()
     range.push_back(maxColor);
 
     addColorToTracking(range);
+    number_of_objects++;
 
     }
 
@@ -501,6 +504,7 @@ void Widget::on_deleteButtom_clicked()
     targets.erase(targets.begin()+index);
     ui->trackedColorsList->removeItem(index);
     pastHistory.erase(pastHistory.begin()+index);
+    number_of_objects --;
 }
 
 void Widget::pauseVideo(){
@@ -824,6 +828,14 @@ void Widget::on_pushButton_2_clicked()
 {
     CONTROL_RECORDING = true;
 
+    toRecord_instantDetectionToRecord.clear();
+    toRecord_instantKalmandEstimation.clear();
+
+    for(unsigned int i = 0; i < number_of_objects; i++){
+        toRecord_instantDetectionToRecord.push_back(vector<QVector3D>());
+        toRecord_instantKalmandEstimation.push_back(vector<QVector3D>());
+    }
+
     reportGood("Vamos começar a gravar!");
 }
 
@@ -885,6 +897,47 @@ void Widget::recordEnd(){
 
         file.close();
     }
+
+    //salva centros detectados
+    for(unsigned int n = 0; n < number_of_objects; n++){
+        //para cada objeto
+        QString file_name = QString(file_centers.c_str()) + QString::number(n) + ".data";
+        QFile file(file_name);
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        QTextStream out(&file);
+        out << "# Dados do instante tomado e centro detectado(x,y) para o objeto " << n << "\n";
+        out << "#Gerado por OracleKalman by JuarezASF UnB110032829 \n";
+        out << "#data: " << QDate::currentDate().toString() << "\n";
+        for(unsigned int i = 0; i < toRecord_instantDetectionToRecord[n].size(); i++){
+            out << toRecord_instantDetectionToRecord[n][i].x() << "\t";
+            out << toRecord_instantDetectionToRecord[n][i].y() << "\t";
+            out << toRecord_instantDetectionToRecord[n][i].z() << "\n";
+        }
+
+        file.close();
+    }
+
+
+    //salva centros estimados
+    for(unsigned int n = 0; n < number_of_objects; n++){
+        //para cada objeto
+        QString file_name = QString(file_centers.c_str()) + "_kalman_" + QString::number(n) + ".data";
+        QFile file(file_name);
+        file.open(QIODevice::WriteOnly | QIODevice::Text);
+        QTextStream out(&file);
+        out << "# Dados do instante tomado e centro kalman estimado (x,y) para o objeto " << n << "\n";
+        out << "#Gerado por OracleKalman by JuarezASF UnB110032829 \n";
+        out << "#data: " << QDate::currentDate().toString() << "\n";
+        for(unsigned int i = 0; i < toRecord_instantKalmandEstimation[n].size(); i++){
+            out << toRecord_instantKalmandEstimation[n][i].x() << "\t";
+            out << toRecord_instantKalmandEstimation[n][i].y() << "\t";
+            out << toRecord_instantKalmandEstimation[n][i].z() << "\n";
+        }
+
+        file.close();
+    }
+
+
 
     //reseta para a próxima gravação
     instantFutureToRecord.clear();
