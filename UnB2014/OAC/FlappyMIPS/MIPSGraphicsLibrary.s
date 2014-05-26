@@ -16,23 +16,7 @@ points:
 	#a3		|y1		|height	
 	#s0		|colour		|colour		|colour		|colour
 	
-	addi	$s7, $0, 512			#store the width in s7
-	addi 	$s0, $0, 0x00FF0000		#pass the colour through to s0 - for every param the colour is s0, a0-3 are the xy + size params
 	
-	la	$a0, points			#points[]
-	addi	$a1, $0, 4			#count
-		
-	jal 	DrawPoly
-	nop				
-	
-	addi	$a0, $0, 50			#x	
-	addi	$a1, $0, 50			#y		
-	addi	$a2, $0, 40			#width		
-	addi	$a3, $0, 20			#height	
-	addi 	$s0, $0, 0x000000FF
-	
-	jal	FillRect
-	nop
 	
 	addi	$a0, $0, 50			#x
 	addi	$a1, $0, 10			#y
@@ -43,13 +27,7 @@ points:
 	jal 	DrawRect
 	nop
 	
-	addi	$a0, $0, 150			#x = 150
-	addi	$a1, $0, 150			#y = 150	
-	addi	$a2, $0, 20			#r = 20
-	addi 	$s0, $0, 0x00FFFF00
 	
-	jal 	FillCircle
-	nop	
 	
 	addi	$a0, $0, 280			#x = 280
 	addi	$a1, $0, 140			#y = 140	
@@ -68,50 +46,6 @@ points:
 	jal 	DrawLine
 	nop
 	
-	addi	$a0, $0, 400			#x0
-	addi	$a1, $0, 440			#x1
-	addi	$a2, $0, 25			#y0
-	addi	$a3, $0, 225			#y1
-	addi 	$s0, $0, 0x00FF9933
-	
-	jal 	DrawDottedLine
-	nop
-	
-	addi	$a0, $0, 420			#x0
-	addi	$a1, $0, 460			#x1
-	addi	$a2, $0, 25			#y0
-	addi	$a3, $0, 225			#y1
-	addi 	$s0, $0, 0x00FF9933
-	
-	jal 	DrawDashedLine
-	nop
-	
-	addi	$a0, $0, 50			#x0
-	addi	$a1, $0, 400			#x1
-	addi	$a2, $0, 220			#y0
-	addi	$a3, $0, 220			#y1
-	addi 	$s0, $0, 0x00FF9933
-	
-	jal 	DrawLine
-	nop
-	
-	addi	$a0, $0, 50			#x0
-	addi	$a1, $0, 400			#x1
-	addi	$a2, $0, 225			#y0
-	addi	$a3, $0, 225			#y1
-	addi 	$s0, $0, 0x00FF9933
-	
-	jal 	DrawDottedLine
-	nop
-	
-	addi	$a0, $0, 50			#x0
-	addi	$a1, $0, 400			#x1
-	addi	$a2, $0, 230			#y0
-	addi	$a3, $0, 230			#y1
-	addi 	$s0, $0, 0x00FF9933
-	
-	jal 	DrawDashedLine
-	nop
 	
 	li   	$v0, 10         	
       	syscall
