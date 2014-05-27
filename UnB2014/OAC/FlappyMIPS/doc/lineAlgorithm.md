@@ -32,3 +32,32 @@ that the pixel centers have integer coordinates.
 notas:
 * Assume deltax != 0 (line is not vertical);
 * note that this division needs to be done in a way that preserves the fractional part
+
+##Algoritmo Otimizado e Simplificado
+O algoritmo acima é o que foi rapidamente implementado e funciona. O problema dele é que usa aritimética de ponto flutuante e só traçar retas crescentes. O algoritmo a seguir é mais eficiente e traçar a reta em todos os sentidos.
+
+
+       function line(x0, y0, x1, y1)
+           dx := abs(x1-x0)
+           dy := abs(y1-y0) 
+           if x0 < x1 then sx := 1 else sx := -1
+           if y0 < y1 then sy := 1 else sy := -1
+           err := dx-dy
+ 
+           loop
+             plot(x0,y0)
+             if x0 = x1 and y0 = y1 exit loop
+             e2 := 2*err
+             if e2 > -dy then 
+               err := err - dy
+               x0 := x0 + sx
+             end if
+             if e2 < dx then 
+               err := err + dx
+               y0 := y0 + sy 
+             end if
+           end loop
+           
+Resultados:
+* O algoritmo funciona bem para a maioria dos casos.
+* O algoritmo falha em traçar retas com inclinação de 45º graus e de (180 + 45º); para as outras inclinações parece funcionar bem
