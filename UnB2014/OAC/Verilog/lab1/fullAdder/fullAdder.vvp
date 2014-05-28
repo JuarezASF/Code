@@ -1,0 +1,39 @@
+#! /usr/bin/vvp
+:ivl_version "0.9.6 " "(v0_9_6)";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_0x818650 .scope module, "full_addv" "full_addv" 2 3;
+ .timescale 0 0;
+L_0x8287c0 .functor OR 1, L_0x828710, L_0x828520, C4<0>, C4<0>;
+v0x827e50_0 .net "A", 0 0, C4<z>; 0 drivers
+v0x827f00_0 .net "B", 0 0, C4<z>; 0 drivers
+v0x827fb0_0 .net "Cin", 0 0, C4<z>; 0 drivers
+v0x828060_0 .net "L1", 0 0, L_0x828420; 1 drivers
+v0x828160_0 .net "L2", 0 0, L_0x828520; 1 drivers
+v0x8281e0_0 .net "L3", 0 0, L_0x828710; 1 drivers
+v0x8282a0_0 .net "carry", 0 0, L_0x8287c0; 1 drivers
+v0x828320_0 .net "sum", 0 0, L_0x8285d0; 1 drivers
+S_0x827a80 .scope module, "half1" "half_addv" 2 11, 3 3, S_0x818650;
+ .timescale 0 0;
+L_0x828420 .functor XOR 1, C4<z>, C4<z>, C4<0>, C4<0>;
+L_0x828520 .functor AND 1, C4<z>, C4<z>, C4<1>, C4<1>;
+v0x827b70_0 .alias "A", 0 0, v0x827e50_0;
+v0x827c30_0 .alias "B", 0 0, v0x827f00_0;
+v0x827cd0_0 .alias "carry", 0 0, v0x828160_0;
+v0x827d70_0 .alias "sum", 0 0, v0x828060_0;
+S_0x818740 .scope module, "half2" "half_addv" 2 13, 3 3, S_0x818650;
+ .timescale 0 0;
+L_0x8285d0 .functor XOR 1, L_0x828420, C4<z>, C4<0>, C4<0>;
+L_0x828710 .functor AND 1, L_0x828420, C4<z>, C4<1>, C4<1>;
+v0x818830_0 .alias "A", 0 0, v0x828060_0;
+v0x827890_0 .alias "B", 0 0, v0x827fb0_0;
+v0x827930_0 .alias "carry", 0 0, v0x8281e0_0;
+v0x8279d0_0 .alias "sum", 0 0, v0x828320_0;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "full_addv.v";
+    "half_addv.v";
