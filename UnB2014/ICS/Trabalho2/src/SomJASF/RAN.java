@@ -15,34 +15,51 @@ public class RAN extends Envoltoria{
 		return tamanho_curva;
 	}
 
+	/**
+	 * Seta novo tamanho da curva e gera nova envoltoria aleatória
+	 * @param tamanho_curva
+	 */
 	public void setTamanho_curva(int tamanho_curva) {
 		this.tamanho_curva = tamanho_curva;
+		generateEnvoltoria();
 	}
 	
 	public float getA() {
 		return a;
 	}
 
+	/**
+	 * seta o ganho para a
+	 * @param a
+	 */
 	public void setA(float a) {
 		this.a = a;
+		setGanho(a);
 	}
 
 	public float getF_ran() {
 		return f_ran;
 	}
 
+	/**
+	 * seta nova frequência de pontos de quebra e gera nova envoltória aleatória
+	 * @param f_ran
+	 */
 	public void setF_ran(float f_ran) {
 		this.f_ran = f_ran;
+		generateEnvoltoria();
 	}
 	//----------------------------------
 	//--------Construtores--------------
 	//----------------------------------
 	/**
-	 * Cria Envoltória aleatório entre +A e -A com frequência de pontos de quebra
-	 * determinada por f_ran. O tamanho da curva é setado para 720
-	 * @param new_a
-	 * @param new_f_ran
+	 * Cria Envoltória aleatório entre +1 e -1 com frequência de pontos de quebra
+	 * de 60Hz. O tamanho da curva é setado para 720
 	 */
+	public RAN(){
+		setParameters(1f, 60, 720);
+	}
+	
 	public RAN(float new_a, float new_f_ran){
 		setParameters(new_a, new_f_ran, 720);
 	}
@@ -54,13 +71,12 @@ public class RAN extends Envoltoria{
 	 * @param new_f_ran
 	 * @param tamanho_curva
 	 */	
-	
 	public RAN(float new_a, float new_f_ran, int tamanho_curva){
 		setParameters(new_a, new_f_ran, tamanho_curva);
 	}
 	
 	/**
-	 * seta os 3 parâmetros da classe e regera a Envoltória
+	 * seta os 3 parâmetros da classe e regera a Envoltória aleatória
 	 * @param new_a
 	 * @param new_f_ran
 	 * @param tamanho_curva
@@ -88,10 +104,12 @@ public class RAN extends Envoltoria{
 	
 	/**
 	 * Gera uma nova envoltória com os parâmetros já especificados
+	 * Note que a envoltória é gerada entre -1 e + 1,
+	 * o ganho é aplicado futuramente
 	 */
 	public void generateEnvoltoria(){
 		Curva curv = new Curva(getTamanho_curva());
-		float amplitude = getA();
+		float amplitude = 1f;
 		for(float x = 0; x <= tamanho_curva; x+= tamanho_curva/f_ran){
 			curv.addPonto(x, getRandomNumber(amplitude));
 		}
