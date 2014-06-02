@@ -1,0 +1,52 @@
+$AddRegPart 1
+G90 G18 G40
+(G40: cancela raio de compensação)
+(G90: coordenadas aabsolutas)
+ET1 M6
+G92 X0 Z-23 
+
+(plano de segurança)
+N10 G0 X57 Z152
+
+(liga ferramenta)
+M3
+G0 Z80
+G1 X50
+Z50
+
+X53 Z53
+G0 Z70
+G1 X45
+Z60
+X55 Z65
+
+G0 X57
+Z120
+G1 X50 Z115
+Z95
+X55 Z90
+
+G0  X57
+Z120
+G1 X45 Z110
+Z100
+X55 Z90
+X57 Z92
+
+G0 Z135
+G1 X50
+Z130
+X57
+
+G0 Z145
+G1  X50
+Z140
+X57
+
+Z143
+x45
+x55
+
+M30
+
+
