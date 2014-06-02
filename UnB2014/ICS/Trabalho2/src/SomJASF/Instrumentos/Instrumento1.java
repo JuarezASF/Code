@@ -32,9 +32,6 @@ public class Instrumento1 extends UnidadeH{
 		ran.setF_ran(60);
 		osci.setDispositivoAmplitude(ran);
 		osci.setFrequencia(440);
-		
-
-		
 	}
 	
 	/**
@@ -56,6 +53,10 @@ public class Instrumento1 extends UnidadeH{
 	}
 	
 	public void setGanho(float G){
+		env.setGanho(G);
+	}
+
+	public void setGanhoRuido(float G){
 		env.setGanho(G);
 	}
 	
