@@ -14,7 +14,7 @@ import org.math.plot.utils.Array;
 
 public class RAN extends Oscilador{
 	
-	private float f_ran;
+	private float f_ran, f_ran_base;
 	private Multiplicador envFinal;
 
 	
@@ -29,6 +29,7 @@ public class RAN extends Oscilador{
 	 * @param new_f_ran
 	 */
 	public RAN(Envoltoria devAmplitude, float new_f_ran) {
+		super();
 		ganhoEnv = devAmplitude;
 		generateRandomEnv(new_f_ran);
 
@@ -41,7 +42,8 @@ public class RAN extends Oscilador{
 	 */
 	public RAN() {
 		super();
-		initializeConstant(100, 60);
+		initializeConstant(1000, 60);
+		setRAN();
 	}
 	
 	/**
@@ -53,7 +55,7 @@ public class RAN extends Oscilador{
 	public RAN(float amplitude, float new_f_ran) {
 		super();
 		initializeConstant(amplitude, new_f_ran);
-	
+		setRAN();
 	}
 	
 	private void initializeConstant(float amplitude, float new_f_ran){
@@ -68,8 +70,6 @@ public class RAN extends Oscilador{
 		//cria envoltória aleatória com base em fran
 		f_ran = new_f_ran;
 		generateRandomEnv(new_f_ran);
-		
-		setRAN();
 	}
 	
 	/**
@@ -185,8 +185,8 @@ public class RAN extends Oscilador{
 	 */
 	public void geraNovoPadraoAleatorio(){
 		generateRandomEnv(getF_ran());
-		setRAN();
-		
+		setRAN(); // altera um dos parâmetros do multiplicador
+		//por isso deve setar RAN novamente
 	}
 
 	/**
@@ -202,7 +202,8 @@ public class RAN extends Oscilador{
 	 * @param f_ran
 	 */
 	public void setF_ran(float f_ran) {
-		this.f_ran = f_ran;
+		this.f_ran_base = f_ran;
+		f_ran = 1f * f_ran_base;
 		geraNovoPadraoAleatorio();
 	}
 	
@@ -210,15 +211,17 @@ public class RAN extends Oscilador{
 	 * seta o ganho do oscilador e aplica mesmo ganho as
 	 * envoltórias...finalmente, seta o RAN para a nova envoltória gerada
 	 */
-	public void setGanho(float k){
-		super.setGanho(k);
-		this.ganhoEnv.setGanho(k);
-		setRAN();
+	public void setGanho(float g){
+		this.ganhoEnv.setGanho(g);
 	}
 	
+	/**
+	 * seta o ganho de RAN para um dispositivo envoltória
+	 * @param env
+	 */
 	public void setGanhoDispositivo(Envoltoria env){
-		ganhoEnv = env;
-		setRAN();
+		ganhoEnv = env;//altera o dipositivo de entrada do multiplicador
+		setRAN();//por isso deve setar RAN novamente
 	}
 	
 	
@@ -227,12 +230,16 @@ public class RAN extends Oscilador{
 	 * não sei se isso é necessário...mas taí
 	 * 
 	 */
-	public void setDuracao(float D){
-		super.setDuracao(D);
-		ganhoEnv.setDuracao(D);
-		randomEnv.setDuracao(D);
-		
-		setRAN();
+	public void setDuracao(float d){
+		ganhoEnv.setDuracao(d);
+		this.duracao = d;
+		f_ran = d*f_ran_base;
+		geraNovoPadraoAleatorio();
+		randomEnv.setDuracao(d);
+	}
+
+	public Envoltoria getGanhoEnv() {
+		return ganhoEnv;
 	}
 	
 }

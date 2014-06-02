@@ -10,9 +10,11 @@ public class Main {
 		// TODO Auto-generated method stub
 		System.out.println("Teste RAN -- start");
 		
-		Instrumento1 ins = new Instrumento1();
-		ins.setGanho(50);
-		
+		Instrumento2 ins = new Instrumento2();
+//		ins.setGanho(50f);
+		ins.setFRuido(60);
+		ins.setGanhoRuido(100);
+			
 		Som som = new Som(ins);
 		som.visualiza();
 		
