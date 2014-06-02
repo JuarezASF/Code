@@ -10,20 +10,11 @@ public class Main {
 		// TODO Auto-generated method stub
 		System.out.println("Teste RAN -- start");
 		
-		RAN rand = new RAN();
+		Instrumento1 ins = new Instrumento1();
+		ins.setGanho(50);
 		
-		rand.visualiza();
-		
-		try {
-		    Thread.sleep(3000);
-		} catch(InterruptedException ex) {
-		    Thread.currentThread().interrupt();
-		}
-		
-		rand.setA(10f);
-		rand.setF_ran(2);
-		rand.generateEnvoltoria();
-		rand.visualiza();
+		Som som = new Som(ins);
+		som.visualiza();
 		
 		System.out.println("Teste RAN -- fim");
 	}
