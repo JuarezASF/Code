@@ -8,7 +8,7 @@ import sintese.Somador;
 import sintese.UnidadeH;
 
 
-public class Instrumento3 extends UnidadeH{
+public class Instrumento3 extends UnidadeH implements Instrumento{
 	
 	private RAN ran;
 	private Oscilador osci_out, osciF;
@@ -95,7 +95,7 @@ public class Instrumento3 extends UnidadeH{
 		ran.setGanho(g);
 	}
 	
-	public void setFRuido(float f){
+	public void setF_ruido(float f){
 		ran.setF_ruido(f);
 	}
 	

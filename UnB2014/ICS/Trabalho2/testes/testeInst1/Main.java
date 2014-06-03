@@ -11,7 +11,7 @@ public class Main {
 
 		Instrumento1 inst1 = new Instrumento1();		
 		
-		inst1.setDuracao(5f);
+		inst1.setDuracao(2f);
 		inst1.setF_ruido(600);
 		inst1.setFrequencia(660);
 		inst1.setGanho(50);
@@ -19,8 +19,11 @@ public class Main {
 		
 
 		Som som = new Som(inst1);
-		som.visualiza();
-		
+		som.salvawave();
+		som.tocawave();
+		som.tocawave();
+		som.tocawave();
+		som.tocawave();		
 		System.out.println("Teste Instrumento1.java -- fim");
 	}
 

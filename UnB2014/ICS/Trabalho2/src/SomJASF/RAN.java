@@ -34,6 +34,8 @@ public class RAN extends Oscilador{
 		f_ruido = new_f_ran;
 		f_ruido_base = new_f_ran;
 		
+		
+		randomEnv = new Envoltoria();
 		generateRandomEnv();
 
 		setRAN();
@@ -74,6 +76,8 @@ public class RAN extends Oscilador{
 		
 		f_ruido = new_f_ran;
 		f_ruido_base = new_f_ran;
+		
+		randomEnv = new Envoltoria();
 		generateRandomEnv();
 	}
 	
@@ -93,8 +97,7 @@ public class RAN extends Oscilador{
 
 
 	/**
-	 * Gera Envoltória aleatória com f_ran potnos espaçados de 720/f_ran 
-	 * @param new_f_ran número de pontos de quebra na envoltoria aleatória
+	 * Gera Envoltória aleatória com f_ruido pontos espaçados de 720/f_ruido 
 	 */
 	private void generateRandomEnv(){
 		float f = getF_ruido();
@@ -106,7 +109,6 @@ public class RAN extends Oscilador{
 			curv.addPonto(x, myRand);
 		}
 		
-		this.randomEnv = new Envoltoria();
 		this.randomEnv.setCURVA(curv);
 	}
 	/**
@@ -187,16 +189,6 @@ public class RAN extends Oscilador{
 	}
 
 	/**
-	 * Cria uma nova tabela aleatória e seta a saída do dispositivo
-	 * para esse novo padrão gerado
-	 */
-	public void geraNovoPadraoAleatorio(){
-		generateRandomEnv();
-		setRAN(); // altera um dos parâmetros do multiplicador
-		//por isso deve setar RAN novamente
-	}
-
-	/**
 	 * retorna a frequência de pontos de quebra
 	 * @return
 	 */
@@ -205,13 +197,13 @@ public class RAN extends Oscilador{
 	}
 
 	/**
-	 * seta novo f_ran e gera novo padrão aleatório com essa definição
-	 * @param f_ran
+	 * seta novo f_ruido_base e gera novo padrão aleatório com essa definição
+	 * @param f_ruido
 	 */
-	public void setF_ruido(float f_ran) {
-		this.f_ruido_base = f_ran;
+	public void setF_ruido(float f_ruido) {
+		this.f_ruido_base = f_ruido;
 		this.f_ruido = 1f * f_ruido_base;
-		geraNovoPadraoAleatorio();
+		generateRandomEnv();
 		//para manter mesma duração anterior
 		float d = this.duracao;
 		randomEnv.setDuracao(d);
@@ -230,9 +222,8 @@ public class RAN extends Oscilador{
 	 * seta o ganho de RAN para um dispositivo envoltória
 	 * @param env
 	 */
-	public void setGanhoDispositivo(Envoltoria env){
-		ganhoEnv = env;//altera o dipositivo de entrada do multiplicador
-		setRAN();//por isso deve setar RAN novamente
+	public void setGanho(Envoltoria envG){
+		ganhoEnv.setCURVA((Curva)envG.getCURVA().clone());
 	}
 	
 	
@@ -245,7 +236,7 @@ public class RAN extends Oscilador{
 		ganhoEnv.setDuracao(d);
 		this.duracao =  d;
 		f_ruido = d*f_ruido_base;
-		geraNovoPadraoAleatorio();
+		generateRandomEnv();
 		randomEnv.setDuracao(d);
 	}
 

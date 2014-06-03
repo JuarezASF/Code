@@ -88,228 +88,7 @@ public class GUI extends JFrame
 		instrumento2_item.addActionListener(menuLidador);
 		instrumento3_item.addActionListener(menuLidador);
 		tipo_instrumento = 0;
-		
-		ins1 = new Instrumento1();
-		ins2 = new Instrumento2();
-		ins3 = new Instrumento3();
-		
-		setInstrumento1Interface();
-		
-			
-	}
-	
-	private void setInstrumento1Interface(){
-		tipo_instrumento = 1;
-		//label de Frequência do Instrumento
-		JLabel f_label = new JLabel("Frequência");
-		F_slider = new JSlider(100, 1000);
-		F_slider.setValue(440);
-		f_label_value = new JLabel("440 Hz");
-		
-		//label de frequencia do ruido
-		JLabel f_ran_label = new JLabel("F. do Ruído");
-		F_ran_slider = new JSlider(1, 100);
-		F_ran_slider.setValue(60);
-		f_ran_label_value = new JLabel("60 Hz");
-		
-		//label de amplitude do ruido
-		JLabel a_ran_label = new JLabel("A. do Ruído");
-		A_ran_slider = new JSlider(1, 100);
-		A_ran_slider.setValue(20);
-		a_ran_label_value = new JLabel("20 Hz");
-		
-		
-		//label de duração
-		JLabel dura_label = new JLabel("Duração");
-		dura_slider = new JSlider(0, 20);
-		dura_slider.setValue(5);
-		dura_label_value = new JLabel("5s");
-		
-		play = new JButton("tocar");
-		play.setActionCommand("play");
-	
-		class Lidador implements ChangeListener, ActionListener{
-			public void stateChanged(ChangeEvent e) {
-				if(e.getSource() == F_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins1.setFrequencia(desiredPosition);
-					f_label_value.setText(desiredPosition + " Hz");
-				}
-				else if(e.getSource() == F_ran_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins1.setF_ruido(desiredPosition);
-					f_ran_label_value.setText(desiredPosition + " Hz");
-				}else if(e.getSource() == A_ran_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins1.setGanho(desiredPosition);
-					a_ran_label_value.setText(desiredPosition + "");
-				}else if(e.getSource() == dura_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins1.setDuracao(desiredPosition);
-					dura_label_value.setText(desiredPosition + " s");
-				}
 				
-			}
-
-			public void actionPerformed(ActionEvent e) {
-				String action = e.getActionCommand();
-						if("play".equals(action)){
-							if(tipo_instrumento == 1)
-							{
-								Som som = new Som(ins1);
-								som.salvawave("ins1.wav");
-								som.tocawave("ins1.wav");
-							}
-						}//end "play/pause"	
-					}
-		}
-	
-		
-		Lidador meuLidador = new Lidador();
-		
-		F_slider.addChangeListener(meuLidador);
-		F_ran_slider.addChangeListener(meuLidador);
-		A_ran_slider.addChangeListener(meuLidador);
-		dura_slider.addChangeListener(meuLidador);
-		play.addActionListener(meuLidador);
-				
-
-		
-		centro.add(f_label); centro.add(F_slider);centro.add(f_label_value);
-		centro.add(f_ran_label); centro.add(F_ran_slider);centro.add(f_ran_label_value);
-		centro.add(a_ran_label); centro.add(A_ran_slider);centro.add(a_ran_label_value);
-		centro.add(dura_label); centro.add(dura_slider);centro.add(dura_label_value);
-		centro.add(play);
-
-	}
-
-	private void setInstrumento2Interface(){
-		tipo_instrumento = 2;
-		//label de Frequência do Instrumento
-		JLabel f_label = new JLabel("Frequência");
-		F_slider = new JSlider(100, 1000);
-		F_slider.setValue(440);
-		f_label_value = new JLabel("440 Hz");
-		
-		//label de frequencia do ruido
-		JLabel f_ran_label = new JLabel("F. do Ruído");
-		F_ran_slider = new JSlider(1, 100);
-		F_ran_slider.setValue(60);
-		f_ran_label_value = new JLabel("60 Hz");
-		
-		//label de amplitude do ruido
-		JLabel a_ran_label = new JLabel("A. do Ruído");
-		A_ran_slider = new JSlider(1, 100);
-		A_ran_slider.setValue(20);
-		a_ran_label_value = new JLabel("20 Hz");
-		
-		
-		//label de duração
-		JLabel dura_label = new JLabel("Duração");
-		dura_slider = new JSlider(0, 20);
-		dura_slider.setValue(5);
-		dura_label_value = new JLabel("5s");
-		
-		//label de amplitude
-		JLabel amplitude_label = new JLabel("Amplitude");
-		Amplitude_slider = new JSlider(0, 50);
-		Amplitude_slider.setValue(10);
-		amplitude_label_value = new JLabel("10");
-		
-		
-		play = new JButton("tocar");
-		play.setActionCommand("play");
-	
-		class Lidador implements ChangeListener, ActionListener{
-			public void stateChanged(ChangeEvent e) {
-				if(e.getSource() == F_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins2.setFrequencia(desiredPosition);
-					f_label_value.setText(desiredPosition + " Hz");
-				}
-				else if(e.getSource() == F_ran_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins2.setFrequenciaRuido(desiredPosition);
-					f_ran_label_value.setText(desiredPosition + " Hz");
-				}else if(e.getSource() == A_ran_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins2.setGanho(desiredPosition);
-					a_ran_label_value.setText(desiredPosition + "");
-				}else if(e.getSource() == dura_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins2.setDuracao(desiredPosition);
-					dura_label_value.setText(desiredPosition + " s");
-				}else if(e.getSource() == Amplitude_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins2.setGanho(desiredPosition);
-					amplitude_label_value.setText(desiredPosition + "");
-				}
-				
-			}
-
-			public void actionPerformed(ActionEvent e) {
-				String action = e.getActionCommand();
-						if("play".equals(action)){
-							if(tipo_instrumento == 2)
-							{
-								Som som = new Som(ins2);
-								som.salvawave("ins2.wav");
-								som.tocawave("ins2.wav");
-							}
-						}//end "play/pause"	
-					}
-		}
-	
-		
-		Lidador meuLidador = new Lidador();
-		
-		F_slider.addChangeListener(meuLidador);
-		F_ran_slider.addChangeListener(meuLidador);
-		A_ran_slider.addChangeListener(meuLidador);
-		dura_slider.addChangeListener(meuLidador);
-		Amplitude_slider.addChangeListener(meuLidador);
-		play.addActionListener(meuLidador);
-				
-
-		
-		centro.add(f_label); centro.add(F_slider);centro.add(f_label_value);
-		centro.add(f_ran_label); centro.add(F_ran_slider);centro.add(f_ran_label_value);
-		centro.add(a_ran_label); centro.add(A_ran_slider);centro.add(a_ran_label_value);
-		centro.add(dura_label); centro.add(dura_slider);centro.add(dura_label_value);
-		centro.add(amplitude_label); centro.add(Amplitude_slider); centro.add(amplitude_label_value);
-		centro.add(play);
-
-	}
-	
-	private void setInstrumento3Interface(){
-		tipo_instrumento = 3;
 		//label de Frequência do Instrumento
 		JLabel f_label = new JLabel("Frequência");
 		F_slider = new JSlider(100, 1000);
@@ -357,75 +136,7 @@ public class GUI extends JFrame
 		play.setActionCommand("play");
 		
 	
-		class Lidador implements ChangeListener, ActionListener{
-			public void stateChanged(ChangeEvent e) {
-				if(e.getSource() == F_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins3.setFrequencia(desiredPosition);
-					f_label_value.setText(desiredPosition + " Hz");
-				}
-				else if(e.getSource() == F_ran_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins3.setFRuido(desiredPosition);
-					f_ran_label_value.setText(desiredPosition + " Hz");
-				}else if(e.getSource() == A_ran_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins3.setGanho(desiredPosition);
-					a_ran_label_value.setText(desiredPosition + "");
-				}else if(e.getSource() == dura_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins3.setDuracao(desiredPosition);
-					dura_label_value.setText(desiredPosition + " s");
-				}else if(e.getSource() == Amplitude_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins3.setGanho(desiredPosition);
-					amplitude_label_value.setText(desiredPosition + "");
-				}else if(e.getSource() == amp_osci_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins3.setOsciFrequenciaA(desiredPosition);
-					amp_osci_label_value.setText(desiredPosition + "");
-				}else if(e.getSource() == freq_osci_slider){
-					JSlider src = (JSlider)e.getSource();
-					int desiredPosition;
-					desiredPosition = (int)src.getValue();
-					
-					ins3.setOsciFrequenciaF(desiredPosition);
-					freq_osci_label_value.setText(desiredPosition + "Hz");
-				}
-				
-			}
-
-			public void actionPerformed(ActionEvent e) {
-				String action = e.getActionCommand();
-						if("play".equals(action)){
-							if(tipo_instrumento == 3)
-							{
-								Som som = new Som(ins3);
-								som.salvawave("ins3.wav");
-								som.tocawave("ins3.wav");
-							}
-						}//end "play/pause"	
-					}
-		}
-	
+			
 		
 		Lidador meuLidador = new Lidador();
 		
@@ -449,13 +160,37 @@ public class GUI extends JFrame
 		centro.add(freq_osci_label); centro.add(freq_osci_slider); centro.add(freq_osci_label_value);
 		
 		centro.add(play);
-
+		
+		ins1 = new Instrumento1();
+		ins2 = new Instrumento2();
+		ins3 = new Instrumento3();
+		tipo_instrumento = 1;
+		setInterface(tipo_instrumento);
+			
+	}
+	
+	private void setInterface(int instrumento){
+		
+		switch(instrumento){
+			case(1):
+				Amplitude_slider.setEnabled(false);
+				amp_osci_slider.setEnabled(false);
+				freq_osci_slider.setEnabled(false);
+				break;
+			case(2):
+				Amplitude_slider.setEnabled(true);
+				amp_osci_slider.setEnabled(false);
+				freq_osci_slider.setEnabled(false);
+				break;
+			case(3):
+				Amplitude_slider.setEnabled(true);
+				amp_osci_slider.setEnabled(true);
+				freq_osci_slider.setEnabled(true);
+				break;
+		}
+		
 	}
 
-
-
-
-	
 	private Plot2DPanel  getPlot2d(Som som){
 		byte pontos[] = som.getAmostras();
 		Plot2DPanel plot = new Plot2DPanel();
@@ -492,14 +227,14 @@ public class GUI extends JFrame
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
 			if("instrumento 1".equals(action)){
-				centro.removeAll();
-				setInstrumento1Interface();
+				tipo_instrumento = 1;
+				setInterface(tipo_instrumento);
 			}else if("instrumento 2".equals(action)){
-				centro.removeAll();
-				setInstrumento2Interface();	
+				tipo_instrumento = 2;
+				setInterface(tipo_instrumento);
 			}else if("instrumento 3".equals(action)){
-				centro.removeAll();
-				setInstrumento3Interface();
+				tipo_instrumento = 3;
+				setInterface(tipo_instrumento);
 			}
 			invalidate();
 			validate();
@@ -508,6 +243,115 @@ public class GUI extends JFrame
 		}
 		
 	}
+	
+	class Lidador implements ChangeListener, ActionListener{
+		public void stateChanged(ChangeEvent e){
+			if(e.getSource() == F_slider){
+				JSlider src = (JSlider)e.getSource();
+				int desiredPosition;
+				desiredPosition = (int)src.getValue();
+				
+				f_label_value.setText(desiredPosition + " Hz");
+			}
+			else if(e.getSource() == F_ran_slider){
+				JSlider src = (JSlider)e.getSource();
+				int desiredPosition;
+				desiredPosition = (int)src.getValue();
+				
+				
+				f_ran_label_value.setText(desiredPosition + " Hz");
+			}else if(e.getSource() == A_ran_slider){
+				JSlider src = (JSlider)e.getSource();
+				int desiredPosition;
+				desiredPosition = (int)src.getValue();
+				
+				a_ran_label_value.setText(desiredPosition + "");
+			}else if(e.getSource() == dura_slider){
+				JSlider src = (JSlider)e.getSource();
+				int desiredPosition;
+				desiredPosition = (int)src.getValue();
+				
+				dura_label_value.setText(desiredPosition + " s");
+			}else if(e.getSource() == Amplitude_slider){
+				JSlider src = (JSlider)e.getSource();
+				int desiredPosition;
+				desiredPosition = (int)src.getValue();
+				
+				amplitude_label_value.setText(desiredPosition + "");
+			}else if(e.getSource() == amp_osci_slider){
+				JSlider src = (JSlider)e.getSource();
+				int desiredPosition;
+				desiredPosition = (int)src.getValue();
+				
+				amp_osci_label_value.setText(desiredPosition + "");
+			}else if(e.getSource() == freq_osci_slider){
+				JSlider src = (JSlider)e.getSource();
+				int desiredPosition;
+				desiredPosition = (int)src.getValue();
+				
+				freq_osci_label_value.setText(desiredPosition + "Hz");
+			}
+			
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			String action = e.getActionCommand();
+					if("play".equals(action)){
+						resetInst();
+						if(tipo_instrumento == 3)
+						{
+							Som som = new Som(ins3);
+							som.salvawave();
+							som.tocawave();
+							
+						}else if(tipo_instrumento == 2)
+						{
+							Som som = new Som(ins2);
+							som.salvawave();
+							som.tocawave();
+							
+						}else if(tipo_instrumento == 1)
+						{
+							Som som = new Som(ins1);
+							som.salvawave();
+							som.tocawave();
+							
+						} 
+					
+					}//end "play/pause"	
+				}
+		
+		void resetInst(){
+			Instrumento ins;
+			switch(tipo_instrumento){
+				case(1):
+					ins1 = new Instrumento1();
+					ins = ins1;
+					break;
+				case(2):
+					ins2 = new Instrumento2();
+					ins = ins2;
+					break;
+				case(3):
+					ins3 = new Instrumento3();
+					ins = ins3;
+					break;
+				default: //isso nuca deve acontecer
+					ins = ins1;
+					ins = ins1;	
+					break;
+			}
+			
+			ins.setFrequencia(F_slider.getValue());
+			ins.setGanho(Amplitude_slider.getValue());
+			ins.setGanhoRuido(A_ran_slider.getValue());
+			ins.setF_ruido(F_ran_slider.getValue());
+			ins.setDuracao(dura_slider.getValue());
+			ins.setOsciFrequenciaA(amp_osci_slider.getValue());
+			ins.setOsciFrequenciaF(freq_osci_slider.getValue());
+		}
+	}
+
 	
 	
 

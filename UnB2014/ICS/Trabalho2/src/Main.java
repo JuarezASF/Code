@@ -15,7 +15,7 @@ public class Main {
 		
 		
 		GUI myGui = new GUI();
-		myGui.setSize(new Dimension(400, 320));
+		myGui.setSize(new Dimension(350, 400));
 		myGui.show();
 		
 	}

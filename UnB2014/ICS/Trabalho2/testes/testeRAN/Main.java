@@ -18,9 +18,9 @@ public class Main {
 		env.setCURVA(curva);
 
 		RAN ran = new RAN();
-		ran.setGanhoDispositivo(env);
+		ran.setGanho(env);
 		ran.setGanho(10);
-		ran.setF_ran(10); 
+		ran.setF_ruido(10); 
 
 			
 		Oscilador osci = new Oscilador(ran);

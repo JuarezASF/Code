@@ -5,7 +5,7 @@ import sintese.Envoltoria;
 import sintese.Oscilador;
 import sintese.UnidadeH;
 
-public class Instrumento1 extends UnidadeH{
+public class Instrumento1 extends UnidadeH implements Instrumento{
 	
 	private RAN ran;
 	private Envoltoria env;
@@ -26,7 +26,7 @@ public class Instrumento1 extends UnidadeH{
 		setGanho(1f);
 		setLambda(0.5f);
 		
-		ran.setGanhoDispositivo(env);
+		ran.setGanho(env);
 		ran.setGanho(10);
 		ran.setF_ruido(60);
 		osci.setDispositivoAmplitude(ran);
@@ -52,7 +52,7 @@ public class Instrumento1 extends UnidadeH{
 		osci = getOscilador();
 	}
 	
-	public void setGanho(float G){
+	public void setGanhoRuido(float G){
 		ran.setGanho(G);
 	}
 	
@@ -68,4 +68,15 @@ public class Instrumento1 extends UnidadeH{
 		this.duracao = d;
 		osci.setDuracao(d);
 	}
+	
+	public void setGanho(float g_ruido){}
+	
+	public void setOsciFrequenciaA(float g){}
+	
+	public void setOsciFrequenciaF(float f){}
+
+	public void reset(){
+		if(osci != null)this.osci.reset();
+	}
+
 }
