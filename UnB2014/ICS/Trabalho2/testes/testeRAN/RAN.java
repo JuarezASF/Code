@@ -1,5 +1,3 @@
-package SomJASF;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
@@ -30,11 +28,7 @@ public class RAN extends Oscilador{
 	public RAN(Envoltoria devAmplitude, float new_f_ran) {
 		super();
 		ganhoEnv = devAmplitude;
-
-		f_ruido = new_f_ran;
-		f_ruido_base = new_f_ran;
-		
-		generateRandomEnv();
+		generateRandomEnv(new_f_ran);
 
 		setRAN();
 	}
@@ -74,7 +68,7 @@ public class RAN extends Oscilador{
 		
 		f_ruido = new_f_ran;
 		f_ruido_base = new_f_ran;
-		generateRandomEnv();
+		generateRandomEnv(new_f_ran);
 	}
 	
 	/**
@@ -96,11 +90,10 @@ public class RAN extends Oscilador{
 	 * Gera Envoltória aleatória com f_ran potnos espaçados de 720/f_ran 
 	 * @param new_f_ran número de pontos de quebra na envoltoria aleatória
 	 */
-	private void generateRandomEnv(){
-		float f = getF_ruido();
+	private void generateRandomEnv(float new_f_ran){
 		Curva curv = new Curva(720);
 		float amplitude = 1f;
-		float passo = 720f/f;
+		float passo = 720f/new_f_ran;
 		for(float x = 0; x <= 720; x+= passo){
 			float myRand = getRandomNumber(amplitude);
 			curv.addPonto(x, myRand);
@@ -191,7 +184,7 @@ public class RAN extends Oscilador{
 	 * para esse novo padrão gerado
 	 */
 	public void geraNovoPadraoAleatorio(){
-		generateRandomEnv();
+		generateRandomEnv(getF_ruido());
 		setRAN(); // altera um dos parâmetros do multiplicador
 		//por isso deve setar RAN novamente
 	}
@@ -208,14 +201,10 @@ public class RAN extends Oscilador{
 	 * seta novo f_ran e gera novo padrão aleatório com essa definição
 	 * @param f_ran
 	 */
-	public void setF_ruido(float f_ran) {
+	public void setF_ran(float f_ran) {
 		this.f_ruido_base = f_ran;
-		this.f_ruido = 1f * f_ruido_base;
+		f_ran = 1f * f_ruido_base;
 		geraNovoPadraoAleatorio();
-		//para manter mesma duração anterior
-		float d = this.duracao;
-		randomEnv.setDuracao(d);
-
 	}
 	
 	/**

@@ -1,5 +1,3 @@
-package SomJASF.Instrumentos;
-import SomJASF.RAN;
 import sintese.Curva;
 import sintese.Envoltoria;
 import sintese.Oscilador;
