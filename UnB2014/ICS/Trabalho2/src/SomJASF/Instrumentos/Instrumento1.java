@@ -45,7 +45,7 @@ public class Instrumento1 extends UnidadeH implements Instrumento{
 		curva.addPonto(60f, 1000f);
 		curva.addPonto(450f, 1000f);
 		curva.addPonto(720f, 0f);
-		env = new Envoltoria();
+		env = getEnvoltoria();
 		env.setCURVA(curva);
 		
 		ran = new RAN();

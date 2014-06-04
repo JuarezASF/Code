@@ -343,51 +343,51 @@ public class GUI extends JFrame
 			}else if("i1d1".equals(action)){
 				tipo_instrumento = 1;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 20, 60, 5, -1, -1);
+				setValue(440, -1, 20, 60, -1, -1, -1);
 			}else if("i1d2".equals(action)){
 				tipo_instrumento = 1;
 				setInterface(tipo_instrumento);
-				setValue(700, -1, 50, 660, 5, -1, -1);
+				setValue(700, -1, 50, 660, -1, -1, -1);
 			}else if("i2d1".equals(action)){
 				tipo_instrumento = 2;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 26, 1, 10, -1, -1);
+				setValue(440, -1, 26, 1, -1, -1, -1);
 			}else if("i2d2".equals(action)){
 				tipo_instrumento = 2;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 26, 12, 10, -1, -1);
+				setValue(440, -1, 26, 12, -1, -1, -1);
 			}else if("i2d3".equals(action)){
 				tipo_instrumento = 2;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 60, 12, 10, -1, -1);
+				setValue(440, -1, 60, 12, -1, -1, -1);
 			}else if("i2d4".equals(action)){
 				tipo_instrumento = 2;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 60, 425, 10, -1, -1);
+				setValue(440, -1, 60, 425, -1, -1, -1);
 			}else if("i2d5".equals(action)){
 				tipo_instrumento = 2;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 1, 400, 10, -1, -1);
+				setValue(440, -1, 1, 400, -1, -1, -1);
 			}else if("i3d1".equals(action)){
 				tipo_instrumento = 3;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 20, 1, 5, 10, 10);
+				setValue(440, -1, 20, 1, -1, 10, 10);
 			}else if("i3d2".equals(action)){
 				tipo_instrumento = 3;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 1, 1, 5, 30, 10);
+				setValue(440, -1, 1, 1, -1, 30, 10);
 			}else if("i3d3".equals(action)){
 				tipo_instrumento = 3;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 1, 1, 5, 32, 31);
+				setValue(440, -1, 1, 1, -1, 32, 31);
 			}else if("i3d4".equals(action)){
 				tipo_instrumento = 3;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 1, 1, 5, 56, 80);
+				setValue(440, -1, 1, 1, -1, 56, 80);
 			}else if("i3d5".equals(action)){
 				tipo_instrumento = 3;
 				setInterface(tipo_instrumento);
-				setValue(440, -1, 50, 1, 5, 56, 80);
+				setValue(440, -1, 50, 1, -1, 56, 80);
 			}else if("m1".equals(action)){
 				 InstrumentoAditivo ins_add = new InstrumentoAditivo();
 			     if(tipo_instrumento==1)
@@ -398,9 +398,10 @@ public class GUI extends JFrame
 			    	 ins_add.addUnidade(ins3);
 			     
 			     Melodia m1 = Tema.tema_bwv988goldberg_v03_eq(0.85f).transposicao(0.35f);
-			     //m1.print();
+			     m1.print();
 			     
 			     Som s1 = m1.getSom(ins_add);
+			     s1.salvawave();
 			     s1.tocawave();
 			}
 			invalidate();

@@ -2,6 +2,10 @@ package SomJASF;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -186,6 +190,51 @@ public class RAN extends Oscilador{
 		  frame.setVisible(true);
 		  frame.setSize(320, 240);
 		  frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	/**
+	 * Gera um gráfico da envoltória aleatória de -1 a +1 criada
+	 * considera que o tamanho máximo da tabela é 720
+	 * Se for usar mais do que isso irá dar pau! orriga se necessário!!
+	 */
+	public void printRanData(File file){
+		  Tabela tab = randomEnv.getCURVA();
+		  
+		  int tamanho_curva = tab.getTamanhoTabela();
+		  
+		  ArrayList<Double> x = new ArrayList<Double>(); 
+		  ArrayList<Double> y = new ArrayList<Double>(); 
+		 
+			System.out.println("pegando pontos");
+		  for(int i = 0; i <= tamanho_curva; i++){
+			  x.add((double )i*tamanho_curva/f_ruido);
+			  y.add((double )tab.getValorNoIndice(i)) ;
+		  }
+
+		try {
+ 
+ 
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+ 
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			BufferedWriter bw = new BufferedWriter(fw);
+			for(int i = 0; i <= tamanho_curva; i++){
+				String content = new String(x.get(i).doubleValue() + "\t" + y.get(i).doubleValue());
+				bw.write(content);
+		  			}
+
+			bw.close();
+ 
+			System.out.println("Done");
+ 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		  
 	}
 
 	/**

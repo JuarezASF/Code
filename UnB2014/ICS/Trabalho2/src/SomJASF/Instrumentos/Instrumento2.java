@@ -30,7 +30,7 @@ public class Instrumento2 extends UnidadeH implements Instrumento{
 		curva.addPonto(60f, 1000f);
 		curva.addPonto(450f, 1000f);
 		curva.addPonto(720f, 0f);
-		ganhoEnv = new Envoltoria();
+		ganhoEnv = getEnvoltoria();
 		ganhoEnv.setCURVA(curva);
 
 		
