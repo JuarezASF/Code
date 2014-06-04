@@ -19,7 +19,10 @@ import javax.swing.event.ChangeListener;
 
 import org.math.plot.Plot2DPanel;
 
+import sintese.InstrumentoAditivo;
+import sintese.Melodia;
 import sintese.Som;
+import sintese.Tema;
 import SomJASF.Instrumentos.*;
 
 public class GUI extends JFrame
@@ -76,6 +79,86 @@ public class GUI extends JFrame
 		carregarInstrumentoMenu.add(instrumento2_item);
 		carregarInstrumentoMenu.add(instrumento3_item);
 		
+		JMenuItem efeitosMenu = new JMenu("Efeitos");
+		menuBar.add(efeitosMenu);
+		
+		JMenu demosInst1menu = new JMenu("Demos Instrumento 1");
+		JMenu demosInst2menu = new JMenu("Demos Instrumento 2");
+		JMenu demosInst3menu = new JMenu("Demos Instrumento 3");
+		
+		efeitosMenu.add(demosInst1menu);
+		efeitosMenu.add(demosInst2menu);
+		efeitosMenu.add(demosInst3menu);
+		
+		JMenuItem inst1demo1Item = new JMenuItem("demo 1");
+		JMenuItem inst1demo2Item = new JMenuItem("demo 2");
+		
+		inst1demo1Item.setActionCommand("i1d1");
+		inst1demo2Item.setActionCommand("i1d2");
+		
+		demosInst1menu.add(inst1demo1Item);
+		demosInst1menu.add(inst1demo2Item);
+		
+		JMenuItem inst2demo1Item = new JMenuItem("demo 1");
+		JMenuItem inst2demo2Item = new JMenuItem("demo 2");
+		JMenuItem inst2demo3Item = new JMenuItem("demo 3");
+		JMenuItem inst2demo4Item = new JMenuItem("demo 4");
+		JMenuItem inst2demo5Item = new JMenuItem("demo 5");
+
+		inst2demo1Item.setActionCommand("i2d1");
+		inst2demo2Item.setActionCommand("i2d2");
+		inst2demo3Item.setActionCommand("i2d3");
+		inst2demo4Item.setActionCommand("i2d4");
+		inst2demo5Item.setActionCommand("i2d5");
+		
+		
+		demosInst2menu.add(inst2demo1Item);
+		demosInst2menu.add(inst2demo2Item);
+		demosInst2menu.add(inst2demo3Item);
+		demosInst2menu.add(inst2demo4Item);
+		demosInst2menu.add(inst2demo5Item);
+
+		JMenuItem inst3demo1Item = new JMenuItem("demo 1");
+		JMenuItem inst3demo2Item = new JMenuItem("demo 2");
+		JMenuItem inst3demo3Item = new JMenuItem("demo 3");
+		JMenuItem inst3demo4Item = new JMenuItem("demo 4");
+		JMenuItem inst3demo5Item = new JMenuItem("demo 5");
+
+		inst3demo1Item.setActionCommand("i3d1");
+		inst3demo2Item.setActionCommand("i3d2");
+		inst3demo3Item.setActionCommand("i3d3");
+		inst3demo4Item.setActionCommand("i3d4");
+		inst3demo5Item.setActionCommand("i3d5");
+		
+		demosInst3menu.add(inst3demo1Item);
+		demosInst3menu.add(inst3demo2Item);
+		demosInst3menu.add(inst3demo3Item);
+		demosInst3menu.add(inst3demo4Item);
+		demosInst3menu.add(inst3demo5Item);
+		
+		JMenu melodiaMenu = new JMenu("Melodias");
+		menuBar.add(melodiaMenu);
+		
+		JMenuItem melodia1 = new JMenuItem("melodia 1");
+		JMenuItem melodia2 = new JMenuItem("melodia 2");
+		JMenuItem melodia3 = new JMenuItem("melodia 3");
+		JMenuItem melodia4 = new JMenuItem("melodia 4");
+		JMenuItem melodia5 = new JMenuItem("melodia 5");
+		
+		melodia1.setActionCommand("m1");
+		melodia2.setActionCommand("m2");
+		melodia3.setActionCommand("m3");
+		melodia4.setActionCommand("m4");
+		melodia5.setActionCommand("m5");
+		
+		melodiaMenu.add(melodia1);
+		melodiaMenu.add(melodia2);
+		melodiaMenu.add(melodia3);
+		melodiaMenu.add(melodia4);
+		melodiaMenu.add(melodia5);
+		
+		
+		
 		setJMenuBar(menuBar);
 		
 		MenuLidador menuLidador = new MenuLidador();
@@ -87,6 +170,28 @@ public class GUI extends JFrame
 		instrumento1_item.addActionListener(menuLidador);
 		instrumento2_item.addActionListener(menuLidador);
 		instrumento3_item.addActionListener(menuLidador);
+		
+		inst1demo1Item.addActionListener(menuLidador);
+		inst1demo2Item.addActionListener(menuLidador);
+		
+		inst2demo1Item.addActionListener(menuLidador);
+		inst2demo2Item.addActionListener(menuLidador);
+		inst2demo3Item.addActionListener(menuLidador);
+		inst2demo4Item.addActionListener(menuLidador);
+		inst2demo5Item.addActionListener(menuLidador);
+		
+		inst3demo1Item.addActionListener(menuLidador);
+		inst3demo2Item.addActionListener(menuLidador);
+		inst3demo3Item.addActionListener(menuLidador);
+		inst3demo4Item.addActionListener(menuLidador);
+		inst3demo5Item.addActionListener(menuLidador);
+		
+		melodia1.addActionListener(menuLidador);
+		melodia2.addActionListener(menuLidador);	
+		melodia3.addActionListener(menuLidador);
+		melodia4.addActionListener(menuLidador);
+		melodia5.addActionListener(menuLidador);
+		
 		tipo_instrumento = 0;
 				
 		//label de Frequência do Instrumento
@@ -97,13 +202,13 @@ public class GUI extends JFrame
 		
 		//label de frequencia do ruido
 		JLabel f_ran_label = new JLabel("F. do Ruído");
-		F_ran_slider = new JSlider(1, 100);
+		F_ran_slider = new JSlider(1, 1000);
 		F_ran_slider.setValue(60);
 		f_ran_label_value = new JLabel("60 Hz");
 		
 		//label de amplitude do ruido
 		JLabel a_ran_label = new JLabel("A. do Ruído");
-		A_ran_slider = new JSlider(1, 100);
+		A_ran_slider = new JSlider(1, 360);
 		A_ran_slider.setValue(20);
 		a_ran_label_value = new JLabel("20 Hz");
 		
@@ -235,14 +340,87 @@ public class GUI extends JFrame
 			}else if("instrumento 3".equals(action)){
 				tipo_instrumento = 3;
 				setInterface(tipo_instrumento);
+			}else if("i1d1".equals(action)){
+				tipo_instrumento = 1;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 20, 60, 5, -1, -1);
+			}else if("i1d2".equals(action)){
+				tipo_instrumento = 1;
+				setInterface(tipo_instrumento);
+				setValue(700, -1, 50, 660, 5, -1, -1);
+			}else if("i2d1".equals(action)){
+				tipo_instrumento = 2;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 26, 1, 10, -1, -1);
+			}else if("i2d2".equals(action)){
+				tipo_instrumento = 2;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 26, 12, 10, -1, -1);
+			}else if("i2d3".equals(action)){
+				tipo_instrumento = 2;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 60, 12, 10, -1, -1);
+			}else if("i2d4".equals(action)){
+				tipo_instrumento = 2;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 60, 425, 10, -1, -1);
+			}else if("i2d5".equals(action)){
+				tipo_instrumento = 2;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 1, 400, 10, -1, -1);
+			}else if("i3d1".equals(action)){
+				tipo_instrumento = 3;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 20, 1, 5, 10, 10);
+			}else if("i3d2".equals(action)){
+				tipo_instrumento = 3;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 1, 1, 5, 30, 10);
+			}else if("i3d3".equals(action)){
+				tipo_instrumento = 3;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 1, 1, 5, 32, 31);
+			}else if("i3d4".equals(action)){
+				tipo_instrumento = 3;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 1, 1, 5, 56, 80);
+			}else if("i3d5".equals(action)){
+				tipo_instrumento = 3;
+				setInterface(tipo_instrumento);
+				setValue(440, -1, 50, 1, 5, 56, 80);
+			}else if("m1".equals(action)){
+				 InstrumentoAditivo ins_add = new InstrumentoAditivo();
+			     if(tipo_instrumento==1)
+			    	 ins_add.addUnidade(ins1);
+			     else if(tipo_instrumento==2)
+			    	 ins_add.addUnidade(ins2);
+			     else if(tipo_instrumento==3)
+			    	 ins_add.addUnidade(ins3);
+			     
+			     Melodia m1 = Tema.tema_bwv988goldberg_v03_eq(0.85f).transposicao(0.35f);
+			     //m1.print();
+			     
+			     Som s1 = m1.getSom(ins_add);
+			     s1.tocawave();
 			}
 			invalidate();
 			validate();
 			centro.updateUI();
 			
 		}
+		void setValue(int f, int a, int a_rui, int f_rui, int d, int a2, int f2){
+			if (f != -1) F_slider.setValue(f);
+			if (a != -1)Amplitude_slider.setValue(a);
+			if (a_rui != -1) A_ran_slider.setValue(a_rui);
+			if (f_rui != -1) F_ran_slider.setValue(f_rui);
+			if (d != -1) dura_slider.setValue(d);
+			if (a2 != -1)amp_osci_slider.setValue(a2);
+			if (f2 != -1)freq_osci_slider.setValue(f2);
+
+		}
+
 		
-	}
+	}// end class MenuLidador
 	
 	class Lidador implements ChangeListener, ActionListener{
 		public void stateChanged(ChangeEvent e){
@@ -318,7 +496,7 @@ public class GUI extends JFrame
 							
 						} 
 					
-					}//end "play/pause"	
+					}
 				}
 		
 		void resetInst(){
@@ -350,6 +528,8 @@ public class GUI extends JFrame
 			ins.setOsciFrequenciaA(amp_osci_slider.getValue());
 			ins.setOsciFrequenciaF(freq_osci_slider.getValue());
 		}
+		
+				
 	}
 
 	

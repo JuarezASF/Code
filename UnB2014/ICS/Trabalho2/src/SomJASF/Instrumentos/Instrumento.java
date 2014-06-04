@@ -1,4 +1,5 @@
 package SomJASF.Instrumentos;
+import sintese.UnidadeH;
 
 public interface Instrumento{
 	
