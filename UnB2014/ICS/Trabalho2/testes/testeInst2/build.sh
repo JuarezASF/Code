@@ -1,4 +1,4 @@
 #! /bin/bash
 
-javac -cp ../../sintese.jar:../jmathplot:. *.java 
+javac -cp ../../include/sintese.jar:../../include/jmathplot.jar:. Main.java 
 
