@@ -1,8 +1,6 @@
-import sintese.Dispositivo;
-import sintese.Multiplicador;
-import sintese.Somador;
 import sintese.Oscilador;
-import sintese.Envoltoria;
+
+import javax.vecmath.Vector2d;
 
 public class OsciladorShepard extends Oscilador{
 	
@@ -65,6 +63,39 @@ public class OsciladorShepard extends Oscilador{
 	public void setFaseCilco(float fc){
 		gauss_env.setContador(fc);
 		freq_env.setContador(fc);
+	}
+
+	public void setPorcentagemCiclo(float p){
+		setFaseCilco(p*720f/100f);
+	}
+	
+	/**
+	 * Retorna o par (f, a) atual
+	 * @return
+	 */
+	public Vector2d getFreqAmpData(){
+		Vector2d amp = gauss_env.getSaidaData();
+		Vector2d freq = freq_env.getSaidaData();
+		
+		Vector2d v = new Vector2d(freq.y, amp.y);
+		
+		return v;
+	}
+
+	public Vector2d getTimeFreqData(){
+		Vector2d freq = freq_env.getSaidaData();
+		
+		Vector2d v = new Vector2d(freq.x, freq.y);
+		
+		return v;
+	}
+
+	public Vector2d getTimeAmpData(){
+		Vector2d amp = gauss_env.getSaidaData();
+		
+		Vector2d v = new Vector2d(amp.x, amp.y);
+		
+		return v;
 	}
 
 }

@@ -1,14 +1,16 @@
 import sintese.Envoltoria;
 import sintese.Curva;
 
+import javax.vecmath.Vector2d;
+
 public class EnvoltoriaLinearShepard extends Envoltoria{
 	
 	private float contador;
 	private float duracao_ciclo;
 	
 	private void set(double freq_central, float inicio){
-		double f_inicial = 0.5*freq_central;
-		double f_final   = 1.5*freq_central;
+		double f_inicial = 1f/4f*freq_central;
+		double f_final   = 4*freq_central;
 		
 		Curva curva = new Curva(720);
 		for(int i = 0; i <=720; i++){
@@ -59,6 +61,20 @@ public class EnvoltoriaLinearShepard extends Envoltoria{
 	 */
 	public void setContador(float c){
 		contador = c;
+	}
+	
+	/**
+	 * Retorna a dupla (contador, saída).
+	 * Isto é, retorna o ponto do gráfico em que estamos.
+	 * @return
+	 */
+	public Vector2d getSaidaData(){
+		double x = contador;
+		double y = getSaida();
+		
+		Vector2d v = new Vector2d(x, y);
+	
+		return v;
 	}
 
 }

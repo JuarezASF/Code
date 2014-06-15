@@ -1,9 +1,9 @@
+
+
 import sintese.Curva;
-import sintese.Dispositivo;
-import sintese.Multiplicador;
-import sintese.Somador;
-import sintese.Oscilador;
 import sintese.Envoltoria;
+
+import javax.vecmath.Vector2d;
 
 
 public class EnvoltoriaGaussiana extends Envoltoria{
@@ -100,6 +100,21 @@ public class EnvoltoriaGaussiana extends Envoltoria{
 		
 		return saida;
 	}
+	
+	/**
+	 * Retorna a dupla (contador, saída).
+	 * Isto é, retorna o ponto do gráfico em que estamos.
+	 * @return
+	 */
+	public Vector2d getSaidaData(){
+		double x = contador;
+		double y = getSaida();
+		
+		Vector2d v = new Vector2d(x, y);
+	
+		return v;
+	}
+	
 	
 	public void setDuracaoCiclo(float d){
 		duracao_ciclo = d;
