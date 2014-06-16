@@ -1,6 +1,15 @@
 import sintese.Curva;
 import sintese.Envoltoria;
-
+/**
+ * Implementa uma envoltória para a entrada de Frequência do OsciladorRisset.
+ * 
+ * 
+ * Utiliza-se para isso a API sintese 
+ * 
+ * Ver referência teórica para a fórmula utilizada em: http://hebb.mit.edu/courses/9.29/2003/athena/auditory/risset.html
+ * @author juarez408
+ *
+ */
 public class EnvoltoriaFrequenciaRisset extends Envoltoria{
 	private float fContador, fFi, fT0;
 	boolean bCrescente;

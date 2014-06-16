@@ -1,5 +1,13 @@
 import sintese.Oscilador;
 
+/**
+ * Implementa Oscilador básico para gerar efeito Risset Contínuo utilizando-se da API sintese
+ * 
+ * 
+ * Ver referência teórica em: http://hebb.mit.edu/courses/9.29/2003/athena/auditory/risset.html
+ * @author juarez408
+ *
+ */
 public class OsciladorRissetContinuo extends Oscilador{
 	EnvoltoriaAmplitudeRisset amp_env;
 	EnvoltoriaFrequenciaRisset freq_env;

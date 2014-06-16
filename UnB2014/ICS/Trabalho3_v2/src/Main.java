@@ -1,3 +1,5 @@
+import java.awt.Dimension;
+
 import sintese.Curva;
 import sintese.Envoltoria;
 import sintese.Oscilador;
@@ -65,8 +67,9 @@ public class Main {
 	public static void demo4(){
 		float var = 0.1f;
 		float Fc = 440;
-		float T0 = 5;
+		float T0 = 15f;
 		float F0 = Fc/4.0f;
+		float duracao = 30f;
 		
 		
 		OsciladorRissetContinuo osci1 = new OsciladorRissetContinuo(F0, T0, Fc, var);
@@ -86,17 +89,76 @@ public class Main {
 		
 		Envoltoria ganho = new Envoltoria();
 		ganho.setCURVA(curva);
-		ganho.setDuracao(10);
+		ganho.setDuracao(duracao);
 		
 		Multiplicador mult = new Multiplicador(ganho, sum4);
 		
-		Som som = new Som(mult, 10);
+		Som som = new Som(mult, duracao);
+		
+		som.visualiza();
+	}
+	
+	public static void demo5(){
+		float var = 0.1f;
+		float Fc = 440;
+		float T0 = 15f;
+		float F0 = Fc/8.0f;
+		float duracao = 30f;
+		
+		
+		OsciladorRissetContinuo[] osci = new OsciladorRissetContinuo[7];
+		
+		for(int i = 0; i < 7; i++){
+			float Fi = F0*((float )Math.pow(2.0, i));
+			osci[i] = new OsciladorRissetContinuo(Fi, T0, Fc, var);
+		}
+		
+		for(int i = 0; i < 7; i++){
+			osci[i].setCrescente(true);
+		}
+		
+		Somador[] sum = new Somador[6];
+		sum[0] = new Somador(osci[0], osci[1]);
+		for(int i = 1; i < 6; i++){
+			sum[i] = new Somador(sum[i-1], osci[i+1]);
+		}
+		
+		Curva curva = new Curva(720);
+		curva.addPonto(0f, 0.75);
+		curva.addPonto(720f, 0.75);
+		
+		Envoltoria ganho = new Envoltoria();
+		ganho.setCURVA(curva);
+		ganho.setDuracao(duracao);
+		
+		Multiplicador mult = new Multiplicador(ganho, sum[5]);
+		
+		Som som = new Som(mult, duracao);
+		
+		som.visualiza();
+		
+		
+	}
+	
+	public static void demo6(){
+		GUI gui = new GUI();
+		gui.setVisible(true);
+		gui.setSize(new Dimension(320, 240));
+	}
+	
+	public static void demo7(){
+		EfeitoRissetContinuo efeito = new EfeitoRissetContinuo();
+		efeito.setT0(5f);
+		efeito.setDuracao(20f);
+		efeito.setCrescente(true);
+		
+		Som som = efeito.getSom();
 		
 		som.visualiza();
 	}
 	
 	public static void main(String[] args){
-		demo4();
+		demo7();
 	}
 
 }

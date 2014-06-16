@@ -4,6 +4,8 @@ import sintese.Curva;
 /**
  * Implementa uma curva de amplitude gaussiana para gerar o efeito Risset contínuo
  * com a classe Envoltória da API sintese.
+ * 
+ * 
  * Ver referência teórica para a fórmula utilizada em: http://hebb.mit.edu/courses/9.29/2003/athena/auditory/risset.html
  * @author Juarez Aires Sampaio Filho
  *
