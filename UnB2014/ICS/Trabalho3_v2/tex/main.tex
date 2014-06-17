@@ -261,15 +261,42 @@ Com base na fórmula geral do efeito, desenvolveu-se:
    \end{figure}
 \end{frame}
 
+\subsubsection{EfeitoRissetContinuo}
+\begin{frame}{EfeitoRissetContinuo 1/2}
+\begin{itemize}
+	\item Conecta vários OsciladoresRissetContinuo definindo as frequências
+	como potências de dois de uma frequência base.
+	\item possui métodos para configurar todos os parâmetros do efeito
+	e um método para obter o som resultante.
+	\item na implementação utilizamos 9 harmônicos, começando com Fc/16,
+	até Fc e então até 16Fc
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+ \frametitle{EfeitoRissetContinuo 2/2}
+ \begin{figure}
+  \includegraphics[scale=0.6]{./images/efeitoRisset_code.png}
+  \caption{Construção de EfeitoRissetContinuo}
+   \end{figure}
+\end{frame}
 
 
+\section{Interface Gráfica}
+\begin{frame}
+ \frametitle{Interface Gráfica}
+ \begin{figure}
+  \includegraphics[scale=0.4]{./images/gui.png}
+  \caption{Interface Desenvolvida}
+   \end{figure}
+\end{frame}
 \section{Documentação e Referências}
 \begin{frame}
   \frametitle{Documentação e Referências}
   \begin{itemize}
   \item \href{../doc/index.html}{Documentação produzida com javadoc}
   \item \href{http://www.cic.unb.br/docentes/lcmm/sintese/javadoc/}{Documentação da API sintese}
-  \item \href{https://code.google.com/p/jmathplot/}{API jmathplot}
+  \item \href{http://hebb.mit.edu/courses/9.29/2003/athena/auditory/risset.html}{CIRCULARITY IN PITCH JUDGEMENT, MIT, Introduction to Computational Neuroscience}
   \end{itemize}
 \end{frame}
 
