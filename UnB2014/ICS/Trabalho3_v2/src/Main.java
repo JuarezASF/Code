@@ -143,14 +143,15 @@ public class Main {
 	public static void demo6(){
 		GUI gui = new GUI();
 		gui.setVisible(true);
-		gui.setSize(new Dimension(320, 240));
+		gui.setSize(new Dimension(200, 400));
 	}
 	
 	public static void demo7(){
 		EfeitoRissetContinuo efeito = new EfeitoRissetContinuo();
-		efeito.setT0(5f);
+		efeito.setT0(10f);
 		efeito.setDuracao(20f);
 		efeito.setCrescente(true);
+		efeito.setVar(0.1f);
 		
 		Som som = efeito.getSom();
 		
@@ -158,7 +159,7 @@ public class Main {
 	}
 	
 	public static void main(String[] args){
-		demo7();
+		demo6();
 	}
 
 }
