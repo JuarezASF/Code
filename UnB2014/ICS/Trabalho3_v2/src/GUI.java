@@ -76,6 +76,15 @@ public class GUI extends JFrame implements ActionListener, ChangeListener
 		sliderVar.setName("sliderVar");
 		JLabel labelVar = new JLabel("Variância(%)", JLabel.CENTER);
 		
+		JSlider sliderG = new JSlider(0, 150, 75);
+		sliderG.setPaintLabels(true);
+		sliderG.setPaintTicks(true);
+		sliderG.setMajorTickSpacing(30);
+		sliderG.setMinorTickSpacing(10);
+		sliderG.addChangeListener(this);
+		sliderG.setName("sliderG");
+		JLabel labelG = new JLabel("Ganho(%)", JLabel.CENTER);
+		
 		JButton inverteB = new JButton("Inverter");
 		inverteB.setActionCommand("inverte");
 		inverteB.addActionListener(this);
@@ -92,6 +101,7 @@ public class GUI extends JFrame implements ActionListener, ChangeListener
 		centro.add(labelDuracao); centro.add(sliderDuracao);
 		centro.add(labelFc); centro.add(sliderFc);
 		centro.add(labelVar); centro.add(sliderVar);
+		centro.add(labelG); centro.add(sliderG);
 		centro.add(inverteB);
 		
 		sul.add(playB);
@@ -109,8 +119,8 @@ public class GUI extends JFrame implements ActionListener, ChangeListener
 			String action = e.getActionCommand();
 			if(action.equals("play")){
 				Som som = risset.getSom();
-				som.salvawave("./wav/meuSom.wav");
-				som.tocawave("./wav/meuSom.wav");
+				som.salvawave();
+				som.tocawave();
 			}else if(action.equals("visualizar")){
 				Som som = risset.getSom();
 				som.visualiza();
@@ -133,7 +143,9 @@ public class GUI extends JFrame implements ActionListener, ChangeListener
 				else if(action.equals("sliderFc"))
 					risset.setFc(value);
 				else if(action.equals("sliderVar"))
-					risset.setVar(value);
+					risset.setVar(value/100.0f);
+				else if(action.equals("sliderG"))
+					risset.setGanho(value/100.0f);
 			}//end if adjusting
 		}//end statChanged(ChangeEvent e)
 

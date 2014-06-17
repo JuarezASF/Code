@@ -26,22 +26,22 @@ public class EfeitoRissetContinuo {
 		fVar = var;
 		fFc = Fc;
 		fT0 = T0;
-		fF0 = fFc/8.0f;
+		fF0 = fFc/16.0f;
 		fDuracao = duracao;
 		bCrescente = crescente;
 		
-		for(int i = 0; i < 7; i++){
+		for(int i = 0; i < 9; i++){
 			float Fi = fF0*((float )Math.pow(2.0, i));
 			osci[i] = new OsciladorRissetContinuo(Fi, fT0, fFc, fVar);
 		}
 		
-		for(int i = 0; i < 7; i++){
+		for(int i = 0; i < 9; i++){
 			osci[i].setCrescente(bCrescente);
 		}
 		
 		
 		sum[0] = new Somador(osci[0], osci[1]);
-		for(int i = 1; i < 6; i++){
+		for(int i = 1; i < 8; i++){
 			sum[i] = new Somador(sum[i-1], osci[i+1]);
 		}
 		
@@ -54,7 +54,7 @@ public class EfeitoRissetContinuo {
 		ganho.setCURVA(curva);
 		ganho.setDuracao(fDuracao);
 		
-		efeito_final = new Multiplicador(ganho, sum[5]);
+		efeito_final = new Multiplicador(ganho, sum[7]);
 	}
 	
 	/**
@@ -62,8 +62,8 @@ public class EfeitoRissetContinuo {
 	 * (T0, Fc, var, duracao, crescente) = (15, 440, 0.25f,30f, false)
 	 */
 	public EfeitoRissetContinuo(){
-		osci = new OsciladorRissetContinuo[7];
-		sum = new Somador[6];
+		osci = new OsciladorRissetContinuo[9];
+		sum = new Somador[8];
 		ganho = new Envoltoria();
 		
 		set(15, 440, 0.1f,30f, false);
@@ -78,18 +78,28 @@ public class EfeitoRissetContinuo {
 	 * @param crescente
 	 */
 	public EfeitoRissetContinuo(float T0, float Fc, float var, float duracao, boolean crescente){
-		osci = new OsciladorRissetContinuo[7];
-		sum = new Somador[6];
+		osci = new OsciladorRissetContinuo[9];
+		sum = new Somador[8];
 		ganho = new Envoltoria();
 		
 		set(T0, Fc, var, duracao, crescente);
 	}
 	
+	public void setGanho(float g){
+		Curva curva = new Curva(720);
+		curva.addPonto(0f, 0.0);
+		curva.addPonto(50f, g);
+		curva.addPonto(680f, g);
+		curva.addPonto(720f, g);
+		
+		ganho.setCURVA(curva);
+		ganho.setDuracao(fDuracao);
+		
+		efeito_final = new Multiplicador(ganho, sum[7]);
+	}
+	
 	public void setT0(float T0){
-		fT0 = T0;
-		for(int i = 0; i < 7; i++){
-			osci[i].setT0(T0);
-		}
+		set(T0, fFc, fVar, fDuracao, bCrescente);
 	}
 	
 	public void setFc(float Fc){
@@ -105,8 +115,8 @@ public class EfeitoRissetContinuo {
 		}
 	
 	private void setF0(){
-		fF0 = fFc/8.0f;
-		for(int i = 0; i < 7; i++){
+		fF0 = fFc/16.0f;
+		for(int i = 0; i < 9; i++){
 			float Fi = fF0*((float )Math.pow(2.0, i));
 			osci[i].setFi(Fi);
 		}

@@ -83,9 +83,10 @@ public class EnvoltoriaFrequenciaRisset extends Envoltoria{
 	 * cíclica de período T0.
 	 */
 	public float getSaida(){
+		if(fContador > 720.0)
+			fContador -= 720;
+		
 		float saida = getCURVA().getValorNoIndice(fContador);
-		if(fContador >= 720.0)
-			fContador = 0;
 		
 		return saida;
 	}

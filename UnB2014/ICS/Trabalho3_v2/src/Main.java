@@ -98,6 +98,9 @@ public class Main {
 		som.visualiza();
 	}
 	
+	/**
+	 * Testa composição de osciladores com arrays
+	 */
 	public static void demo5(){
 		float var = 0.1f;
 		float Fc = 440;
@@ -140,21 +143,42 @@ public class Main {
 		
 	}
 	
+	/**
+	 * Testa interface GUI
+	 */
 	public static void demo6(){
 		GUI gui = new GUI();
 		gui.setVisible(true);
-		gui.setSize(new Dimension(200, 400));
+		gui.setSize(new Dimension(220, 450));
 	}
 	
+	/**
+	 * Testa class efeito Risset Continuo
+	 */
 	public static void demo7(){
 		EfeitoRissetContinuo efeito = new EfeitoRissetContinuo();
-		efeito.setT0(10f);
-		efeito.setDuracao(20f);
+		efeito.setT0(5f);
+		efeito.setDuracao(10f);
+		efeito.setFc(220);
 		efeito.setCrescente(true);
 		efeito.setVar(0.1f);
 		
 		Som som = efeito.getSom();
 		
+		som.visualiza();
+	}
+	
+	public static void demo8(){
+		OsciladorRissetContinuo osci = new OsciladorRissetContinuo();
+		osci.setFi(880);
+		osci.setT0(0.49f);
+		
+		//OsciladorRissetContinuo osci2 = new OsciladorRissetContinuo();
+		//osci2.setFi(440);
+		
+		//Somador sum = new Somador(osci, osci2);
+		
+		Som som = new Som(osci, 1);
 		som.visualiza();
 	}
 	

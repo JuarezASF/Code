@@ -81,9 +81,10 @@ public class EnvoltoriaAmplitudeRisset extends Envoltoria{
 	 * Reescrevemos o método para permitir uma envoltória de periodo definido por T0.
 	 */
 	public float getSaida(){
+		if(fContador > 720.0)
+			fContador -= 720.0;
+		
 		float saida = getCURVA().getValorNoIndice(fContador);
-		if(fContador >= 720.0)
-			fContador = 0;
 		
 		return saida;
 	}
