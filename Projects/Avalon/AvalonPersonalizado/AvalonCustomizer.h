@@ -9,6 +9,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "MaskOperation.h"
+
 using namespace cv;
 using namespace std;
 
@@ -22,6 +24,7 @@ public:
     void setVerso(Mat &novo);
     void setNome(std::string novo);
     Mat getCard();
+    bool set[5];
 
 private:
     Mat plano, moldura, personagem, verso;

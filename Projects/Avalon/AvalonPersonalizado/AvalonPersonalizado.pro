@@ -41,11 +41,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     AvalonCustomizer.cpp \
     QString2Strings.cpp \
-    cv2qtimage.cpp
+    cv2qtimage.cpp \
+    MaskOperation.cpp
 
 HEADERS  += mainwindow.h \
     AvalonCustomizer.h \
     QString2String.h \
-    cv2qtimage.h
+    cv2qtimage.h \
+    MaskOperation.h
 
 FORMS    += mainwindow.ui
