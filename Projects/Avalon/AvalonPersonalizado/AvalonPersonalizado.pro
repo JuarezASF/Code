@@ -39,9 +39,13 @@ LIBS += -L/usr/local/lib \
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    AvalonCustomizer.cpp
+    AvalonCustomizer.cpp \
+    QString2Strings.cpp \
+    cv2qtimage.cpp
 
 HEADERS  += mainwindow.h \
-    AvalonCustomizer.h
+    AvalonCustomizer.h \
+    QString2String.h \
+    cv2qtimage.h
 
 FORMS    += mainwindow.ui
