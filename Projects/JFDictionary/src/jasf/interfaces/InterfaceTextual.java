@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import jasf.dictionary.dados.RepositorioItensDicionarioVector;
+import jasf.dictionary.Fachada;
 import jasf.dictionary.itemDicionario.ItemDicionario;
+import jasf.dictionary.itemDicionario.RepositorioItensDicionarioVector;
 
 public class InterfaceTextual {
 	static void print(ItemDicionario item){
@@ -18,9 +19,14 @@ public class InterfaceTextual {
 	}
 	
 	static void print(RepositorioItensDicionarioVector dicionario){
+		try{
 		for(int i = 0; i < dicionario.getSize(); i++){
 			InterfaceTextual.print(dicionario.getItem(i));
 			System.out.println("-------------------------");
+		}
+		}
+		catch(Exception E){
+			System.out.println("\n\n Não foi possível termianr a impressão!\n\n");
 		}
 	}
 	
@@ -181,6 +187,35 @@ public class InterfaceTextual {
 	      System.out.println("Deserialized Object...");
 	      InterfaceTextual.print(e);
 	   }
+	
+	public static void runDemo6(){
+		try{
+		ItemDicionario iten1 = new ItemDicionario("Juarez");
+		iten1.addDefinicao("Namorado da Isabela");
+		
+		ItemDicionario iten2 = new ItemDicionario("Isabela");
+		iten2.addDefinicao("Namorada do Juarez");
+		iten2.addDefinicao("Dona da Wendy");
+		
+		
+		ItemDicionario iten3 = new ItemDicionario("Wendy");
+		iten3.addDefinicao("Gata da Isabela");
+		iten3.addDefinicao("Não gosta do Juarez");
+		
+		Fachada dicionario = new Fachada();
+		dicionario.cadastrar(iten1);
+		dicionario.cadastrar(iten2);
+		dicionario.cadastrar(iten3);
+		
+		
+		dicionario.salvar("./meusDados.ser");
+		}
+		catch(Exception E){
+			System.out.println("algo deu errado");
+			E.printStackTrace();
+		}
+		
+	}
 
 
 	

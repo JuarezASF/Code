@@ -1,8 +1,12 @@
-package jasf.dictionary.dados;
+package jasf.dictionary.itemDicionario;
 
-import jasf.dictionary.itemDicionario.ItemDicionario;
 import java.util.Vector;
 
+/**
+ * Não está muito bem implementado. O repositório não deveria implementar regras de negócio!
+ * @author JuarezASF
+ *
+ */
 public class RepositorioItensDicionarioVector implements java.io.Serializable{
 	Vector<ItemDicionario> itens;
 	
@@ -107,7 +111,10 @@ public class RepositorioItensDicionarioVector implements java.io.Serializable{
 	 * @param n
 	 * @return
 	 */
-	public ItemDicionario getItem(int n){
+	public ItemDicionario getItem(int n)
+	throws Exception{
+		if(n >= itens.size())
+			throw new Exception("Número do Item não pode ser encontrado!");
 		return itens.get(n);
 	}
 	
