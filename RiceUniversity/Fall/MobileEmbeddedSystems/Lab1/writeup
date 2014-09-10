@@ -1,0 +1,87 @@
+Lab01: Programming in a Linux Environment
+Juarez Aires Sampaio Filho
+Rice ID: S01217136
+
+Part 1
+
+Q1. What were the arguments passed to the chmod command in (3)?
+    751 helloworld.py 
+    7: RWX for owner
+    5: R-X for owner's group
+    1: --X for everyone else 
+
+Q2. Copy-paste the directories in your path, and the contents of the directory 
+where you placed the symbolic link as printed out by ls -l.
+    $PATH
+        bash: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+    ls /usr/local/bin
+        lrwxrwxrwx 1 root root 91 Sep  8 16:41 justifytext -> /home/jasf/Documents/RiceUniversity/MobileEmbedded/Lab1/justifytext.py
+        lrwxrwxrwx 1 root root 30 Sep  8 01:33 sublime_text -> /opt/sublime_text/sublime_text
+
+
+Part 2
+
+Q3. What operations are done on the input integer?
+        The input integer, obtained after converting the input string to a 
+    numeric value using atoi, receives three operations: shift right by one bit,
+    bit-to-bit logical and with the mask 0x0f(after this only the last four 
+    original bits remain) and shift left by four bits. The actions performed on 
+    the value and its assembly command are:
+        #| C code           | Assembly code         |
+        1|a = a >> 1;       | shrb   -0x4(%rbp)     |
+        ---------------------------------------------
+        2|a = a & 0x0f;     | andb   $0xf,-0x4(%rbp)|
+        ---------------------------------------------
+        3|  a = a << 4;     | shlb   $0x4,-0x4(%rbp)|
+        ---------------------------------------------
+
+
+Q4. What is the present bug, and under what conditions is it triggered? 
+        The present bug is trying to redefine a char that was first defined into
+    a string constant table. The bug is triggered when the if-branch is taken on
+    function CHECK, that is, when the value of variable 'a' is greater than 128 
+    after the operations. 
+
+Q5. What are possible ways to fix this bug?
+        One possible way to solve this bug is by declaring 'x' in a different 
+    way. The problem happens because the initialization "char *x = "error or not?";"
+    creates a constant string into a constant string table and then assign the 
+    address of this string to *x. Trying to read x[0] is allowed, but trying to
+    modify it will cause segmentation fault. However, if we define x as 
+    "char x[] = "error or not?";" then the compiler will calculate the size of 
+    the string(14 if we count the '\0' terminator character), create a fixed size
+    array char x[14] and then assign the value of each char to it's position. 
+    Thereby we will be able to both read and change the value of x[0]. Many 
+    solutions are available following the same idea. We could also calculate
+    ourselves the size of x and write "char x[14] = "error or not?". Another 
+    idea if we do want to use a char * is:
+        char *x;
+        x = (char *)malloc(14*sizeof(char));
+        x[0]='e'
+        x[1]='r'
+        ....
+        x[13]='\0'
+
+Part 3
+
+Q6. What is the maximum length array our program can sort?
+        As defined by the macro MAX_NUM on sort.h header file, the maximum 
+    length array our program can sort is 100.
+
+Q7. What is the difference between incrementing int* and char* by 1 (i.e. ((int *)p)+1) vs ((char *)p)+1))?
+        The difference is in the actual amount added to the address stored in p.
+    The command 'p =((int *)p)+1' will add the size of an int(in bytes) to the 
+    value of p and 'p =((char *)p)+1' will add the size of a char(also in bytes).
+    Therefore, the value added by the former operation is 4 and by the latter is
+    1.
+
+Q8. Are the input arrays passed by reference or value to merge_sort?
+        The values are passed by reference.
+
+Q9. What is the difference between #include "header.h" and #include <header.h>?
+        The former will include a local header whose path is in the same 
+    directory that the compiler is being run and the latter includes a header 
+    that is stored in specific directories.
+
+Q10. Use your justifytext script to justify this writeup (after completing it) to a length of 80 characters.
+        My script is not working 100%, so I didn't apply it.
